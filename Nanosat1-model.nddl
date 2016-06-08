@@ -1,0 +1,138 @@
+class Nanosatellite;
+class Battery;
+class Camera;
+
+class Nanosatellite 
+{
+	Camera camera;
+	Battery mainBattery;
+    
+	Nanosatellite(Battery b)
+	{
+    	camera = new Camera(this);
+    	mainBattery = b;
+  	}
+  	  	
+	action takePhoto {}
+}
+
+// The battery
+
+class Battery extends Reservoir
+{
+    string profileType;
+    
+    // ic = initial capacity, min and max levels
+	Battery(float ic, float min, float max)
+	{
+		super(ic, min, max);
+		profileType="IncrementalFlowProfile";
+	}
+}
+
+// The camera, it's state and location
+
+class CameraLocation extends Timeline
+{
+	predicate Stowed {} 
+	predicate Stowing {}
+	predicate Unstowed {}
+	predicate Unstowing {}
+}
+
+class CameraState extends Timeline
+{
+	predicate On {}	
+	predicate Off {}	
+}
+
+class Camera
+{
+    Nanosatellite nanosat;
+	CameraLocation location;
+	CameraState state;
+	
+	Camera(Nanosatellite n)
+	{
+		nanosat = n;
+		location = new CameraLocation();
+	    state = new CameraState();
+	}
+	
+	action takePhoto{
+    	eq(1, duration);
+	}
+	
+	action turnOn{
+	    eq(1, duration);
+	}
+	
+	action turnOff{
+	    eq(1, duration);
+	}
+
+	action Stow{
+		eq(2, duration);
+	}
+
+  	action Unstow{
+    	eq(2, duration);
+	}
+}
+
+
+Nanosatellite::takePhoto
+{
+	equals(object.camera.takePhoto);
+}
+
+Camera::takePhoto
+{
+    contained_by(condition object.state.On);
+    contained_by(condition object.location.Unstowed);
+  	
+  	contains(effect object.nanosat.mainBattery.consume consumption);
+  	eq(consumption.quantity, 20);
+}
+
+Camera::turnOn
+{
+    contained_by(condition object.location.Unstowed);
+	met_by(condition object.state.Off);
+	meets(effect object.state.On);
+	
+  	contains(effect object.nanosat.mainBattery.consume consumption);
+  	eq(consumption.quantity, 10);	
+}
+
+Camera::turnOff
+{
+    contained_by(condition object.location.Unstowed);
+	met_by(condition object.state.On);
+	meets(effect object.state.Off);
+	
+  	contains(effect object.nanosat.mainBattery.consume consumption);
+  	eq(consumption.quantity, 10);	
+}
+
+Camera::Stow
+{
+    contained_by(condition object.state.Off);
+	met_by(condition object.location.Unstowed);
+	equals(effect object.location.Stowing);
+	meets(effect object.location.Stowed);
+	
+  	contains(effect object.nanosat.mainBattery.consume consumption);
+  	eq(consumption.quantity, 20);	
+}
+
+Camera::Unstow
+{
+    contained_by(condition object.state.Off);
+	met_by(condition object.location.Stowed);
+	equals(effect object.location.Unstowing);
+	meets(effect object.location.Unstowed);
+	
+  	contains(effect object.nanosat.mainBattery.consume consumption);
+  	eq(consumption.quantity, 20);
+}

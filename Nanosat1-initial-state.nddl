@@ -1,0 +1,26 @@
+#include "Nanosat1-model.nddl"
+
+// Create a planner configuration instance in PLASMA.
+
+// Setting up the nanosatellite with battery
+Battery battery = new Battery(1000.0, 10.0, 1000.0);
+Nanosatellite nanosat = new Nanosatellite(battery);
+
+// Close the the PLASMA Database - no more objects can be created.
+close();
+
+// Establish the initial camera state and location
+fact(nanosat.camera.location.Stowed stowed);
+eq(stowed.start, 0);
+fact(nanosat.camera.state.Off off);
+eq(off.start, 0);
+
+// Establish the goal - take a photo
+goal(nanosat.takePhoto photo);
+
+// this is taking a photo at a specific time
+//photo.start.specify(10);
+
+// this is taking a photo at some point within the horizon (defined as 0 - 100)
+leq(0, photo.start);
+leq(photo.end, 100);

@@ -1,0 +1,174 @@
+import psengine.*;
+import Nanosat1.*;
+import java.awt.BorderLayout;
+import org.ops.ui.main.swing.PSDesktop;
+import org.ops.ui.mouse.swing.*;
+import org.ops.ui.gantt.swing.*;
+import org.ops.ui.rchart.swing.*;
+import org.ops.ui.utils.swing.Util;
+
+int month = GregorianCalendar.JULY, day = 1; 
+GregorianCalendar start = new GregorianCalendar(2016,month,day,0,0);
+GregorianCalendar end = new GregorianCalendar(2016,month,day,2,0);
+
+try {
+    // Load the model and the problem :
+	errors = psengine.executeScript("nddl",bsh.cwd+"/Nanosat1-initial-state.nddl",true/*isFile*/);
+    if (!errors.equals(""))
+        throw new RuntimeException("Failed loading model:"+errors);
+    
+	//desktop.makeNddlConsole();
+	
+	// Create a solver
+	solver = desktop.makeSolver(
+		"PlannerConfig.xml", // config
+		0,   // startHorizon
+        100  // endHorizon
+    );
+    
+    // This will display a dialog that allows the user to run the solver interactively
+	// desktop.makeSolverDialog(solver);
+	
+	// Instead of showing stepping tool, skip right to the end:
+    solver.solve(100, 100);
+
+}
+catch (Exception e) {
+    e.printStackTrace();
+}
+
+// call showPlan() to see the plan activities
+void showPlanOld()
+{
+	PSObjectList l = psengine.getObjectsByType("Object");
+	for (int i=0;i<l.size();i++) {
+		PSObject o = l.get(i);
+		desktop.showTokens(l.get(i));
+    }
+}
+
+// call showChart() to get the GANTT chart
+
+void showSchedule()
+    throws Exception
+{
+    ActionDetailsPanel dp = (ActionDetailsPanel)desktop.makeDetailsFrame().getContentPane().getComponent(0);
+    JInternalFrame ganttFrame = desktop.makeResourceGanttFrame("Object",start,end);
+    ganttFrame.setLocation(0,0);
+    ganttFrame.setSize(700,300);
+    PSGantt gantt = (PSGantt)ganttFrame.getContentPane().getComponent(0);
+    gantt.addMouseListener(dp);         
+}
+
+// call showResourceProfiles() to look at the battery activity
+
+void showResourceProfiles()
+{
+    resourceFrame = desktop.makeResourcesFrame("Battery",start);
+    resourceFrame.setLocation(0,180);
+    resourceFrame.setSize(500,300);	
+}
+
+void printProfile()
+{
+    PSResource r = psengine.getObjectByName("battery");
+    //print(obj);
+    //r.asPSResource(obj);
+    PSResourceProfile cap = r.getCapacity();
+	print("Battery level: "+cap);
+}
+
+// Helper method that, for each token, creates a row of values for each
+// column in columnNames, and adds the row to data.
+void addRows(Vector data, PSTokenList tl, Vector columnNames)
+{ 
+	for (int i=0; i < tl.size() ; i++) {
+    	row = new Vector();
+    	PSToken t = tl.get(i);
+       	
+		// Fill each column as best we can:
+       	for (int k=0; k < columnNames.size(); k++) {
+			String col = columnNames.get(k);
+			
+			// Three special cases before we get to generic case:
+			if(col == "Key") {
+				row.add(t.getEntityKey());
+			}
+			else if(col == "Name") {
+				row.add(t.getEntityName());
+			}
+			else if(col == "ES") {
+				row.add(t.getStart().getLowerBound());
+			}
+		
+			else {
+				String entry = "--";
+ 		     	PSVariableList vars = t.getParameters();
+        			for (int j=0; j<vars.size();j++) 
+       			{	
+       				PSVariable var = vars.get(j);
+        			if (var.getEntityName().equals(col)) 
+       				{
+       					entry = var.toString();
+       				}
+       			}
+       			row.add(entry);
+       		}
+		}
+		data.add(row);    
+	}
+}
+
+// call showPlan() to get a timetable
+// a) Gather the tokens in the agent and timeline objects.
+// b) Gather the tokens associated with them.
+// c) Store the token variables we want to show for each token.
+// d) Sort them in chronological order
+void showPlan()
+{	   
+	PSObjectList ol = psengine.getObjectsByType("Nanosatellite");
+	PSTokenList tl = ol.get(0).getTokens();
+	
+	PSObjectList ol2 = psengine.getObjectsByType("Camera");	
+	PSTokenList tl2 = ol2.get(0).getTokens();
+
+	columnNames = new Vector();
+	data = new Vector();
+ 
+    columnNames.add("Key");
+    columnNames.add("Name");
+	columnNames.add("ES");  // We use this column for chronological sorting later
+    columnNames.add("start");
+    columnNames.add("duration");
+    columnNames.add("end");
+	
+	addRows(data, tl, columnNames);
+	addRows(data, tl2, columnNames);
+
+	// Sort the rows based on the 3rd column (start) 
+	sortedData = new Vector();
+	
+	while(data.size() > 0) {
+		int bestIdx = -1;
+		double lowestLB = 0;
+		for(int i=0; i < data.size(); i++) {
+			if (bestIdx == -1 || data.get(i).get(2) < lowestLB) {
+				bestIdx = i;
+				lowestLB = data.get(i).get(2);
+			}
+		}
+		sortedData.add(data.get(bestIdx));
+		data.remove(bestIdx);
+	}
+
+	frame = desktop.makeNewFrame("Timeline");
+	table = new JTable(new Util.MatrixTableModel(sortedData,columnNames));
+	scrollpane = new JScrollPane(table);
+    frame.getContentPane().add(scrollpane);    	
+ 	frame.setSize(frame.getSize()); // Force repaint
+}
+
+// Show results right away:
+showPlan();
+
+
