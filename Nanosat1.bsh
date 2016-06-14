@@ -9,7 +9,7 @@ import org.ops.ui.utils.swing.Util;
 
 int month = GregorianCalendar.JULY, day = 1; 
 GregorianCalendar start = new GregorianCalendar(2016,month,day,0,0);
-GregorianCalendar end = new GregorianCalendar(2016,month,day,2,0);
+GregorianCalendar end = new GregorianCalendar(2016,month,day,0,10);
 
 try {
     // Load the model and the problem :
@@ -37,19 +37,8 @@ catch (Exception e) {
     e.printStackTrace();
 }
 
-// call showPlan() to see the plan activities
-void showPlanOld()
-{
-	PSObjectList l = psengine.getObjectsByType("Object");
-	for (int i=0;i<l.size();i++) {
-		PSObject o = l.get(i);
-		desktop.showTokens(l.get(i));
-    }
-}
 
-// call showChart() to get the GANTT chart
-
-void showSchedule()
+void showGantt()
     throws Exception
 {
     ActionDetailsPanel dp = (ActionDetailsPanel)desktop.makeDetailsFrame().getContentPane().getComponent(0);
@@ -60,22 +49,26 @@ void showSchedule()
     gantt.addMouseListener(dp);         
 }
 
-// call showResourceProfiles() to look at the battery activity
-
-void showResourceProfiles()
+void showResourceProfile()
 {
     resourceFrame = desktop.makeResourcesFrame("Battery",start);
-    resourceFrame.setLocation(0,180);
-    resourceFrame.setSize(500,300);	
 }
 
-void printProfile()
+void showResourceGantt()
 {
-    PSResource r = psengine.getObjectByName("battery");
-    //print(obj);
-    //r.asPSResource(obj);
-    PSResourceProfile cap = r.getCapacity();
-	print("Battery level: "+cap);
+    resources = desktop.makeResourceGanttFrame("Battery",start,end);
+}
+
+void printResourceLevels()
+{
+    PSObject obj = psengine.getObjectByName("battery");
+    PSResource r = PSResource.asPSResource(obj);
+    PSResourceProfile prof = r.getFDLevels();    
+    PSTimePointList times = prof.getTimes();
+	for (int i=0; i<times.size(); i++) {
+		int time = times.get(i);
+		print(times.get(i)+" ["+prof.getLowerBound(time)+","+prof.getUpperBound(time)+"]");
+	}
 }
 
 // Helper method that, for each token, creates a row of values for each
@@ -132,6 +125,9 @@ void showPlan()
 	PSObjectList ol2 = psengine.getObjectsByType("Camera");	
 	PSTokenList tl2 = ol2.get(0).getTokens();
 
+    PSObjectList ol3 = psengine.getObjectsByType("SolarPanel");	
+	PSTokenList tl3 = ol3.get(0).getTokens();
+
 	columnNames = new Vector();
 	data = new Vector();
  
@@ -144,6 +140,7 @@ void showPlan()
 	
 	addRows(data, tl, columnNames);
 	addRows(data, tl2, columnNames);
+	addRows(data, tl3, columnNames);
 
 	// Sort the rows based on the 3rd column (start) 
 	sortedData = new Vector();

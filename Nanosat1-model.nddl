@@ -1,19 +1,26 @@
 class Nanosatellite;
 class Battery;
 class Camera;
+class CameraState;
+class Window;
+class SolarPanel;
+class SolarPanelState;
 
 class Nanosatellite 
 {
-	Camera camera;
 	Battery mainBattery;
+	Camera camera;
+	SolarPanel panel;
     
 	Nanosatellite(Battery b)
 	{
-    	camera = new Camera(this);
     	mainBattery = b;
+        camera = new Camera(this);
+        panel = new SolarPanel(this);
   	}
   	  	
 	action takePhoto {}
+	action chargeBattery {}
 }
 
 // The battery
@@ -22,117 +29,124 @@ class Battery extends Reservoir
 {
     string profileType;
     
-    // ic = initial capacity, min and max levels
-	Battery(float ic, float min, float max)
+    // ic = initial capacity, level limit min, level limit max, production max, consumption max
+	Battery(float ic, float lmin, float lmax, float pmax, float pmin)
 	{
-		super(ic, min, max);
+		super(ic, lmin, lmax, pmax, pmin);
 		profileType="IncrementalFlowProfile";
 	}
 }
 
-// The camera, it's state and location
+// Time window for availability
 
-class CameraLocation extends Timeline
+class Window extends Timeline
 {
-	predicate Stowed {} 
-	predicate Stowing {}
-	predicate Unstowed {}
-	predicate Unstowing {}
+    predicate Available {}
 }
+
+// The camera
 
 class CameraState extends Timeline
 {
-	predicate On {}	
-	predicate Off {}	
+	predicate On {}
+	predicate Off {}
+	predicate poweringUp {}
+	predicate poweringDown {}	
 }
 
 class Camera
 {
     Nanosatellite nanosat;
-	CameraLocation location;
 	CameraState state;
+	Window window;
 	
 	Camera(Nanosatellite n)
 	{
 		nanosat = n;
-		location = new CameraLocation();
 	    state = new CameraState();
+	    window = new Window();
 	}
-	
+		
 	action takePhoto{
     	eq(1, duration);
 	}
 	
 	action turnOn{
-	    eq(1, duration);
+	    eq(2, duration);
 	}
 	
 	action turnOff{
-	    eq(1, duration);
+	    eq(2, duration);
 	}
-
-	action Stow{
-		eq(2, duration);
-	}
-
-  	action Unstow{
-    	eq(2, duration);
-	}
+	
+	action consumePowerWhileOn {}
 }
 
+// The solar panel
+
+class SolarPanelState extends Timeline
+{
+	predicate Charging {}
+}
+
+class SolarPanel
+{
+    Nanosatellite nanosat;
+	SolarPanelState state;
+	Window window;
+	
+	Camera(Nanosatellite n)
+	{
+		nanosat = n;
+	    state = new SolarPanelState();
+	    window = new Window();
+	}
+	
+	action chargeBattery {}
+}
+
+// Actions
 
 Nanosatellite::takePhoto
 {
 	equals(object.camera.takePhoto);
 }
 
+Nanosatellite::chargeBattery
+{
+   equals(object.panel.chargeBattery);
+}
+
 Camera::takePhoto
 {
     contained_by(condition object.state.On);
-    contained_by(condition object.location.Unstowed);
-  	
-  	contains(effect object.nanosat.mainBattery.consume consumption);
-  	eq(consumption.quantity, 20);
+    contained_by(condition object.window.Available);
 }
 
 Camera::turnOn
 {
-    contained_by(condition object.location.Unstowed);
 	met_by(condition object.state.Off);
+	equals(effect object.state.poweringUp);
 	meets(effect object.state.On);
-	
-  	contains(effect object.nanosat.mainBattery.consume consumption);
-  	eq(consumption.quantity, 10);	
 }
 
 Camera::turnOff
 {
-    contained_by(condition object.location.Unstowed);
 	met_by(condition object.state.On);
+	equals(effect object.state.poweringDown);
 	meets(effect object.state.Off);
-	
-  	contains(effect object.nanosat.mainBattery.consume consumption);
-  	eq(consumption.quantity, 10);	
 }
 
-Camera::Stow
+Camera::consumePowerWhileOn
 {
-    contained_by(condition object.state.Off);
-	met_by(condition object.location.Unstowed);
-	equals(effect object.location.Stowing);
-	meets(effect object.location.Stowed);
-	
-  	contains(effect object.nanosat.mainBattery.consume consumption);
-  	eq(consumption.quantity, 20);	
+    contained_by(object.state.On);
+    starts(object.nanosat.mainBattery.consume consumption);
+    eq(consumption.quantity, 120);
 }
 
-Camera::Unstow
+SolarPanel::chargeBattery
 {
-    contained_by(condition object.state.Off);
-	met_by(condition object.location.Stowed);
-	equals(effect object.location.Unstowing);
-	meets(effect object.location.Unstowed);
-	
-  	contains(effect object.nanosat.mainBattery.consume consumption);
-  	eq(consumption.quantity, 20);
+    contained_by(condition object.window.Available);
+    starts(effect object.nanosat.mainBattery.produce power);
+  	eq(power.quantity, 50);
 }

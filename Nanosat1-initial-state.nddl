@@ -3,24 +3,45 @@
 // Create a planner configuration instance in PLASMA.
 
 // Setting up the nanosatellite with battery
-Battery battery = new Battery(1000.0, 10.0, 1000.0);
+Battery battery = new Battery(500.0, 10.0, 500.0, 490.0, 490.0);
 Nanosatellite nanosat = new Nanosatellite(battery);
 
 // Close the the PLASMA Database - no more objects can be created.
 close();
 
-// Establish the initial camera state and location
-fact(nanosat.camera.location.Stowed stowed);
-eq(stowed.start, 0);
+// Establish the initial conditions
 fact(nanosat.camera.state.Off off);
 eq(off.start, 0);
 
-// Establish the goal - take a photo
+// Establish the window where it's possible to take a photo and charge the battery
+fact(nanosat.camera.window.Available camwindow);
+camwindow.start = 0;
+camwindow.end = 50;
+fact(nanosat.panel.window.Available chargingwindow);
+chargingwindow.start = 10;
+chargingwindow.end = 80;
+
+// If the camera is on, consume power
+fact(nanosat.camera.consumePowerWhileOn camUsingBattery);
+leq(0, camUsingBattery.start);
+leq(camUsingBattery.end, 100);
+
+// Turn off the camera at the end of the window
+fact(nanosat.camera.turnOff turnoff);
+turnoff.start.specify(50);
+
+// Establish the goal: take a photo
 goal(nanosat.takePhoto photo);
+photo.start.specify(10);
+// Doing the tasks at some point within the horizon
+// leq(0, photo.start);
+// leq(photo.end, 50);
 
-// this is taking a photo at a specific time
-//photo.start.specify(10);
+// Charge the battery
+goal(nanosat.chargeBattery charge);
+charge.start.specify(60);
+//leq(0, charge.start);
+//leq(charge.end, 100);
 
-// this is taking a photo at some point within the horizon (defined as 0 - 100)
-leq(0, photo.start);
-leq(photo.end, 100);
+// Camera needs to use the battery before being charged
+// nanosat.constrain(camUsingBattery, charge);
