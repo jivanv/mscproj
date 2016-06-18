@@ -49,19 +49,36 @@ void showGantt()
     gantt.addMouseListener(dp);         
 }
 
-void showResourceProfile()
+void showBatteryProfile()
 {
     resourceFrame = desktop.makeResourcesFrame("Battery",start);
 }
 
-void showResourceGantt()
+void showMemoryProfile()
+{
+    resourceFrame = desktop.makeResourcesFrame("Memory",start);
+}
+
+void showBatteryGantt()
 {
     resources = desktop.makeResourceGanttFrame("Battery",start,end);
 }
 
-void printResourceLevels()
+void printBatteryLevels()
 {
     PSObject obj = psengine.getObjectByName("battery");
+    PSResource r = PSResource.asPSResource(obj);
+    PSResourceProfile prof = r.getFDLevels();    
+    PSTimePointList times = prof.getTimes();
+	for (int i=0; i<times.size(); i++) {
+		int time = times.get(i);
+		print(times.get(i)+" ["+prof.getLowerBound(time)+","+prof.getUpperBound(time)+"]");
+	}
+}
+
+void printMemoryLevels()
+{
+    PSObject obj = psengine.getObjectByName("memory");
     PSResource r = PSResource.asPSResource(obj);
     PSResourceProfile prof = r.getFDLevels();    
     PSTimePointList times = prof.getTimes();
@@ -127,6 +144,9 @@ void showPlan()
 
     PSObjectList ol3 = psengine.getObjectsByType("SolarPanel");	
 	PSTokenList tl3 = ol3.get(0).getTokens();
+    
+    PSObjectList ol4 = psengine.getObjectsByType("Transmitter");	
+	PSTokenList tl4 = ol4.get(0).getTokens();
 
 	columnNames = new Vector();
 	data = new Vector();
@@ -141,6 +161,7 @@ void showPlan()
 	addRows(data, tl, columnNames);
 	addRows(data, tl2, columnNames);
 	addRows(data, tl3, columnNames);
+    addRows(data, tl4, columnNames);
 
 	// Sort the rows based on the 3rd column (start) 
 	sortedData = new Vector();

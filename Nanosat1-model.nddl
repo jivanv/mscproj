@@ -5,22 +5,29 @@ class CameraState;
 class Window;
 class SolarPanel;
 class SolarPanelState;
+class Memory;
+class Transmitter;
 
 class Nanosatellite 
 {
 	Battery mainBattery;
+	Memory memory;
 	Camera camera;
 	SolarPanel panel;
+	Transmitter transmitter;
     
-	Nanosatellite(Battery b)
+	Nanosatellite(Battery b, Memory m)
 	{
     	mainBattery = b;
+    	memory = m;
         camera = new Camera(this);
         panel = new SolarPanel(this);
+        transmitter = new Transmitter(this);
   	}
   	  	
 	action takePhoto {}
 	action chargeBattery {}
+	action downlinkData {}
 }
 
 // The battery
@@ -31,6 +38,20 @@ class Battery extends Reservoir
     
     // ic = initial capacity, level limit min, level limit max, production max, consumption max
 	Battery(float ic, float lmin, float lmax, float pmax, float pmin)
+	{
+		super(ic, lmin, lmax, pmax, pmin);
+		profileType="IncrementalFlowProfile";
+	}
+}
+
+// The memory
+
+class Memory extends Reservoir
+{
+    string profileType;
+    
+    // ic = initial capacity, level limit min, level limit max, production max, consumption max
+	Memory(float ic, float lmin, float lmax, float pmax, float pmin)
 	{
 		super(ic, lmin, lmax, pmax, pmin);
 		profileType="IncrementalFlowProfile";
@@ -79,7 +100,9 @@ class Camera
 	    eq(2, duration);
 	}
 	
-	action consumePowerWhileOn {}
+	action consumePowerWhileOn {
+	 //   eq([0, 50], duration);
+	}
 }
 
 // The solar panel
@@ -105,6 +128,22 @@ class SolarPanel
 	action chargeBattery {}
 }
 
+// The transmitter
+
+class Transmitter
+{
+    Nanosatellite nanosat;
+    Window window;
+    
+    Transmitter(Nanosatellite n)
+    {
+        nanosat = n;
+        window = new Window();
+    }
+    
+    action downlinkData{}
+}
+
 // Actions
 
 Nanosatellite::takePhoto
@@ -117,14 +156,22 @@ Nanosatellite::chargeBattery
    equals(object.panel.chargeBattery);
 }
 
+Nanosatellite::downlinkData
+{
+    equals(object.transmitter.downlinkData);
+}
+
 Camera::takePhoto
 {
     contained_by(condition object.state.On);
     contained_by(condition object.window.Available);
+    contains(effect object.nanosat.memory.produce data);
+    eq(data.quantity, 50);
 }
 
 Camera::turnOn
 {
+    contained_by(condition object.window.Available);
 	met_by(condition object.state.Off);
 	equals(effect object.state.poweringUp);
 	meets(effect object.state.On);
@@ -132,6 +179,7 @@ Camera::turnOn
 
 Camera::turnOff
 {
+    contained_by(condition object.window.Available);
 	met_by(condition object.state.On);
 	equals(effect object.state.poweringDown);
 	meets(effect object.state.Off);
@@ -140,13 +188,21 @@ Camera::turnOff
 Camera::consumePowerWhileOn
 {
     contained_by(object.state.On);
-    starts(object.nanosat.mainBattery.consume consumption);
-    eq(consumption.quantity, 120);
+    starts(effect object.nanosat.mainBattery.consume consumption);
+    eq(consumption.quantity, 100);
 }
 
 SolarPanel::chargeBattery
 {
     contained_by(condition object.window.Available);
+    equals(effect object.state.Charging);
     starts(effect object.nanosat.mainBattery.produce power);
   	eq(power.quantity, 50);
+}
+
+Transmitter::downlinkData
+{
+    contained_by(condition object.window.Available);
+    contains(effect object.nanosat.memory.consume data);
+    eq(data.quantity, 25);
 }

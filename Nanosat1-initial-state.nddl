@@ -4,44 +4,55 @@
 
 // Setting up the nanosatellite with battery
 Battery battery = new Battery(500.0, 10.0, 500.0, 490.0, 490.0);
-Nanosatellite nanosat = new Nanosatellite(battery);
+Memory memory = new Memory(0, 0, 1000, 1000, 1000);
+Nanosatellite nanosat = new Nanosatellite(battery, memory);
 
 // Close the the PLASMA Database - no more objects can be created.
 close();
+
+// Establish the time horizon for the problem
+// horizonStart = 0;
+// horizonEnd = 100;
 
 // Establish the initial conditions
 fact(nanosat.camera.state.Off off);
 eq(off.start, 0);
 
-// Establish the window where it's possible to take a photo and charge the battery
+// Establish the windows where it's possible to take a photo, charge the battery and downlink data
 fact(nanosat.camera.window.Available camwindow);
 camwindow.start = 0;
 camwindow.end = 50;
+
 fact(nanosat.panel.window.Available chargingwindow);
-chargingwindow.start = 10;
-chargingwindow.end = 80;
+chargingwindow.start = 0;
+chargingwindow.end = 50;
+
+fact(nanosat.transmitter.window.Available downlinkwindow);
+downlinkwindow.start = 30;
+downlinkwindow.end = 60;
 
 // If the camera is on, consume power
 fact(nanosat.camera.consumePowerWhileOn camUsingBattery);
 leq(0, camUsingBattery.start);
 leq(camUsingBattery.end, 100);
 
-// Turn off the camera at the end of the window
+// Turn off the camera
 fact(nanosat.camera.turnOff turnoff);
-turnoff.start.specify(50);
+leq(0, turnoff.start);
+leq(turnoff.end, 100);
 
-// Establish the goal: take a photo
+// Take a photo
 goal(nanosat.takePhoto photo);
-photo.start.specify(10);
 // Doing the tasks at some point within the horizon
-// leq(0, photo.start);
-// leq(photo.end, 50);
+leq(0, photo.start);
+leq(photo.end, 100);
 
 // Charge the battery
-goal(nanosat.chargeBattery charge);
-charge.start.specify(60);
-//leq(0, charge.start);
-//leq(charge.end, 100);
+fact(nanosat.chargeBattery charge);
+leq(0, charge.start);
+leq(charge.end, 100);
 
-// Camera needs to use the battery before being charged
-// nanosat.constrain(camUsingBattery, charge);
+// If in the appropriate window, downlink data
+goal(nanosat.downlinkData downlink);
+leq(0, downlink.start);
+leq(downlink.end, 100);
