@@ -101,7 +101,7 @@ class Camera
 	}
 	
 	action consumePowerWhileOn {
-	 //   eq([0, 50], duration);
+	    eq([0, 50], duration);
 	}
 }
 
@@ -189,7 +189,7 @@ Camera::consumePowerWhileOn
 {
     contained_by(object.state.On);
     starts(effect object.nanosat.mainBattery.consume consumption);
-    eq(consumption.quantity, 100);
+    mulEq(duration, 12, consumption.quantity);
 }
 
 SolarPanel::chargeBattery
@@ -197,12 +197,13 @@ SolarPanel::chargeBattery
     contained_by(condition object.window.Available);
     equals(effect object.state.Charging);
     starts(effect object.nanosat.mainBattery.produce power);
-  	eq(power.quantity, 50);
+  	eq(power.quantity, duration);
 }
 
 Transmitter::downlinkData
 {
+    after(object.nanosat.camera.takePhoto);
     contained_by(condition object.window.Available);
     contains(effect object.nanosat.memory.consume data);
-    eq(data.quantity, 25);
+    eq(data.quantity, duration);
 }

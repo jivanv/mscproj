@@ -49,19 +49,11 @@ void showGantt()
     gantt.addMouseListener(dp);         
 }
 
-void showBatteryProfile()
+void showBatteryActivity()
 {
+    PSObject b = psengine.getObjectByName("battery");
+    desktop.showTokens(b);
     resourceFrame = desktop.makeResourcesFrame("Battery",start);
-}
-
-void showMemoryProfile()
-{
-    resourceFrame = desktop.makeResourcesFrame("Memory",start);
-}
-
-void showBatteryGantt()
-{
-    resources = desktop.makeResourceGanttFrame("Battery",start,end);
 }
 
 void printBatteryLevels()
@@ -72,8 +64,15 @@ void printBatteryLevels()
     PSTimePointList times = prof.getTimes();
 	for (int i=0; i<times.size(); i++) {
 		int time = times.get(i);
-		print(times.get(i)+" ["+prof.getLowerBound(time)+","+prof.getUpperBound(time)+"]");
+		print(times.get(i)+" ["+prof.getLowerBound(time)+", "+prof.getUpperBound(time)+"]");
 	}
+}
+
+void showMemoryActivity()
+{
+    PSObject m = psengine.getObjectByName("memory");
+    desktop.showTokens(m);
+    resourceFrame = desktop.makeResourcesFrame("Memory",start);
 }
 
 void printMemoryLevels()
@@ -84,7 +83,7 @@ void printMemoryLevels()
     PSTimePointList times = prof.getTimes();
 	for (int i=0; i<times.size(); i++) {
 		int time = times.get(i);
-		print(times.get(i)+" ["+prof.getLowerBound(time)+","+prof.getUpperBound(time)+"]");
+		print(times.get(i)+" ["+prof.getLowerBound(time)+", "+prof.getUpperBound(time)+"]");
 	}
 }
 
@@ -136,17 +135,17 @@ void addRows(Vector data, PSTokenList tl, Vector columnNames)
 // d) Sort them in chronological order
 void showPlan()
 {	   
-	PSObjectList ol = psengine.getObjectsByType("Nanosatellite");
-	PSTokenList tl = ol.get(0).getTokens();
+	//PSObjectList ol = psengine.getObjectsByType("Nanosatellite");
+	//PSTokenList tl = ol.get(0).getTokens();
 	
-	PSObjectList ol2 = psengine.getObjectsByType("Camera");	
-	PSTokenList tl2 = ol2.get(0).getTokens();
+	  PSObjectList ol2 = psengine.getObjectsByType("Camera");	
+	  PSTokenList tl2 = ol2.get(0).getTokens();
 
-    PSObjectList ol3 = psengine.getObjectsByType("SolarPanel");	
-	PSTokenList tl3 = ol3.get(0).getTokens();
+      PSObjectList ol3 = psengine.getObjectsByType("SolarPanel");	
+	  PSTokenList tl3 = ol3.get(0).getTokens();
     
-    PSObjectList ol4 = psengine.getObjectsByType("Transmitter");	
-	PSTokenList tl4 = ol4.get(0).getTokens();
+      PSObjectList ol4 = psengine.getObjectsByType("Transmitter");	
+	  PSTokenList tl4 = ol4.get(0).getTokens();
 
 	columnNames = new Vector();
 	data = new Vector();
@@ -158,7 +157,7 @@ void showPlan()
     columnNames.add("duration");
     columnNames.add("end");
 	
-	addRows(data, tl, columnNames);
+//	addRows(data, tl, columnNames);
 	addRows(data, tl2, columnNames);
 	addRows(data, tl3, columnNames);
     addRows(data, tl4, columnNames);
