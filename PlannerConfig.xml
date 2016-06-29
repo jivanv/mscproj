@@ -13,10 +13,7 @@
 
   <UnboundVariableManager defaultPriority="0">
     <FlawFilter var-match="end"/>
-    <FlawFilter var-match="duration"/>
-    <FlawFilter class-match="Resource" var-match="time"/>
     <FlawFilter class-match="Resource" var-match="quantity"/>
-    <FlawFilter class-match="Reservoir" var-match="time"/>
     <FlawFilter class-match="Reservoir" var-match="quantity"/>
     <FlawFilter class-match="Reusable" var-match="quantity"/>
     <FlawFilter component="InfiniteDynamicFilter"/>

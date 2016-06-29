@@ -3,8 +3,8 @@
 // Create a planner configuration instance in PLASMA.
 
 // Setting up the nanosatellite with battery
-Battery battery = new Battery(500.0, 10.0, 500.0, 490.0, 490.0);
-Memory memory = new Memory(0, 0, 1000, 1000, 1000);
+Battery battery = new Battery(500.0, 10.0, 500.0);
+Memory memory = new Memory(0, 0, 1000);
 Nanosatellite nanosat = new Nanosatellite(battery, memory);
 
 // Close the the PLASMA Database - no more objects can be created.

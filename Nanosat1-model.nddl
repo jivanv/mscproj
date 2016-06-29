@@ -36,10 +36,10 @@ class Battery extends Reservoir
 {
     string profileType;
     
-    // ic = initial capacity, level limit min, level limit max, production max, consumption max
-	Battery(float ic, float lmin, float lmax, float pmax, float pmin)
+    // ic = initial capacity, min, max
+	Battery(float ic, float min, float max)
 	{
-		super(ic, lmin, lmax, pmax, pmin);
+		super(ic, min, max);
 		profileType="IncrementalFlowProfile";
 	}
 }
@@ -50,10 +50,10 @@ class Memory extends Reservoir
 {
     string profileType;
     
-    // ic = initial capacity, level limit min, level limit max, production max, consumption max
-	Memory(float ic, float lmin, float lmax, float pmax, float pmin)
+    // ic = initial capacity, min, max
+	Memory(float ic, float min, float max)
 	{
-		super(ic, lmin, lmax, pmax, pmin);
+		super(ic, min, max);
 		profileType="IncrementalFlowProfile";
 	}
 }
