@@ -4,15 +4,12 @@
 
 // Setting up the nanosatellite with battery
 Battery battery = new Battery(500.0, 10.0, 500.0);
-Memory memory = new Memory(0, 0, 1000);
+Memory memory = new Memory(0, 0, 500.0);
 Nanosatellite nanosat = new Nanosatellite(battery, memory);
 
 // Close the the PLASMA Database - no more objects can be created.
 close();
 
-// Establish the time horizon for the problem
-// horizonStart = 0;
-// horizonEnd = 100;
 
 // Establish the initial conditions
 fact(nanosat.camera.state.Off off);

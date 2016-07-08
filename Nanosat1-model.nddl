@@ -15,14 +15,14 @@ class Nanosatellite
 	Camera camera;
 	SolarPanel panel;
 	Transmitter transmitter;
-    
+	    
 	Nanosatellite(Battery b, Memory m)
 	{
     	mainBattery = b;
     	memory = m;
         camera = new Camera(this);
         panel = new SolarPanel(this);
-        transmitter = new Transmitter(this);
+        transmitter = new Transmitter(this);  
   	}
   	  	
 	action takePhoto {}
@@ -125,7 +125,9 @@ class SolarPanel
 	    window = new Window();
 	}
 	
-	action chargeBattery {}
+	action chargeBattery {
+	    eq([0, 50], duration);
+	}
 }
 
 // The transmitter
@@ -141,8 +143,12 @@ class Transmitter
         window = new Window();
     }
     
-    action downlinkData{}
+    predicate downlinkData{
+        eq([0,30], duration);
+    }
 }
+
+// The radiation monitor
 
 // Actions
 
@@ -160,6 +166,7 @@ Nanosatellite::downlinkData
 {
     equals(object.transmitter.downlinkData);
 }
+
 
 Camera::takePhoto
 {
@@ -196,14 +203,24 @@ SolarPanel::chargeBattery
 {
     contained_by(condition object.window.Available);
     equals(effect object.state.Charging);
-    starts(effect object.nanosat.mainBattery.produce power);
-  	eq(power.quantity, duration);
+  	bool continueLoopB;
+    if(continueLoopB) {
+        meets(effect object.chargeBattery next);
+        next.end <= 50;
+        starts(effect object.nanosat.mainBattery.produce power);
+        mulEq(duration, 4, power.quantity);
+    }
 }
 
 Transmitter::downlinkData
 {
-    after(object.nanosat.camera.takePhoto);
+//    after(object.nanosat.camera.takePhoto);
     contained_by(condition object.window.Available);
-    contains(effect object.nanosat.memory.consume data);
-    eq(data.quantity, duration);
+    bool continueLoop;
+    if(continueLoop) {
+        meets(effect object.downlinkData next);
+        next.end <= 60;
+        starts(effect object.nanosat.memory.consume data);
+        mulEq(duration, 10, data.quantity);
+    }
 }

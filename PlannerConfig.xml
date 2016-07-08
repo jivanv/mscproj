@@ -4,7 +4,6 @@
   <ThreatManager defaultPriority="0">
     <FlawHandler component="StandardThreatHandler"/>
     <FlawFilter class-match="Reservoir"/>
-    <FlawFilter class-match="Reusable"/>
   </ThreatManager>
 
   <OpenConditionManager defaultPriority="0">
@@ -13,11 +12,11 @@
 
   <UnboundVariableManager defaultPriority="0">
     <FlawFilter var-match="end"/>
-    <FlawFilter class-match="Resource" var-match="quantity"/>
-    <FlawFilter class-match="Reservoir" var-match="quantity"/>
-    <FlawFilter class-match="Reusable" var-match="quantity"/>
     <FlawFilter component="InfiniteDynamicFilter"/>
+    <FlawFilter class-match="Resource" var-match="time"/>
+    <FlawFilter class-match="Reservoir" var-match="time"/>
     <FlawHandler component="StandardVariableHandler"/>
     <FlawHandler var-match="start" component="StandardVariableHandler" priority="9999"/>
+    <FlawHandler class="ConsumptionLooper" predicate="loop" variable="continueLoop" component="Max"/> 
   </UnboundVariableManager>
 </Solver>
