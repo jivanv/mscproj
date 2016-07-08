@@ -135,7 +135,7 @@ void addRows(Vector data, PSTokenList tl, Vector columnNames)
 // d) Sort them in chronological order
 void showPlan()
 {	   
-	  PSObjectList ol = psengine.getObjectsByType("ConsumptionLooper");
+	  PSObjectList ol = psengine.getObjectsByType("RadiationMonitor");
 	  PSTokenList tl = ol.get(0).getTokens();
 	
 	  PSObjectList ol2 = psengine.getObjectsByType("Camera");	

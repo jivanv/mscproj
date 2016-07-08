@@ -12,21 +12,27 @@ close();
 
 
 // Establish the initial conditions
-fact(nanosat.camera.state.Off off);
-eq(off.start, 0);
+fact(nanosat.camera.state.Off cOff);
+eq(cOff.start, 0);
+fact(nanosat.radiation.state.Off rOff);
+eq(rOff.start, 0);
 
-// Establish the windows where it's possible to take a photo, charge the battery and downlink data
+// Establish the windows of availability
 fact(nanosat.camera.window.Available camwindow);
 camwindow.start = 0;
-camwindow.end = 50;
+camwindow.end = 15;
 
 fact(nanosat.panel.window.Available chargingwindow);
 chargingwindow.start = 0;
 chargingwindow.end = 50;
 
 fact(nanosat.transmitter.window.Available downlinkwindow);
-downlinkwindow.start = 30;
-downlinkwindow.end = 60;
+downlinkwindow.start = 70;
+downlinkwindow.end = 100;
+
+fact(nanosat.radiation.window.Available radiationwindow);
+radiationwindow.start = 10;
+radiationwindow.end = 30;
 
 // If the camera is on, consume power
 fact(nanosat.camera.consumePowerWhileOn camUsingBattery);
@@ -39,10 +45,23 @@ leq(0, turnoff.start);
 leq(turnoff.end, 100);
 
 // Take a photo
-goal(nanosat.takePhoto photo);
+goal(nanosat.camera.takePhoto photo);
 // Doing the tasks at some point within the horizon
 leq(0, photo.start);
 leq(photo.end, 100);
+
+//Goals and facts about the radiation monitor
+fact(nanosat.radiation.consumePowerWhileOn rUsingBattery);
+leq(0, rUsingBattery.start);
+leq(rUsingBattery.end, 100);
+
+fact(nanosat.radiation.turnOff rTurnOff);
+leq(0, rTurnOff.start);
+leq(rTurnOff.end, 100);
+
+goal(nanosat.radiation.measureRadiation rad);
+leq(0, rad.start);
+leq(rad.end, 100);
 
 // Charge the battery
 fact(nanosat.chargeBattery charge);
