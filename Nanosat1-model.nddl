@@ -17,7 +17,7 @@ class Nanosatellite
 	SolarPanel panel;
 	Transmitter transmitter;
 	RadiationMonitor radiation;
-	    
+		    
 	Nanosatellite(Battery b, Memory m)
 	{
     	mainBattery = b;
@@ -25,7 +25,7 @@ class Nanosatellite
         camera = new Camera(this);
         panel = new SolarPanel(this);
         transmitter = new Transmitter(this);  
-        radiation = new RadiationMonitor(this);      
+        radiation = new RadiationMonitor(this);
   	}
   	  	
 	action takePhoto {}
@@ -102,7 +102,7 @@ class Camera
 	    eq(2, duration);
 	}
 	
-	action consumePowerWhileOn {
+	predicate consumePowerWhileOn {
 	    eq([0, 50], duration);
 	}
 }
@@ -128,7 +128,7 @@ class SolarPanel
 	}
 	
 	action chargeBattery {
-	    eq([0, 50], duration);
+	    eq(1, duration);
 	}
 }
 
@@ -146,7 +146,7 @@ class Transmitter
     }
     
     predicate downlinkData{
-        eq([0,30], duration);
+        eq(1, duration);
     }
 }
 
@@ -177,7 +177,7 @@ class RadiationMonitor
 	    eq(2, duration);
 	}
 	
-	action consumePowerWhileOn {
+	predicate consumePowerWhileOn {
 	    eq([0, 20], duration);
 	}
 }
@@ -214,6 +214,7 @@ Camera::takePhoto
 
 Camera::turnOn
 {
+    before(object.takePhoto);
     contained_by(condition object.window.Available);
 	met_by(condition object.state.Off);
 	equals(effect object.state.poweringUp);
@@ -222,6 +223,7 @@ Camera::turnOn
 
 Camera::turnOff
 {
+    after(object.takePhoto);
     contained_by(condition object.window.Available);
 	met_by(condition object.state.On);
 	equals(effect object.state.poweringDown);
@@ -254,9 +256,14 @@ Transmitter::downlinkData
     bool continueLoop;
     if(continueLoop) {
         meets(effect object.downlinkData next);
-        next.end <= 60;
+        next.end <= 90;
         starts(effect object.nanosat.memory.consume data);
         mulEq(duration, 10, data.quantity);
+        
+        // downlinking also uses battery
+        
+        starts(effect object.nanosat.mainBattery.consume consumption);
+        mulEq(duration, 2, consumption.quantity);
     }
 }
 
@@ -270,6 +277,7 @@ RadiationMonitor::measureRadiation
 
 RadiationMonitor::turnOn
 {
+    before(object.measureRadiation);
     contained_by(condition object.window.Available);
 	met_by(condition object.state.Off);
 	equals(effect object.state.poweringUp);
@@ -278,6 +286,7 @@ RadiationMonitor::turnOn
 
 RadiationMonitor::turnOff
 {
+    after(object.measureRadiation);
     contained_by(condition object.window.Available);
 	met_by(condition object.state.On);
 	equals(effect object.state.poweringDown);

@@ -13,10 +13,11 @@
   <UnboundVariableManager defaultPriority="0">
     <FlawFilter var-match="end"/>
     <FlawFilter component="InfiniteDynamicFilter"/>
-    <FlawFilter class-match="Resource" var-match="time"/>
-    <FlawFilter class-match="Reservoir" var-match="time"/>
+    <FlawFilter class-match="Resource" var-match="quantity"/>
+    <FlawFilter class-match="Reservoir" var-match="quantity"/>
     <FlawHandler component="StandardVariableHandler"/>
     <FlawHandler var-match="start" component="StandardVariableHandler" priority="9999"/>
-    <FlawHandler class="ConsumptionLooper" predicate="loop" variable="continueLoop" component="Max"/> 
+    <FlawHandler class="Transmitter" predicate="downlinkData" variable="continueLoop" component="Max"/>
+    <FlawHandler class="SolarPanel" predicate="chargeBattery" variable="continueLoopB" component="Max"/> 
   </UnboundVariableManager>
 </Solver>
