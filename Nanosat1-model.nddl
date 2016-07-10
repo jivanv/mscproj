@@ -16,7 +16,7 @@ class Nanosatellite
 	Camera camera;
 	SolarPanel panel;
 	Transmitter transmitter;
-	RadiationMonitor radiation;
+	RadiationMonitor rm;
 		    
 	Nanosatellite(Battery b, Memory m)
 	{
@@ -24,8 +24,8 @@ class Nanosatellite
     	memory = m;
         camera = new Camera(this);
         panel = new SolarPanel(this);
-        transmitter = new Transmitter(this);  
-        radiation = new RadiationMonitor(this);
+        transmitter = new Transmitter(this);
+        rm = new RadiationMonitor(this);
   	}
   	  	
 	action takePhoto {}
@@ -103,11 +103,9 @@ class Camera
 	}
 	
 	action consumePowerWhileOn {
-	    eq([0, 50], duration);
+	    eq(1, duration);
 	}
 }
-
-// The solar panel
 
 class SolarPanelState extends Timeline
 {
@@ -132,8 +130,6 @@ class SolarPanel
 	}
 }
 
-// The transmitter
-
 class Transmitter
 {
     Nanosatellite nanosat;
@@ -150,26 +146,24 @@ class Transmitter
     }
 }
 
-// The radiation monitor
-
 class RadiationMonitor
 {
     Nanosatellite nanosat;
-    Window window;
-    PayloadState state;
-    
-    RadiationMonitor(Nanosatellite n)
-    {
-        nanosat = n;
-        window = new Window();
-        state = new PayloadState();
-    }
-    
-    action measureRadiation {
-        eq(15, duration);
-    }
-    
-    action turnOn{
+	PayloadState state;
+	Window window;
+	
+	RadiationMonitor(Nanosatellite n)
+	{
+		nanosat = n;
+	    state = new PayloadState();
+	    window = new Window();
+	}
+		
+	action measureRadiation{
+    	eq(8, duration);
+	}
+	
+	action turnOn{
 	    eq(2, duration);
 	}
 	
@@ -177,8 +171,8 @@ class RadiationMonitor
 	    eq(2, duration);
 	}
 	
-	predicate consumePowerWhileOn {
-	    eq([0, 20], duration);
+	action consumePowerWhileOn {
+	    eq(1, duration);
 	}
 }
 
@@ -201,7 +195,7 @@ Nanosatellite::downlinkData
 
 Nanosatellite::measureRadiation
 {
-    equals(object.radiation.measureRadiation);
+    equals(object.rm.measureRadiation);
 }
 
 Camera::takePhoto
@@ -233,8 +227,13 @@ Camera::turnOff
 Camera::consumePowerWhileOn
 {
     contained_by(object.state.On);
-    starts(effect object.nanosat.mainBattery.consume consumption);
-    mulEq(duration, 12, consumption.quantity);
+    bool continueLoopC;
+    if(continueLoopC) {
+        meets(effect object.consumePowerWhileOn next);
+        next.end <= 15;
+        starts(effect object.nanosat.mainBattery.consume power);
+        mulEq(duration, 6, power.quantity);
+    }
 }
 
 SolarPanel::chargeBattery
@@ -246,7 +245,7 @@ SolarPanel::chargeBattery
         meets(effect object.chargeBattery next);
         next.end <= 50;
         starts(effect object.nanosat.mainBattery.produce power);
-        mulEq(duration, 4, power.quantity);
+        mulEq(duration, 3, power.quantity);
     }
 }
 
@@ -272,7 +271,7 @@ RadiationMonitor::measureRadiation
     contained_by(condition object.state.On);
     contained_by(condition object.window.Available);
     starts(effect object.nanosat.memory.produce data);
-    mulEq(duration, 5, data.quantity);
+    eq(data.quantity, 50);
 }
 
 RadiationMonitor::turnOn
@@ -296,6 +295,11 @@ RadiationMonitor::turnOff
 RadiationMonitor::consumePowerWhileOn
 {
     contained_by(object.state.On);
-    starts(effect object.nanosat.mainBattery.consume consumption);
-    mulEq(duration, 8, consumption.quantity);
+    bool continueLoopR;
+    if(continueLoopR) {
+        meets(effect object.consumePowerWhileOn next);
+        next.end <= 70;
+        starts(effect object.nanosat.mainBattery.consume power);
+        mulEq(duration, 4, power.quantity);
+    }
 }
