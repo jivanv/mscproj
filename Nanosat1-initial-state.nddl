@@ -10,7 +10,6 @@ Nanosatellite nanosat = new Nanosatellite(battery, memory);
 // Close the the PLASMA Database - no more objects can be created.
 close();
 
-
 // Establish the initial conditions
 fact(nanosat.camera.state.Off cameraOff);
 eq(cameraOff.start, 0);
@@ -34,6 +33,7 @@ fact(nanosat.radiation.window.Available radiationWindow);
 radiationWindow.start = 10;
 radiationWindow.end = 30;
 
+// Goals and facts about the camera
 // If the camera is on, consume power
 fact(nanosat.camera.consumePowerWhileOn camUsingBatt);
 leq(0, camUsingBatt.start);
@@ -46,7 +46,7 @@ leq(turnOffCamera.end, 100);
 
 // Take a photo
 goal(nanosat.camera.takePhoto takePhoto);
-// Doing the tasks at some point within the horizon
+// Doing the task at some point within the horizon
 leq(0, takePhoto.start);
 leq(takePhoto.end, 100);
 

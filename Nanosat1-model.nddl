@@ -102,7 +102,7 @@ class Camera
 	    eq(2, duration);
 	}
 	
-	predicate consumePowerWhileOn {
+	action consumePowerWhileOn {
 	    eq([0, 50], duration);
 	}
 }
@@ -145,7 +145,7 @@ class Transmitter
         window = new Window();
     }
     
-    predicate downlinkData{
+    action downlinkData{
         eq(1, duration);
     }
 }
@@ -208,7 +208,7 @@ Camera::takePhoto
 {
     contained_by(condition object.state.On);
     contained_by(condition object.window.Available);
-    contains(effect object.nanosat.memory.produce data);
+    starts(effect object.nanosat.memory.produce data);
     eq(data.quantity, 50);
 }
 
@@ -271,7 +271,7 @@ RadiationMonitor::measureRadiation
 {
     contained_by(condition object.state.On);
     contained_by(condition object.window.Available);
-    contains(effect object.nanosat.memory.produce data);
+    starts(effect object.nanosat.memory.produce data);
     mulEq(duration, 5, data.quantity);
 }
 
