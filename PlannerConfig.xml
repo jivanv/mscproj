@@ -17,8 +17,8 @@
     <FlawFilter class-match="Reservoir" var-match="quantity"/>
     <FlawHandler component="StandardVariableHandler"/>
     <FlawHandler var-match="start" component="StandardVariableHandler" priority="9999"/>
-    <FlawHandler class="Transmitter" predicate="downlinkData" variable="continueLoop" component="Max"/>
     <FlawHandler class="SolarPanel" predicate="chargeBattery" variable="continueLoopB" component="Max"/>
     <FlawHandler class="Camera" predicate="consumePowerWhileOn" variable="continueLoopC" component="Max"/>
+    <FlawHandler class="Transmitter" predicate="downlinkData" variable="continueLoop" component="Max"/>
   </UnboundVariableManager>
 </Solver>

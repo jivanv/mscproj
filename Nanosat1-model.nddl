@@ -4,7 +4,6 @@ class Camera;
 class PayloadState;
 class Window;
 class SolarPanel;
-class SolarPanelState;
 class Memory;
 class Transmitter;
 
@@ -24,10 +23,6 @@ class Nanosatellite
         panel = new SolarPanel(this);
         transmitter = new Transmitter(this);
   	}
-  	  	
-	action takePhoto {}
-	action chargeBattery {}
-	action downlinkData {}
 }
 
 // The battery
@@ -87,15 +82,15 @@ class Camera
 	}
 		
 	action takePhoto{
-    	eq(1, duration);
+    	eq(3, duration);
 	}
 	
 	action turnOn{
-	    eq(2, duration);
+	    eq(1, duration);
 	}
 	
 	action turnOff{
-	    eq(2, duration);
+	    eq(1, duration);
 	}
 	
 	action consumePowerWhileOn {
@@ -103,21 +98,14 @@ class Camera
 	}
 }
 
-class SolarPanelState extends Timeline
-{
-	predicate Charging {}
-}
-
 class SolarPanel
 {
     Nanosatellite nanosat;
-	SolarPanelState state;
 	Window window;
 	
 	SolarPanel(Nanosatellite n)
 	{
 		nanosat = n;
-	    state = new SolarPanelState();
 	    window = new Window();
 	}
 	
@@ -144,27 +132,13 @@ class Transmitter
 
 // Actions
 
-Nanosatellite::takePhoto
-{
-	equals(object.camera.takePhoto);
-}
-
-Nanosatellite::chargeBattery
-{
-   equals(object.panel.chargeBattery);
-}
-
-Nanosatellite::downlinkData
-{
-    equals(object.transmitter.downlinkData);
-}
-
 Camera::takePhoto
 {
     contained_by(condition object.state.On);
     contained_by(condition object.window.Available);
     starts(effect object.nanosat.memory.produce data);
     eq(data.quantity, 50);
+    meets(effect object.turnOff);
 }
 
 Camera::turnOn
@@ -188,23 +162,24 @@ Camera::turnOff
 Camera::consumePowerWhileOn
 {
     contained_by(object.state.On);
+    starts(effect object.nanosat.mainBattery.consume power);
+    mulEq(duration, 6, power.quantity);
     bool continueLoopC;
     if(continueLoopC) {
         meets(effect object.consumePowerWhileOn next);
-        next.end <= 15;
-        starts(effect object.nanosat.mainBattery.consume power);
-        mulEq(duration, 6, power.quantity);
+        next.end <= 100;
+        starts(effect object.nanosat.mainBattery.consume p);
+        mulEq(duration, 6, p.quantity);
     }
 }
 
 SolarPanel::chargeBattery
 {
     contained_by(condition object.window.Available);
-    equals(effect object.state.Charging);
   	bool continueLoopB;
     if(continueLoopB) {
         meets(effect object.chargeBattery next);
-        next.end <= 50;
+        next.end <= 100;
         starts(effect object.nanosat.mainBattery.produce power);
         mulEq(duration, 3, power.quantity);
     }
@@ -216,12 +191,9 @@ Transmitter::downlinkData
     bool continueLoop;
     if(continueLoop) {
         meets(effect object.downlinkData next);
-        next.end <= 90;
+        next.end <= 100;
         starts(effect object.nanosat.memory.consume data);
         mulEq(duration, 6, data.quantity);
-        
-        // downlinking also uses battery
-        
         starts(effect object.nanosat.mainBattery.consume consumption);
         mulEq(duration, 2, consumption.quantity);
     }

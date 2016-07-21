@@ -27,10 +27,10 @@ try {
     );
     
     // This will display a dialog that allows the user to run the solver interactively
-	// desktop.makeSolverDialog(solver);
+	//desktop.makeSolverDialog(solver);
 	
-	// Instead of showing stepping tool, skip right to the end:
-    solver.solve(100, 100);
+	//Instead of showing stepping tool, skip right to the end:
+    solver.solve(200, 200);
 
 }
 catch (Exception e) {
