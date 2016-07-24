@@ -4,34 +4,73 @@ class Camera;
 class PayloadState;
 class Window;
 class SolarPanel;
-class SolarPanelState;
 class Memory;
 class Transmitter;
+class C3D;
 class RadiationMonitor;
 
 class Nanosatellite 
 {
 	Battery mainBattery;
 	Memory memory;
-	Camera camera;
+	C3D c3d;
 	SolarPanel panel;
 	Transmitter transmitter;
-	RadiationMonitor rm;
 		    
 	Nanosatellite(Battery b, Memory m)
 	{
     	mainBattery = b;
     	memory = m;
-        camera = new Camera(this);
+        c3d = new C3D(this);
         panel = new SolarPanel(this);
         transmitter = new Transmitter(this);
-        rm = new RadiationMonitor(this);
   	}
-  	  	
-	action takePhoto {}
-	action chargeBattery {}
-	action downlinkData {}
-	action measureRadiation {}
+}
+
+class C3D
+{
+    Nanosatellite nanosat;
+    Camera camera;
+    RadiationMonitor rm;
+    PayloadState state;
+    Window window;
+    
+    C3D(Nanosatellite n)
+    {
+        nanosat = n;
+        camera = new Camera(this);
+        rm = new RadiationMonitor(this);
+        state = new PayloadState();
+        window = new Window();
+    }
+    
+    action turnOn{
+	    eq(1, duration);
+	}
+	
+	action turnOff{
+	    eq(1, duration);
+	}
+	
+	action consumePowerWhileOn {
+	    eq(1, duration);
+	}
+	
+	action runHouseKeepingModeBeforeCamera {
+	    eq(1, duration);
+	}
+	
+	action takePhoto {
+	    eq(30, duration);
+	}
+	
+	action runHouseKeepingModeBeforeRM {
+	    eq(1, duration);
+	}
+	
+	action measureRadiation {
+	    eq(40, duration);
+	}
 }
 
 // The battery
@@ -79,49 +118,46 @@ class PayloadState extends Timeline
 
 class Camera
 {
-    Nanosatellite nanosat;
+    C3D c3d;
 	PayloadState state;
 	Window window;
 	
-	Camera(Nanosatellite n)
+	Camera(C3D c)
 	{
-		nanosat = n;
-	    state = new PayloadState();
+		c3d = c;
 	    window = new Window();
 	}
 		
 	action takePhoto{
-    	eq(1, duration);
-	}
-	
-	action turnOn{
-	    eq(2, duration);
-	}
-	
-	action turnOff{
-	    eq(2, duration);
-	}
-	
-	action consumePowerWhileOn {
-	    eq(1, duration);
+    	eq(30, duration);
 	}
 }
 
-class SolarPanelState extends Timeline
+class RadiationMonitor
 {
-	predicate Charging {}
+    C3D c3d;
+	PayloadState state;
+	Window window;
+	
+	RadiationMonitor(C3D c)
+	{
+		c3d = c;
+	    window = new Window();
+	}
+		
+	action measureRadiation{
+    	eq(40, duration);
+	}
 }
 
 class SolarPanel
 {
     Nanosatellite nanosat;
-	SolarPanelState state;
 	Window window;
 	
 	SolarPanel(Nanosatellite n)
 	{
 		nanosat = n;
-	    state = new SolarPanelState();
 	    window = new Window();
 	}
 	
@@ -146,67 +182,37 @@ class Transmitter
     }
 }
 
-class RadiationMonitor
-{
-    Nanosatellite nanosat;
-	PayloadState state;
-	Window window;
-	
-	RadiationMonitor(Nanosatellite n)
-	{
-		nanosat = n;
-	    state = new PayloadState();
-	    window = new Window();
-	}
-		
-	action measureRadiation{
-    	eq(8, duration);
-	}
-	
-	action turnOn{
-	    eq(2, duration);
-	}
-	
-	action turnOff{
-	    eq(2, duration);
-	}
-	
-	action consumePowerWhileOn {
-	    eq(1, duration);
-	}
-}
-
 // Actions
 
-Nanosatellite::takePhoto
+C3D::takePhoto
 {
-	equals(object.camera.takePhoto);
-}
-
-Nanosatellite::chargeBattery
-{
-   equals(object.panel.chargeBattery);
-}
-
-Nanosatellite::downlinkData
-{
-    equals(object.transmitter.downlinkData);
-}
-
-Nanosatellite::measureRadiation
-{
-    equals(object.rm.measureRadiation);
+    equals(object.camera.takePhoto);
+    met_by(object.runHouseKeepingModeBeforeCamera);
+    contained_by(condition object.state.On);
+    starts(effect object.nanosat.memory.produce data);
+    eq(data.quantity, 691200);
 }
 
 Camera::takePhoto
 {
-    contained_by(condition object.state.On);
     contained_by(condition object.window.Available);
-    starts(effect object.nanosat.memory.produce data);
-    eq(data.quantity, 50);
 }
 
-Camera::turnOn
+C3D::measureRadiation
+{
+    equals(object.rm.measureRadiation);
+    met_by(object.runHouseKeepingModeBeforeRM);
+    contained_by(condition object.state.On);
+    starts(effect object.nanosat.memory.produce data);
+    eq(data.quantity, 18432);
+}
+
+RadiationMonitor::measureRadiation
+{
+    contained_by(condition object.window.Available);
+}
+
+C3D::turnOn
 {
     before(object.takePhoto);
     contained_by(condition object.window.Available);
@@ -215,37 +221,54 @@ Camera::turnOn
 	meets(effect object.state.On);
 }
 
-Camera::turnOff
+C3D::turnOff
 {
-    after(object.takePhoto);
     contained_by(condition object.window.Available);
 	met_by(condition object.state.On);
 	equals(effect object.state.poweringDown);
 	meets(effect object.state.Off);
 }
 
-Camera::consumePowerWhileOn
+C3D::consumePowerWhileOn
 {
+    contained_by(condition object.window.Available);
     contained_by(object.state.On);
+    starts(effect object.nanosat.mainBattery.consume power);
+    mulEq(duration, 13, power.quantity);
     bool continueLoopC;
     if(continueLoopC) {
         meets(effect object.consumePowerWhileOn next);
-        next.end <= 15;
-        starts(effect object.nanosat.mainBattery.consume power);
-        mulEq(duration, 6, power.quantity);
+        next.end <= 1500;
+        starts(effect object.nanosat.mainBattery.consume p);
+        mulEq(duration, 13, p.quantity);
     }
+}
+
+C3D::runHouseKeepingModeBeforeCamera
+{
+    meets(object.takePhoto);
+    contained_by(condition object.state.On);
+    starts(effect object.nanosat.memory.produce data);
+    eq(data.quantity, 256);
+}
+
+C3D::runHouseKeepingModeBeforeRM
+{
+    meets(object.measureRadiation);
+    contained_by(condition object.state.On);
+    starts(effect object.nanosat.memory.produce data);
+    eq(data.quantity, 256);
 }
 
 SolarPanel::chargeBattery
 {
     contained_by(condition object.window.Available);
-    equals(effect object.state.Charging);
   	bool continueLoopB;
     if(continueLoopB) {
         meets(effect object.chargeBattery next);
-        next.end <= 50;
+        next.end <= 1500;
         starts(effect object.nanosat.mainBattery.produce power);
-        mulEq(duration, 3, power.quantity);
+        mulEq(duration, 133, power.quantity);
     }
 }
 
@@ -253,53 +276,12 @@ Transmitter::downlinkData
 {
     contained_by(condition object.window.Available);
     bool continueLoop;
-    if(continueLoop) {
+    if(continueLoop == true) {
         meets(effect object.downlinkData next);
-        next.end <= 90;
+        next.end <= 1500;
         starts(effect object.nanosat.memory.consume data);
-        mulEq(duration, 10, data.quantity);
-        
-        // downlinking also uses battery
-        
+        mulEq(duration, 72000, data.quantity);
         starts(effect object.nanosat.mainBattery.consume consumption);
-        mulEq(duration, 2, consumption.quantity);
-    }
-}
-
-RadiationMonitor::measureRadiation
-{
-    contained_by(condition object.state.On);
-    contained_by(condition object.window.Available);
-    starts(effect object.nanosat.memory.produce data);
-    eq(data.quantity, 50);
-}
-
-RadiationMonitor::turnOn
-{
-    before(object.measureRadiation);
-    contained_by(condition object.window.Available);
-	met_by(condition object.state.Off);
-	equals(effect object.state.poweringUp);
-	meets(effect object.state.On);
-}
-
-RadiationMonitor::turnOff
-{
-    after(object.measureRadiation);
-    contained_by(condition object.window.Available);
-	met_by(condition object.state.On);
-	equals(effect object.state.poweringDown);
-	meets(effect object.state.Off);
-}
-
-RadiationMonitor::consumePowerWhileOn
-{
-    contained_by(object.state.On);
-    bool continueLoopR;
-    if(continueLoopR) {
-        meets(effect object.consumePowerWhileOn next);
-        next.end <= 70;
-        starts(effect object.nanosat.mainBattery.consume power);
-        mulEq(duration, 4, power.quantity);
+        mulEq(duration, 453, consumption.quantity);
     }
 }

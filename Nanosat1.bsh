@@ -23,14 +23,14 @@ try {
 	solver = desktop.makeSolver(
 		"PlannerConfig.xml", // config
 		0,   // startHorizon
-        100  // endHorizon
+        1500  // endHorizon
     );
     
     // This will display a dialog that allows the user to run the solver interactively
-	// desktop.makeSolverDialog(solver);
+	//desktop.makeSolverDialog(solver);
 	
-	// Instead of showing stepping tool, skip right to the end:
-    solver.solve(100, 100);
+	//Instead of showing stepping tool, skip right to the end:
+    solver.solve(350, 350);
 
 }
 catch (Exception e) {
@@ -135,17 +135,20 @@ void addRows(Vector data, PSTokenList tl, Vector columnNames)
 // d) Sort them in chronological order
 void showPlan()
 {	   
-	  PSObjectList ol = psengine.getObjectsByType("RadiationMonitor");
+	  PSObjectList ol = psengine.getObjectsByType("SolarPanel");
 	  PSTokenList tl = ol.get(0).getTokens();
 	
 	  PSObjectList ol2 = psengine.getObjectsByType("Camera");	
 	  PSTokenList tl2 = ol2.get(0).getTokens();
 
-      PSObjectList ol3 = psengine.getObjectsByType("SolarPanel");	
+      PSObjectList ol3 = psengine.getObjectsByType("C3D");	
 	  PSTokenList tl3 = ol3.get(0).getTokens();
     
       PSObjectList ol4 = psengine.getObjectsByType("Transmitter");	
 	  PSTokenList tl4 = ol4.get(0).getTokens();
+	  
+//	  PSObjectList ol5 = psengine.getObjectsByType("TOPCAT");	
+//	  PSTokenList tl5 = ol5.get(0).getTokens();
 
 	columnNames = new Vector();
 	data = new Vector();
@@ -161,6 +164,7 @@ void showPlan()
 	addRows(data, tl2, columnNames);
 	addRows(data, tl3, columnNames);
     addRows(data, tl4, columnNames);
+ //   addRows(data, tl5, columnNames);
 
 	// Sort the rows based on the 3rd column (start) 
 	sortedData = new Vector();

@@ -3,75 +3,204 @@
 // Create a planner configuration instance in PLASMA.
 
 // Setting up the nanosatellite with battery
-Battery battery = new Battery(500.0, 10.0, 500.0);
-Memory memory = new Memory(0, 0, 500.0);
+Battery battery = new Battery(30000, 0, 30000);
+Memory memory = new Memory(0, 0, 4194304);
 Nanosatellite nanosat = new Nanosatellite(battery, memory);
 
 // Close the the PLASMA Database - no more objects can be created.
 close();
 
 // Establish the initial conditions
-fact(nanosat.camera.state.Off cameraOff);
-eq(cameraOff.start, 0);
-fact(nanosat.rm.state.Off rmOff);
-eq(rmOff.start, 0);
+fact(nanosat.c3d.state.Off cOff);
+cOff.start = 0;
 
 // Establish the windows of availability
-fact(nanosat.camera.window.Available camWindow);
-camWindow.start = 0;
-camWindow.end = 15;
+fact(nanosat.c3d.window.Available c3dWindow1);
+fact(nanosat.c3d.window.Available c3dWindow2);
+fact(nanosat.c3d.window.Available c3dWindow3);
+fact(nanosat.c3d.window.Available c3dWindow4);
+fact(nanosat.c3d.window.Available c3dWindow5);
+fact(nanosat.c3d.window.Available c3dWindow6);
+fact(nanosat.c3d.window.Available c3dWindow7);
+fact(nanosat.c3d.window.Available c3dWindow8);
+fact(nanosat.c3d.window.Available c3dWindow9);
+fact(nanosat.c3d.window.Available c3dWindow10);
+fact(nanosat.c3d.window.Available c3dWindow11);
+fact(nanosat.c3d.window.Available c3dWindow12);
+fact(nanosat.c3d.window.Available c3dWindow13);
+fact(nanosat.c3d.window.Available c3dWindow14);
+c3dWindow1.start = 78;
+c3dWindow1.end = 126;
+c3dWindow2.start = 175;
+c3dWindow2.end = 223;
+c3dWindow3.start = 272;
+c3dWindow3.end = 321;
+c3dWindow4.start = 369;
+c3dWindow4.end = 418;
+c3dWindow5.start = 466;
+c3dWindow5.end = 515;
+c3dWindow6.start = 563;
+c3dWindow6.end = 612;
+c3dWindow7.start = 660;
+c3dWindow7.end = 708;
+c3dWindow8.start = 758;
+c3dWindow8.end = 806;
+c3dWindow9.start = 855;
+c3dWindow9.end = 903;
+c3dWindow10.start = 952;
+c3dWindow10.end = 1000;
+c3dWindow11.start = 1049;
+c3dWindow11.end = 1097;
+c3dWindow12.start = 1146;
+c3dWindow12.end = 1195;
+c3dWindow13.start = 1243;
+c3dWindow13.end = 1292;
+c3dWindow14.start = 1340;
+c3dWindow14.end = 1389;
 
-fact(nanosat.panel.window.Available chargingWindow);
-chargingWindow.start = 0;
-chargingWindow.end = 50;
+fact(nanosat.c3d.camera.window.Available cameraWindow1);
+fact(nanosat.c3d.camera.window.Available cameraWindow2);
+fact(nanosat.c3d.camera.window.Available cameraWindow3);
+fact(nanosat.c3d.camera.window.Available cameraWindow4);
+fact(nanosat.c3d.camera.window.Available cameraWindow5);
+fact(nanosat.c3d.camera.window.Available cameraWindow6);
+fact(nanosat.c3d.camera.window.Available cameraWindow7);
+fact(nanosat.c3d.camera.window.Available cameraWindow8);
+fact(nanosat.c3d.camera.window.Available cameraWindow9);
+fact(nanosat.c3d.camera.window.Available cameraWindow10);
+fact(nanosat.c3d.camera.window.Available cameraWindow11);
+fact(nanosat.c3d.camera.window.Available cameraWindow12);
+fact(nanosat.c3d.camera.window.Available cameraWindow13);
+fact(nanosat.c3d.camera.window.Available cameraWindow14);
+cameraWindow1.start = 78;
+cameraWindow1.end = 126;
+cameraWindow2.start = 175;
+cameraWindow2.end = 223;
+cameraWindow3.start = 272;
+cameraWindow3.end = 321;
+cameraWindow4.start = 369;
+cameraWindow4.end = 418;
+cameraWindow5.start = 466;
+cameraWindow5.end = 515;
+cameraWindow6.start = 563;
+cameraWindow6.end = 612;
+cameraWindow7.start = 660;
+cameraWindow7.end = 708;
+cameraWindow8.start = 758;
+cameraWindow8.end = 806;
+cameraWindow9.start = 855;
+cameraWindow9.end = 903;
+cameraWindow10.start = 952;
+cameraWindow10.end = 1000;
+cameraWindow11.start = 1049;
+cameraWindow11.end = 1097;
+cameraWindow12.start = 1146;
+cameraWindow12.end = 1195;
+cameraWindow13.start = 1243;
+cameraWindow13.end = 1292;
+cameraWindow14.start = 1340;
+cameraWindow14.end = 1389;
 
-fact(nanosat.transmitter.window.Available downlinkWindow);
-downlinkWindow.start = 60;
-downlinkWindow.end = 90;
+fact(nanosat.panel.window.Available chargingWindow1);
+fact(nanosat.panel.window.Available chargingWindow2);
+fact(nanosat.panel.window.Available chargingWindow3);
+fact(nanosat.panel.window.Available chargingWindow4);
+fact(nanosat.panel.window.Available chargingWindow5);
+fact(nanosat.panel.window.Available chargingWindow6);
+fact(nanosat.panel.window.Available chargingWindow7);
+fact(nanosat.panel.window.Available chargingWindow8);
+fact(nanosat.panel.window.Available chargingWindow9);
+fact(nanosat.panel.window.Available chargingWindow10);
+fact(nanosat.panel.window.Available chargingWindow11);
+fact(nanosat.panel.window.Available chargingWindow12);
+fact(nanosat.panel.window.Available chargingWindow13);
+fact(nanosat.panel.window.Available chargingWindow14);
+fact(nanosat.panel.window.Available chargingWindow15);
+chargingWindow1.start = 0;
+chargingWindow1.end = 29;
+chargingWindow2.start = 78;
+chargingWindow2.end = 126;
+chargingWindow3.start = 175;
+chargingWindow3.end = 223;
+chargingWindow4.start = 272;
+chargingWindow4.end = 321;
+chargingWindow5.start = 369;
+chargingWindow5.end = 418;
+chargingWindow6.start = 466;
+chargingWindow6.end = 515;
+chargingWindow7.start = 563;
+chargingWindow7.end = 612;
+chargingWindow8.start = 660;
+chargingWindow8.end = 708;
+chargingWindow9.start = 758;
+chargingWindow9.end = 806;
+chargingWindow10.start = 855;
+chargingWindow10.end = 903;
+chargingWindow11.start = 952;
+chargingWindow11.end = 1000;
+chargingWindow12.start = 1049;
+chargingWindow12.end = 1097;
+chargingWindow13.start = 1146;
+chargingWindow13.end = 1195;
+chargingWindow14.start = 1243;
+chargingWindow14.end = 1292;
+chargingWindow15.start = 1340;
+chargingWindow15.end = 1389;
 
-fact(nanosat.rm.window.Available radWindow);
-radWindow.start = 40;
-radWindow.end = 70;
-
-// Goals and facts about the camera
-// If the camera is on, consume power
-fact(nanosat.camera.consumePowerWhileOn camUsingBatt);
-leq(0, camUsingBatt.start);
-leq(camUsingBatt.end, 100);
-
-// Turn off the camera
-fact(nanosat.camera.turnOff turnOffCamera);
-leq(0, turnOffCamera.start);
-leq(turnOffCamera.end, 100);
-
-// Take a photo
-goal(nanosat.camera.takePhoto takePhoto);
-takePhoto.start = 3;
-
-// Take another photo
-goal(nanosat.camera.takePhoto takeSecondPhoto);
-takeSecondPhoto.start = 8;
-
-// Radiation stuff
-
-fact(nanosat.rm.consumePowerWhileOn rmUsingBatt);
-leq(0, rmUsingBatt.start);
-leq(rmUsingBatt.end, 100);
-
-fact(nanosat.camera.turnOff turnOffRm);
-leq(0, turnOffRm.start);
-leq(turnOffRm.end, 100);
-
-goal(nanosat.rm.measureRadiation measure);
-leq(0, measure.start);
-leq(measure.end, 100);
+fact(nanosat.transmitter.window.Available downlinkWindow1);
+fact(nanosat.transmitter.window.Available downlinkWindow2);
+fact(nanosat.transmitter.window.Available downlinkWindow3);
+fact(nanosat.transmitter.window.Available downlinkWindow4);
+fact(nanosat.transmitter.window.Available downlinkWindow5);
+fact(nanosat.transmitter.window.Available downlinkWindow6);
+fact(nanosat.transmitter.window.Available downlinkWindow7);
+fact(nanosat.transmitter.window.Available downlinkWindow8);
+fact(nanosat.transmitter.window.Available downlinkWindow9);
+downlinkWindow1.start = 2;
+downlinkWindow1.end = 14;
+downlinkWindow2.start = 701;
+downlinkWindow2.end = 713;
+downlinkWindow3.start = 797;
+downlinkWindow3.end = 809;
+downlinkWindow4.start = 894;
+downlinkWindow4.end = 904;
+downlinkWindow5.start = 1269;
+downlinkWindow5.end = 1279;
+downlinkWindow6.start = 533;
+downlinkWindow6.end = 544;
+downlinkWindow7.start = 627;
+downlinkWindow7.end = 640;
+downlinkWindow8.start = 1338;
+downlinkWindow8.end = 1351;
+downlinkWindow9.start = 1434;
+downlinkWindow9.end = 1446;
 
 // Charge the battery
-fact(nanosat.chargeBattery charge);
-leq(0, charge.start);
-leq(charge.end, 100);
+//fact(nanosat.panel.chargeBattery charge);
+//leq(0, charge.start);
+//leq(charge.end, 1500);
 
 // If in the appropriate window, downlink data
-goal(nanosat.downlinkData downlink);
+fact(nanosat.transmitter.downlinkData downlink);
 leq(0, downlink.start);
-leq(downlink.end, 100);
+leq(downlink.end, 1500);
+
+// If C3D is on, consume power
+fact(nanosat.c3d.consumePowerWhileOn c3dUseBattery);
+leq(0, c3dUseBattery.start);
+leq(c3dUseBattery.end, 1500);
+
+// Take a photo
+goal(nanosat.c3d.takePhoto takePhoto1);
+leq(0, takePhoto1.start);
+leq(takePhoto1.end, 1500);
+
+// Measure radiation
+goal(nanosat.c3d.measureRadiation measureRadiation1);
+leq(0, measureRadiation1.start);
+leq(measureRadiation1.end, 1500);
+
+// Turn off C3D
+goal(nanosat.c3d.turnOff turnOffC3D);
+leq(0, turnOffC3D.start);
+leq(turnOffC3D.end, 1500);
