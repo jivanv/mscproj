@@ -10,6 +10,8 @@ class C3D;
 class RadiationMonitor;
 class TOPCAT;
 class MIC;
+class FUNCUBE;
+class Comms;
 
 class Nanosatellite 
 {
@@ -20,6 +22,7 @@ class Nanosatellite
 	C3D c3d;
 	TOPCAT topcat;
 	MIC mic;
+	FUNCUBE funcube2;
 		    
 	Nanosatellite(Battery b, Memory m)
 	{
@@ -30,6 +33,7 @@ class Nanosatellite
         c3d = new C3D(this);
         topcat = new TOPCAT(this);
         mic = new MIC(this);
+        funcube2 = new FUNCUBE(this);
   	}
 }
 
@@ -133,6 +137,38 @@ class MIC
 	action runExperiment {
 	    eq(15, duration);
 	}
+}
+
+class FUNCUBE
+{
+    Nanosatellite nanosat;
+    Comms education;
+    Comms amateur;
+    
+    FUNCUBE(Nanosatellite n)
+    {
+        nanosat = n;
+        education = new Comms();
+        amateur = new Comms();
+    }
+    
+    action communicateEducation {
+        eq(1, duration);
+    }
+    
+    action communicateAmateur {
+        eq(1, duration);
+    }
+}
+
+class Comms
+{
+    Window window;
+    
+    Comms()
+    {
+        window = new Window();
+    }
 }
 
 // The battery
@@ -383,6 +419,31 @@ MIC::runExperiment
     eq(data.quantity, 34816);
 }
 
+FUNCUBE::communicateEducation
+{
+    starts(effect object.nanosat.mainBattery.consume power);
+    mulEq(duration, 22, power.quantity);
+    bool continueLoopFE;
+    if(continueLoopFE) {
+        meets(effect object.communicateEducation next);
+        next.end <= 1500;
+        starts(effect object.nanosat.mainBattery.consume p);
+        mulEq(duration, 22, p.quantity);
+    }
+}
+
+FUNCUBE::communicateAmateur
+{
+    starts(effect object.nanosat.mainBattery.consume power);
+    mulEq(duration, 21, power.quantity);
+    bool continueLoopFA;
+    if(continueLoopFA) {
+        meets(effect object.communicateAmateur next);
+        next.end <= 1500;
+        starts(effect object.nanosat.mainBattery.consume p);
+        mulEq(duration, 21, p.quantity);
+    }
+}
 
 SolarPanel::chargeBattery
 {

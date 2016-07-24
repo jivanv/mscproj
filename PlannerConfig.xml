@@ -19,6 +19,8 @@
     <FlawHandler class="C3D" predicate="consumePowerWhileOn" variable="continueLoopC" component="Max"/>
     <FlawHandler class="TOPCAT" predicate="consumePowerWhileOn" variable="continueLoopT" component="Max"/>
     <FlawHandler class="MIC" predicate="consumePowerWhileOn" variable="continueLoopM" component="Max"/>
+    <FlawHandler class="FUNCUBE" predicate="communicateAmateur" variable="continueLoopFA" component="Max"/>
+    <FlawHandler class="FUNCUBE" predicate="communicateEducation" variable="continueLoopFE" component="Max"/>
     <FlawHandler class="Transmitter" predicate="downlinkData" variable="continueLoop" component="Max"/>
   </UnboundVariableManager>
 </Solver>
