@@ -5,7 +5,7 @@ class PayloadState;
 class Window;
 class SolarPanel;
 class Memory;
-class Transmitter;
+class STX;
 class C3D;
 class RadiationMonitor;
 class TOPCAT;
@@ -13,30 +13,33 @@ class MIC;
 class FUNCUBE;
 class Comms;
 class JANUS;
+class UVTRX;
 
 class Nanosatellite 
 {
 	Battery mainBattery;
 	Memory memory;
 	SolarPanel panel;
-	Transmitter transmitter;
+	STX stx;
 	C3D c3d;
 	TOPCAT topcat;
 	MIC mic;
 	FUNCUBE funcube2;
 	JANUS janus;
+	UVTRX uvtrx;
 		    
 	Nanosatellite(Battery b, Memory m)
 	{
     	mainBattery = b;
     	memory = m;
         panel = new SolarPanel(this);
-        transmitter = new Transmitter(this);
+        stx = new STX(this);
         c3d = new C3D(this);
         topcat = new TOPCAT(this);
         mic = new MIC(this);
         funcube2 = new FUNCUBE(this);
         janus = new JANUS(this);
+        uvtrx = new UVTRX(this);
   	}
 }
 
@@ -192,8 +195,6 @@ class JANUS
     }
 }
 
-// The battery
-
 class Battery extends Reservoir
 {
     string profileType;
@@ -205,8 +206,6 @@ class Battery extends Reservoir
 		profileType="IncrementalFlowProfile";
 	}
 }
-
-// The memory
 
 class Memory extends Reservoir
 {
@@ -221,7 +220,6 @@ class Memory extends Reservoir
 }
 
 // Time window for availability
-
 class Window extends Timeline
 {
     predicate Available {}
@@ -282,18 +280,38 @@ class SolarPanel
 	}
 }
 
-class Transmitter
+class STX
 {
     Nanosatellite nanosat;
     Window window;
     
-    Transmitter(Nanosatellite n)
+    STX(Nanosatellite n)
     {
         nanosat = n;
         window = new Window();
     }
     
     action downlinkData{
+        eq(1, duration);
+    }
+}
+
+class UVTRX
+{
+    Nanosatellite nanosat;
+    Window window;
+    
+    UVTRX(Nanosatellite n)
+    {
+        nanosat = n;
+        window = new Window();
+    }
+    
+    action downlinkData{
+        eq(1, duration);
+    }
+    
+    action beacon{
         eq(1, duration);
     }
 }
@@ -510,16 +528,42 @@ SolarPanel::chargeBattery
     }
 }
 
-Transmitter::downlinkData
+STX::downlinkData
 {
     contained_by(condition object.window.Available);
-    bool continueLoop;
-    if(continueLoop == true) {
+    bool continueLoopS;
+    if(continueLoopS == true) {
+        meets(effect object.downlinkData next);
+        next.end <= 1500;
+        starts(effect object.nanosat.memory.consume data);
+        mulEq(duration, 786432, data.quantity);
+        starts(effect object.nanosat.mainBattery.consume consumption);
+        mulEq(duration, 453, consumption.quantity);
+    }
+}
+
+UVTRX::downlinkData
+{
+    contained_by(condition object.window.Available);
+    bool continueLoopU;
+    if(continueLoopU) {
         meets(effect object.downlinkData next);
         next.end <= 1500;
         starts(effect object.nanosat.memory.consume data);
         mulEq(duration, 72000, data.quantity);
         starts(effect object.nanosat.mainBattery.consume consumption);
-        mulEq(duration, 453, consumption.quantity);
+        mulEq(duration, 35, consumption.quantity);
+    }
+}
+
+UVTRX::beacon
+{
+    contained_by(condition object.window.Available);
+    bool continueLoopUB;
+    if(continueLoopUB) {
+        meets(effect object.beacon next);
+        next.end <= 1500;
+        starts(effect object.nanosat.mainBattery.consume consumption);
+        mulEq(duration, 0.21, consumption.quantity);
     }
 }

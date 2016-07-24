@@ -144,7 +144,7 @@ void showPlan()
       PSObjectList ol3 = psengine.getObjectsByType("C3D");	
 	  PSTokenList tl3 = ol3.get(0).getTokens();
     
-      PSObjectList ol4 = psengine.getObjectsByType("Transmitter");	
+      PSObjectList ol4 = psengine.getObjectsByType("STX");	
 	  PSTokenList tl4 = ol4.get(0).getTokens();
 	  
 	  PSObjectList ol5 = psengine.getObjectsByType("MIC");	
@@ -155,6 +155,9 @@ void showPlan()
 	  
 	  PSObjectList ol7 = psengine.getObjectsByType("JANUS");	
 	  PSTokenList tl7 = ol7.get(0).getTokens();
+	  
+	  PSObjectList ol8 = psengine.getObjectsByType("UVTRX");	
+	  PSTokenList tl8 = ol8.get(0).getTokens();
 
 	columnNames = new Vector();
 	data = new Vector();
@@ -173,6 +176,7 @@ void showPlan()
     addRows(data, tl5, columnNames);
     addRows(data, tl6, columnNames);
     addRows(data, tl7, columnNames);
+    addRows(data, tl8, columnNames);
 
 	// Sort the rows based on the 3rd column (start) 
 	sortedData = new Vector();

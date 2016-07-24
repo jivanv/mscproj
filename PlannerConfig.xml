@@ -23,6 +23,8 @@
     <FlawHandler class="FUNCUBE" predicate="communicateEducation" variable="continueLoopFE" component="Max"/>
     <FlawHandler class="JANUS" predicate="runExperimentLowPower" variable="continueLoopJL" component="Max"/>
     <FlawHandler class="JANUS" predicate="runExperimentHighPower" variable="continueLoopJH" component="Max"/>
-    <FlawHandler class="Transmitter" predicate="downlinkData" variable="continueLoop" component="Max"/>
+    <FlawHandler class="STX" predicate="downlinkData" variable="continueLoopS" component="Max"/>
+    <FlawHandler class="UVTRX" predicate="downlinkData" variable="continueLoopU" component="Max"/>
+    <FlawHandler class="UVTRX" predicate="beacon" variable="continueLoopUB" component="Max"/>
   </UnboundVariableManager>
 </Solver>

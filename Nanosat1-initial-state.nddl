@@ -115,33 +115,34 @@ chargingWindow14.end = 1292;
 chargingWindow15.start = 1340;
 chargingWindow15.end = 1389;
 
-fact(nanosat.transmitter.window.Available downlinkWindow1);
-fact(nanosat.transmitter.window.Available downlinkWindow2);
-fact(nanosat.transmitter.window.Available downlinkWindow3);
-fact(nanosat.transmitter.window.Available downlinkWindow4);
-fact(nanosat.transmitter.window.Available downlinkWindow5);
-fact(nanosat.transmitter.window.Available downlinkWindow6);
-fact(nanosat.transmitter.window.Available downlinkWindow7);
-fact(nanosat.transmitter.window.Available downlinkWindow8);
-fact(nanosat.transmitter.window.Available downlinkWindow9);
-downlinkWindow1.start = 2;
-downlinkWindow1.end = 14;
-downlinkWindow2.start = 701;
-downlinkWindow2.end = 713;
-downlinkWindow3.start = 797;
-downlinkWindow3.end = 809;
-downlinkWindow4.start = 894;
-downlinkWindow4.end = 904;
-downlinkWindow5.start = 1269;
-downlinkWindow5.end = 1279;
-downlinkWindow6.start = 533;
-downlinkWindow6.end = 544;
-downlinkWindow7.start = 627;
-downlinkWindow7.end = 640;
-downlinkWindow8.start = 1338;
-downlinkWindow8.end = 1351;
-downlinkWindow9.start = 1434;
-downlinkWindow9.end = 1446;
+fact(nanosat.stx.window.Available downlinkCapeTown1);
+fact(nanosat.stx.window.Available downlinkCapeTown2);
+fact(nanosat.stx.window.Available downlinkCapeTown3);
+fact(nanosat.stx.window.Available downlinkCapeTown4);
+downlinkCapeTown1.start = 533;
+downlinkCapeTown1.end = 544;
+downlinkCapeTown2.start = 627;
+downlinkCapeTown2.end = 640;
+downlinkCapeTown3.start = 1338;
+downlinkCapeTown3.end = 1351;
+downlinkCapeTown4.start = 1434;
+downlinkCapeTown4.end = 1446;
+
+fact(nanosat.uvtrx.window.Available downlinkUK1);
+fact(nanosat.uvtrx.window.Available downlinkUK2);
+fact(nanosat.uvtrx.window.Available downlinkUK3);
+fact(nanosat.uvtrx.window.Available downlinkUK4);
+fact(nanosat.uvtrx.window.Available downlinkUK5);
+downlinkUK1.start = 2;
+downlinkUK1.end = 14;
+downlinkUK2.start = 701;
+downlinkUK2.end = 713;
+downlinkUK3.start = 797;
+downlinkUK3.end = 809;
+downlinkUK4.start = 894;
+downlinkUK4.end = 904;
+downlinkUK5.start = 1269;
+downlinkUK5.end = 1279;
 
 fact(nanosat.funcube2.amateur.window.Available amateurWindow1);
 fact(nanosat.funcube2.amateur.window.Available amateurWindow2);
@@ -237,10 +238,20 @@ educationWindow15.end = 1440;
 //leq(0, charge.start);
 //leq(charge.end, 1500);
 
-// If in the appropriate window, downlink data
-//fact(nanosat.transmitter.downlinkData downlink);
-//leq(0, downlink.start);
-//leq(downlink.end, 1500);
+// Downlink - Cape Town
+goal(nanosat.stx.downlinkData downlinkCapeTown);
+leq(0, downlinkCapeTown.start);
+leq(downlinkCapeTown.end, 1500);
+
+// Downlink - UK
+goal(nanosat.uvtrx.downlinkData downlinkUK);
+leq(0, downlinkUK.start);
+leq(downlinkUK.end, 1500);
+
+// Beacon
+goal(nanosat.uvtrx.beacon beacon);
+leq(0, beacon.start);
+leq(beacon.end, 1500);
 
 // If C3D is on, consume power
 fact(nanosat.c3d.consumePowerWhileOn c3dUseBattery);
