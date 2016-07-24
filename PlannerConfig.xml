@@ -21,6 +21,8 @@
     <FlawHandler class="MIC" predicate="consumePowerWhileOn" variable="continueLoopM" component="Max"/>
     <FlawHandler class="FUNCUBE" predicate="communicateAmateur" variable="continueLoopFA" component="Max"/>
     <FlawHandler class="FUNCUBE" predicate="communicateEducation" variable="continueLoopFE" component="Max"/>
+    <FlawHandler class="JANUS" predicate="runExperimentLowPower" variable="continueLoopJL" component="Max"/>
+    <FlawHandler class="JANUS" predicate="runExperimentHighPower" variable="continueLoopJH" component="Max"/>
     <FlawHandler class="Transmitter" predicate="downlinkData" variable="continueLoop" component="Max"/>
   </UnboundVariableManager>
 </Solver>

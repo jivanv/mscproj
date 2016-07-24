@@ -291,3 +291,23 @@ leq(micExperiment.end, 1500);
 goal(nanosat.mic.turnOff turnOffMic);
 leq(0, turnOffMic.start);
 leq(turnOffMic.end, 1500);
+
+//FUNCUBE2 educational communications
+goal(nanosat.funcube2.communicateEducation educationalComms);
+leq(0, educationalComms.start);
+leq(educationalComms.end, 1500);
+
+//FUNCUBE2 amateur communications
+goal(nanosat.funcube2.communicateAmateur amateurComms);
+leq(0, amateurComms.start);
+leq(amateurComms.end, 1500);
+
+// Run JANUS in high power mode
+goal(nanosat.janus.runExperimentHighPower highPowerJanus);
+leq(0, highPowerJanus.start);
+leq(highPowerJanus.end, 1500);
+
+// Run JANUS in lower power mode
+goal(nanosat.janus.runExperimentLowPower lowPowerJanus);
+leq(0, lowPowerJanus.start);
+leq(lowPowerJanus.end, 1500);

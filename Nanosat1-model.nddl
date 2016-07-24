@@ -12,6 +12,7 @@ class TOPCAT;
 class MIC;
 class FUNCUBE;
 class Comms;
+class JANUS;
 
 class Nanosatellite 
 {
@@ -23,6 +24,7 @@ class Nanosatellite
 	TOPCAT topcat;
 	MIC mic;
 	FUNCUBE funcube2;
+	JANUS janus;
 		    
 	Nanosatellite(Battery b, Memory m)
 	{
@@ -34,6 +36,7 @@ class Nanosatellite
         topcat = new TOPCAT(this);
         mic = new MIC(this);
         funcube2 = new FUNCUBE(this);
+        janus = new JANUS(this);
   	}
 }
 
@@ -168,6 +171,24 @@ class Comms
     Comms()
     {
         window = new Window();
+    }
+}
+
+class JANUS
+{
+    Nanosatellite nanosat;
+    
+    JANUS(Nanosatellite n)
+    {
+        nanosat = n;
+    }
+    
+    action runExperimentLowPower {
+        eq(1, duration);
+    }
+    
+    action runExperimentHighPower {
+        eq(1, duration);
     }
 }
 
@@ -421,6 +442,7 @@ MIC::runExperiment
 
 FUNCUBE::communicateEducation
 {
+    contained_by(condition object.education.window.Available);
     starts(effect object.nanosat.mainBattery.consume power);
     mulEq(duration, 22, power.quantity);
     bool continueLoopFE;
@@ -434,6 +456,7 @@ FUNCUBE::communicateEducation
 
 FUNCUBE::communicateAmateur
 {
+    contained_by(condition object.amateur.window.Available);
     starts(effect object.nanosat.mainBattery.consume power);
     mulEq(duration, 21, power.quantity);
     bool continueLoopFA;
@@ -443,6 +466,36 @@ FUNCUBE::communicateAmateur
         starts(effect object.nanosat.mainBattery.consume p);
         mulEq(duration, 21, p.quantity);
     }
+}
+
+JANUS::runExperimentLowPower
+{
+    starts(effect object.nanosat.mainBattery.consume power);
+    mulEq(duration, 22, power.quantity);
+    bool continueLoopJL;
+    if(continueLoopJL) {
+        meets(effect object.runExperimentLowPower next);
+        next.end <= 1500;
+        starts(effect object.nanosat.mainBattery.consume p);
+        mulEq(duration, 22, p.quantity);
+    }
+    starts(effect object.nanosat.memory.produce data);
+    eq(data.quantity, 512);
+}
+
+JANUS::runExperimentHighPower
+{
+    starts(effect object.nanosat.mainBattery.consume power);
+    mulEq(duration, 120, power.quantity);
+    bool continueLoopJH;
+    if(continueLoopJH) {
+        meets(effect object.runExperimentHighPower next);
+        next.end <= 1500;
+        starts(effect object.nanosat.mainBattery.consume p);
+        mulEq(duration, 120, p.quantity);
+    }
+    starts(effect object.nanosat.memory.produce data);
+    eq(data.quantity, 512);
 }
 
 SolarPanel::chargeBattery
