@@ -1,13 +1,11 @@
 class Nanosatellite;
 class Battery;
-class Camera;
 class PayloadState;
 class Window;
 class SolarPanel;
 class Memory;
 class STX;
 class C3D;
-class RadiationMonitor;
 class TOPCAT;
 class MIC;
 class FUNCUBE;
@@ -27,6 +25,9 @@ class Nanosatellite
 	FUNCUBE funcube2;
 	JANUS janus;
 	UVTRX uvtrx;
+	Window saa;
+	Window sunlight;
+	Window localSunlight;
 		    
 	Nanosatellite(Battery b, Memory m)
 	{
@@ -40,22 +41,21 @@ class Nanosatellite
         funcube2 = new FUNCUBE(this);
         janus = new JANUS(this);
         uvtrx = new UVTRX(this);
+        saa = new Window();
+        sunlight = new Window();
+        localSunlight = new Window();
   	}
 }
 
 class C3D
 {
     Nanosatellite nanosat;
-    Camera camera;
-    RadiationMonitor rm;
     PayloadState state;
     Window window;
     
     C3D(Nanosatellite n)
     {
         nanosat = n;
-        camera = new Camera(this);
-        rm = new RadiationMonitor(this);
         state = new PayloadState();
         window = new Window();
     }
@@ -180,10 +180,12 @@ class Comms
 class JANUS
 {
     Nanosatellite nanosat;
+    Window window;
     
     JANUS(Nanosatellite n)
     {
         nanosat = n;
+        window = new Window();
     }
     
     action runExperimentLowPower {
@@ -233,37 +235,6 @@ class PayloadState extends Timeline
 	predicate poweringDown {}	
 }
 
-class Camera
-{
-    C3D c3d;
-	PayloadState state;
-	Window window;
-	
-	Camera(C3D c)
-	{
-		c3d = c;
-	    window = new Window();
-	}
-		
-	action takePhoto{
-    	eq(30, duration);
-	}
-}
-
-class RadiationMonitor
-{
-    C3D c3d;
-	PayloadState state;
-	Window window;
-	
-	RadiationMonitor(C3D c)
-	{
-		c3d = c;
-	    window = new Window();
-	}
-
-}
-
 class SolarPanel
 {
     Nanosatellite nanosat;
@@ -299,19 +270,21 @@ class STX
 class UVTRX
 {
     Nanosatellite nanosat;
-    Window window;
+    Comms beacon;
+    Comms downlink;
     
     UVTRX(Nanosatellite n)
     {
         nanosat = n;
-        window = new Window();
+        downlink = new Comms();
+        beacon = new Comms();
     }
     
     action downlinkData{
         eq(1, duration);
     }
     
-    action beacon{
+    action beaconActive{
         eq(1, duration);
     }
 }
@@ -320,20 +293,21 @@ class UVTRX
 
 C3D::takePhoto
 {
-    equals(object.camera.takePhoto);
     met_by(object.runHouseKeepingModeBeforeCamera);
     contained_by(condition object.state.On);
     starts(effect object.nanosat.memory.produce data);
     eq(data.quantity, 691200);
-}
-
-Camera::takePhoto
-{
-    contained_by(condition object.window.Available);
+    // this is to ensure it takes a photo of the ground station
+    starts(object.nanosat.uvtrx.downlink.window.Available);
+    // taking the photo when not in eclipse
+    contained_by(object.nanosat.sunlight.Available);
+    // taking the photo when it is daylight locally
+    contained_by(object.nanosat.localSunlight.Available);
 }
 
 C3D::measureRadiation
 {
+    contained_by(object.nanosat.saa.Available);
     met_by(object.runHouseKeepingModeBeforeRM);
     contained_by(condition object.state.On);
     starts(effect object.nanosat.memory.produce data);
@@ -381,7 +355,6 @@ C3D::runHouseKeepingModeBeforeCamera
 
 C3D::runHouseKeepingModeBeforeRM
 {
-    contained_by(condition object.nanosat.mic.state.Off);
     meets(object.measureRadiation);
     contained_by(condition object.state.On);
     starts(effect object.nanosat.memory.produce data);
@@ -514,11 +487,13 @@ JANUS::runExperimentHighPower
     }
     starts(effect object.nanosat.memory.produce data);
     eq(data.quantity, 512);
+    // this is to ensure it only starts the experiment in the SAA
+    starts(condition object.nanosat.saa.Available);
 }
 
 SolarPanel::chargeBattery
 {
-    contained_by(condition object.window.Available);
+    contained_by(condition object.nanosat.sunlight.Available);
   	bool continueLoopB;
     if(continueLoopB) {
         meets(effect object.chargeBattery next);
@@ -544,7 +519,7 @@ STX::downlinkData
 
 UVTRX::downlinkData
 {
-    contained_by(condition object.window.Available);
+    contained_by(condition object.downlink.window.Available);
     bool continueLoopU;
     if(continueLoopU) {
         meets(effect object.downlinkData next);
@@ -556,12 +531,12 @@ UVTRX::downlinkData
     }
 }
 
-UVTRX::beacon
+UVTRX::beaconActive
 {
-    contained_by(condition object.window.Available);
+    contained_by(condition object.beacon.window.Available);
     bool continueLoopUB;
     if(continueLoopUB) {
-        meets(effect object.beacon next);
+        meets(effect object.beaconActive next);
         next.end <= 1500;
         starts(effect object.nanosat.mainBattery.consume consumption);
         mulEq(duration, 0.21, consumption.quantity);
