@@ -13,50 +13,15 @@ close();
 // Establish the initial conditions
 fact(nanosat.c3d.state.Off cOff);
 cOff.start = 0;
+fact(nanosat.topcat.state.Off tOff);
+tOff.start = 0;
+fact(nanosat.mic.state.Off mOff);
+mOff.start = 0;
 
 // Establish the windows of availability
 fact(nanosat.c3d.window.Available c3dWindow1);
-fact(nanosat.c3d.window.Available c3dWindow2);
-fact(nanosat.c3d.window.Available c3dWindow3);
-fact(nanosat.c3d.window.Available c3dWindow4);
-fact(nanosat.c3d.window.Available c3dWindow5);
-fact(nanosat.c3d.window.Available c3dWindow6);
-fact(nanosat.c3d.window.Available c3dWindow7);
-fact(nanosat.c3d.window.Available c3dWindow8);
-fact(nanosat.c3d.window.Available c3dWindow9);
-fact(nanosat.c3d.window.Available c3dWindow10);
-fact(nanosat.c3d.window.Available c3dWindow11);
-fact(nanosat.c3d.window.Available c3dWindow12);
-fact(nanosat.c3d.window.Available c3dWindow13);
-fact(nanosat.c3d.window.Available c3dWindow14);
-c3dWindow1.start = 78;
-c3dWindow1.end = 126;
-c3dWindow2.start = 175;
-c3dWindow2.end = 223;
-c3dWindow3.start = 272;
-c3dWindow3.end = 321;
-c3dWindow4.start = 369;
-c3dWindow4.end = 418;
-c3dWindow5.start = 466;
-c3dWindow5.end = 515;
-c3dWindow6.start = 563;
-c3dWindow6.end = 612;
-c3dWindow7.start = 660;
-c3dWindow7.end = 708;
-c3dWindow8.start = 758;
-c3dWindow8.end = 806;
-c3dWindow9.start = 855;
-c3dWindow9.end = 903;
-c3dWindow10.start = 952;
-c3dWindow10.end = 1000;
-c3dWindow11.start = 1049;
-c3dWindow11.end = 1097;
-c3dWindow12.start = 1146;
-c3dWindow12.end = 1195;
-c3dWindow13.start = 1243;
-c3dWindow13.end = 1292;
-c3dWindow14.start = 1340;
-c3dWindow14.end = 1389;
+c3dWindow1.start = 0;
+c3dWindow1.end = 1500;
 
 fact(nanosat.c3d.camera.window.Available cameraWindow1);
 fact(nanosat.c3d.camera.window.Available cameraWindow2);
@@ -181,9 +146,9 @@ downlinkWindow9.end = 1446;
 //leq(charge.end, 1500);
 
 // If in the appropriate window, downlink data
-fact(nanosat.transmitter.downlinkData downlink);
-leq(0, downlink.start);
-leq(downlink.end, 1500);
+//fact(nanosat.transmitter.downlinkData downlink);
+//leq(0, downlink.start);
+//leq(downlink.end, 1500);
 
 // If C3D is on, consume power
 fact(nanosat.c3d.consumePowerWhileOn c3dUseBattery);
@@ -204,3 +169,33 @@ leq(measureRadiation1.end, 1500);
 goal(nanosat.c3d.turnOff turnOffC3D);
 leq(0, turnOffC3D.start);
 leq(turnOffC3D.end, 1500);
+
+// If TOPCAT is on, consume power
+fact(nanosat.topcat.consumePowerWhileOn topcatUseBattery);
+leq(0, topcatUseBattery.start);
+leq(topcatUseBattery.end, 1500);
+
+// Perform TOPCAT experiment
+goal(nanosat.topcat.runExperiment topcatExperiment);
+leq(0, topcatExperiment.start);
+leq(topcatExperiment.end, 1500);
+
+//Turn off TOPCAT
+goal(nanosat.topcat.turnOff turnOffTopcat);
+leq(0, turnOffTopcat.start);
+leq(turnOffTopcat.end, 1500);
+
+// If MIC is on, consume power
+fact(nanosat.mic.consumePowerWhileOn micUseBattery);
+leq(0, micUseBattery.start);
+leq(micUseBattery.end, 1500);
+
+// Perform MIC experiment
+goal(nanosat.mic.runExperiment micExperiment);
+leq(0, micExperiment.start);
+leq(micExperiment.end, 1500);
+
+//Turn off MIC
+goal(nanosat.mic.turnOff turnOffMic);
+leq(0, turnOffMic.start);
+leq(turnOffMic.end, 1500);

@@ -17,6 +17,8 @@
     <FlawHandler var-match="start" component="StandardVariableHandler" priority="9999"/>
     <FlawHandler class="SolarPanel" predicate="chargeBattery" variable="continueLoopB" component="Max"/>
     <FlawHandler class="C3D" predicate="consumePowerWhileOn" variable="continueLoopC" component="Max"/>
+    <FlawHandler class="TOPCAT" predicate="consumePowerWhileOn" variable="continueLoopT" component="Max"/>
+    <FlawHandler class="MIC" predicate="consumePowerWhileOn" variable="continueLoopM" component="Max"/>
     <FlawHandler class="Transmitter" predicate="downlinkData" variable="continueLoop" component="Max"/>
   </UnboundVariableManager>
 </Solver>
