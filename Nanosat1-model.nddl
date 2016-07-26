@@ -241,12 +241,10 @@ class PayloadState extends Timeline
 class SolarPanel
 {
     Nanosatellite nanosat;
-	Window window;
 	
 	SolarPanel(Nanosatellite n)
 	{
 		nanosat = n;
-	    window = new Window();
 	}
 	
 	action chargeBattery {
