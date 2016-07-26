@@ -233,9 +233,51 @@ educationWindow15.start = 1390;
 educationWindow15.end = 1440;
 
 // Charge the battery
-//fact(nanosat.panel.chargeBattery charge);
-//leq(0, charge.start);
-//leq(charge.end, 1500);
+fact(nanosat.panel.chargeBattery charge1);
+leq(30, charge1.start);
+leq(charge1.end, 77);
+fact(nanosat.panel.chargeBattery charge2);
+leq(127, charge2.start);
+leq(charge2.end, 174);
+fact(nanosat.panel.chargeBattery charge3);
+leq(224, charge3.start);
+leq(charge3.end, 271);
+fact(nanosat.panel.chargeBattery charge4);
+leq(322, charge4.start);
+leq(charge4.end, 368);
+fact(nanosat.panel.chargeBattery charge5);
+leq(419, charge5.start);
+leq(charge5.end, 465);
+fact(nanosat.panel.chargeBattery charge6);
+leq(516, charge6.start);
+leq(charge6.end, 562);
+fact(nanosat.panel.chargeBattery charge7);
+leq(613, charge7.start);
+leq(charge7.end, 659);
+fact(nanosat.panel.chargeBattery charge8);
+leq(709, charge8.start);
+leq(charge8.end, 757);
+fact(nanosat.panel.chargeBattery charge9);
+leq(807, charge9.start);
+leq(charge9.end, 854);
+fact(nanosat.panel.chargeBattery charge10);
+leq(904, charge10.start);
+leq(charge10.end, 951);
+fact(nanosat.panel.chargeBattery charge11);
+leq(1001, charge11.start);
+leq(charge11.end, 1048);
+fact(nanosat.panel.chargeBattery charge12);
+leq(1098, charge12.start);
+leq(charge12.end, 1145);
+fact(nanosat.panel.chargeBattery charge13);
+leq(1196, charge13.start);
+leq(charge13.end, 1242);
+fact(nanosat.panel.chargeBattery charge14);
+leq(1293, charge14.start);
+leq(charge14.end, 1339);
+fact(nanosat.panel.chargeBattery charge15);
+leq(1390, charge15.start);
+leq(charge15.end, 1440);
 
 // Downlink - Cape Town
 goal(nanosat.stx.downlinkData downlinkCapeTown);
@@ -321,3 +363,8 @@ leq(highPowerJanus.end, 1500);
 goal(nanosat.janus.runExperimentLowPower lowPowerJanus);
 leq(0, lowPowerJanus.start);
 leq(lowPowerJanus.end, 1500);
+
+// These payloads are always on and consuming power: EPS, SWB, BAT, OBC, ADCS
+fact(nanosat.constantpayloads.consumePower constantPayloadsRunning);
+leq(0, constantPayloadsRunning.start);
+leq(constantPayloadsRunning.end, 1500);

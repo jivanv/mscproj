@@ -12,6 +12,7 @@ class FUNCUBE;
 class Comms;
 class JANUS;
 class UVTRX;
+class ConstantlyActivePayload;
 
 class Nanosatellite 
 {
@@ -25,6 +26,7 @@ class Nanosatellite
 	FUNCUBE funcube2;
 	JANUS janus;
 	UVTRX uvtrx;
+	ConstantlyActivePayload constantpayloads;
 	Window saa;
 	Window sunlight;
 	Window localSunlight;
@@ -41,6 +43,7 @@ class Nanosatellite
         funcube2 = new FUNCUBE(this);
         janus = new JANUS(this);
         uvtrx = new UVTRX(this);
+        constantpayloads = new ConstantlyActivePayload(this, 0.62);
         saa = new Window();
         sunlight = new Window();
         localSunlight = new Window();
@@ -289,7 +292,36 @@ class UVTRX
     }
 }
 
+class ConstantlyActivePayload
+{
+    Nanosatellite nanosat;
+    float powerConsumptionRate;
+    
+    ConstantlyActivePayload(Nanosatellite n, float rate)
+    {
+        nanosat = n;
+        powerConsumptionRate = rate;
+    }
+    
+    action consumePower{
+        eq(1, duration);
+    }
+}
+
 // Actions
+
+ConstantlyActivePayload::consumePower
+{
+    starts(effect object.nanosat.mainBattery.consume power);
+    eq(object.powerConsumptionRate, power.quantity);
+    bool continueLoopCAP;
+    if(continueLoopCAP) {
+        meets(effect object.consumePower next);
+        next.end <= 1500;
+        starts(effect object.nanosat.mainBattery.consume p);
+        eq(object.powerConsumptionRate, power.quantity);
+    }
+}
 
 C3D::takePhoto
 {
@@ -398,6 +430,7 @@ TOPCAT::runExperiment
 
 MIC::turnOn
 {
+    contained_by(condition object.nanosat.c3d.state.Off);
 	met_by(condition object.state.Off);
 	equals(effect object.state.poweringUp);
 	meets(effect object.state.On);
@@ -405,6 +438,7 @@ MIC::turnOn
 
 MIC::turnOff
 {
+    contained_by(condition object.nanosat.c3d.state.Off);
 	met_by(condition object.state.On);
 	equals(effect object.state.poweringDown);
 	meets(effect object.state.Off);
@@ -412,6 +446,7 @@ MIC::turnOff
 
 MIC::consumePowerWhileOn
 {
+    contained_by(condition object.nanosat.c3d.state.Off);
     contained_by(object.state.On);
     starts(effect object.nanosat.mainBattery.consume power);
     mulEq(duration, 63, power.quantity);
@@ -426,6 +461,7 @@ MIC::consumePowerWhileOn
 
 MIC::runExperiment
 {
+    contained_by(condition object.nanosat.c3d.state.Off);
     contained_by(condition object.state.On);
     starts(effect object.nanosat.memory.produce data);
     eq(data.quantity, 34816);
