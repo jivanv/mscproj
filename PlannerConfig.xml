@@ -26,6 +26,5 @@
     <FlawHandler class="UVTRX" predicate="downlinkData" variable="continueLoopU" component="Max"/>
     <FlawHandler class="UVTRX" predicate="beaconActive" variable="continueLoopUB" component="Max"/>
     <FlawHandler class="ConstantlyActivePayload" predicate="consumePower" variable="continueLoopCAP" component="Max"/>
-    <FlawHandler var-match="start" component="StandardVariableHandler" priority="9999"/>
   </UnboundVariableManager>
 </Solver>

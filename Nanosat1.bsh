@@ -30,7 +30,7 @@ try {
 	//desktop.makeSolverDialog(solver);
 	
 	//Instead of showing stepping tool, skip right to the end:
-    solver.solve(800, 800);
+    solver.solve(760, 760);
 
 }
 catch (Exception e) {
@@ -209,18 +209,12 @@ void showPlan()
 // call showActivities() to get a timetable of just the activities and their times
 
 void showActivities()
-{	   
-	  PSObjectList ol = psengine.getObjectsByType("SolarPanel");
-	  PSTokenList tl = ol.get(0).getTokens();
-	
+{	
 	  PSObjectList ol2 = psengine.getObjectsByType("TOPCAT");	
 	  PSTokenList tl2 = ol2.get(0).getTokens();
 
       PSObjectList ol3 = psengine.getObjectsByType("C3D");	
 	  PSTokenList tl3 = ol3.get(0).getTokens();
-    
-      PSObjectList ol4 = psengine.getObjectsByType("STX");	
-	  PSTokenList tl4 = ol4.get(0).getTokens();
 	  
 	  PSObjectList ol5 = psengine.getObjectsByType("MIC");	
 	  PSTokenList tl5 = ol5.get(0).getTokens();
@@ -230,12 +224,6 @@ void showActivities()
 	  
 	  PSObjectList ol7 = psengine.getObjectsByType("JANUS");	
 	  PSTokenList tl7 = ol7.get(0).getTokens();
-	  
-	  PSObjectList ol8 = psengine.getObjectsByType("UVTRX");	
-	  PSTokenList tl8 = ol8.get(0).getTokens();
-	  
-	  PSObjectList ol9 = psengine.getObjectsByType("ConstantlyActivePayload");	
-	  PSTokenList tl9 = ol9.get(0).getTokens();
 
 	columnNames = new Vector();
 	data = new Vector();
@@ -247,15 +235,11 @@ void showActivities()
     columnNames.add("duration");
     columnNames.add("end");
 	
-	addRows(data, tl, columnNames);
 	addRows(data, tl2, columnNames);
 	addRows(data, tl3, columnNames);
-    addRows(data, tl4, columnNames);
     addRows(data, tl5, columnNames);
     addRows(data, tl6, columnNames);
     addRows(data, tl7, columnNames);
-    addRows(data, tl8, columnNames);
-    addRows(data, tl9, columnNames);
 
 	// Sort the rows based on the 3rd column (start) 
 	sortedData = new Vector();
