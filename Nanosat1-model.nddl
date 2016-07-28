@@ -6,13 +6,6 @@ class SolarPanel;
 class Memory;
 class STX;
 class C3D;
-class TOPCAT;
-class MIC;
-class FUNCUBE;
-class Comms;
-class JANUS;
-class UVTRX;
-class ConstantlyActivePayload;
 
 class Nanosatellite 
 {
@@ -21,12 +14,6 @@ class Nanosatellite
 	SolarPanel panel;
 	STX stx;
 	C3D c3d;
-	TOPCAT topcat;
-	MIC mic;
-	FUNCUBE funcube2;
-	JANUS janus;
-	UVTRX uvtrx;
-	ConstantlyActivePayload constantpayloads;
 	Window saa;
 	Window sunlight;
 	Window localSunlight;
@@ -39,12 +26,6 @@ class Nanosatellite
         panel = new SolarPanel(this);
         stx = new STX(this);
         c3d = new C3D(this);
-        topcat = new TOPCAT(this);
-        mic = new MIC(this);
-        funcube2 = new FUNCUBE(this);
-        janus = new JANUS(this);
-        uvtrx = new UVTRX(this);
-        constantpayloads = new ConstantlyActivePayload(this, 0.62);
         saa = new Window();
         sunlight = new Window();
         localSunlight = new Window();
@@ -90,124 +71,6 @@ class C3D
 	action measureRadiation {
 	    eq(40, duration);
 	}
-}
-
-class TOPCAT
-{
-    Nanosatellite nanosat;
-    PayloadState state;
-    
-    TOPCAT(Nanosatellite n)
-    {
-        nanosat = n;
-        state = new PayloadState();
-    }
-    
-    action turnOn{
-	    eq(15, duration);
-	}
-	
-	action turnOff{
-	    eq(1, duration);
-	}
-	
-	action consumePowerWhileOn {
-	    eq(1, duration);
-	}
-	
-	action runExperiment {
-	    eq(40, duration);
-	}
-}
-
-class MIC
-{
-    Nanosatellite nanosat;
-    PayloadState state;
-    
-    MIC(Nanosatellite n)
-    {
-        nanosat = n;
-        state = new PayloadState();
-    }
-    
-    action turnOn{
-	    eq(1, duration);
-	}
-	
-	action turnOff{
-	    eq(1, duration);
-	}
-	
-	action consumePowerWhileOn {
-	    eq(1, duration);
-	}
-	
-	action runExperiment {
-	    eq(15, duration);
-	}
-}
-
-class FUNCUBE
-{
-    Nanosatellite nanosat;
-    Comms education;
-    Comms amateur;
-    
-    FUNCUBE(Nanosatellite n)
-    {
-        nanosat = n;
-        education = new Comms();
-        amateur = new Comms();
-    }
-    
-    action communicateEducation {
-        eq(1, duration);
-    }
-    
-    action communicateAmateur {
-        eq(1, duration);
-    }
-}
-
-class Comms
-{
-    Window window;
-    
-    Comms()
-    {
-        window = new Window();
-    }
-}
-
-class JANUS extends Timeline
-{
-    Nanosatellite nanosat;
-    Window window;
-    PayloadState state;
-    
-    JANUS(Nanosatellite n)
-    {
-        nanosat = n;
-        window = new Window();
-        state = new PayloadState();
-    }
-    
-    action turnOff {
-        eq(1, duration);
-    }
-    
-    action turnOn {
-        eq(1, duration);
-    }
-    
-    action runExperimentLowPower {
-        eq(1, duration);
-    }
-    
-    action runExperimentHighPower {
-        eq(1, duration);
-    }
 }
 
 class Battery extends Reservoir
@@ -278,83 +141,8 @@ class STX
     }
 }
 
-class UVTRX
-{
-    Nanosatellite nanosat;
-    Comms beacon;
-    Comms downlink;
-    
-    UVTRX(Nanosatellite n)
-    {
-        nanosat = n;
-        downlink = new Comms();
-        beacon = new Comms();
-    }
-    
-    action downlinkData{
-        eq(1, duration);
-    }
-    
-    action beaconActive{
-        eq(1, duration);
-    }
-}
-
-class ConstantlyActivePayload
-{
-    Nanosatellite nanosat;
-    float powerConsumptionRate;
-    PayloadState state;
-        
-    ConstantlyActivePayload(Nanosatellite n, float rate)
-    {
-        nanosat = n;
-        powerConsumptionRate = rate;
-        state = new PayloadState();
-    }
-    
-    action turnOff{}
-    
-    action turnOn{}
-    
-    action consumePower{
-        eq(1, duration);
-    }
-}
 
 // Actions
-
-ConstantlyActivePayload::consumePower
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-    starts(effect object.turnOn);
-    starts(effect object.nanosat.mainBattery.consume power);
-    eq(object.powerConsumptionRate, power.quantity);
-    bool continueLoopCAP;
-    if(continueLoopCAP) {
-        meets(effect object.consumePower next);
-        next.end <= 1500;
-        starts(effect object.nanosat.mainBattery.consume p);
-        eq(object.powerConsumptionRate, power.quantity);
-    }
-    meets(effect object.turnOff);
-}
-
-ConstantlyActivePayload::turnOn
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-	met_by(condition object.state.Off);
-	equals(effect object.state.poweringUp);
-	meets(effect object.state.On);
-}
-
-ConstantlyActivePayload::turnOff
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-	met_by(condition object.state.On);
-	equals(effect object.state.poweringDown);
-	meets(effect object.state.Off);
-}
 
 C3D::takePhoto
 {
@@ -366,7 +154,7 @@ C3D::takePhoto
     meets(effect object.turnOff);
     
     // this is to ensure it takes a photo of the ground station
-    starts(object.nanosat.uvtrx.downlink.window.Available);
+   // starts(object.nanosat.uvtrx.downlink.window.Available);
     // taking the photo when not in eclipse
     contained_by(object.nanosat.sunlight.Available);
     // taking the photo when it is daylight locally
@@ -435,176 +223,6 @@ C3D::runHouseKeepingModeBeforeRM
     eq(data.quantity, 256);
 }
 
-TOPCAT::turnOn
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-	met_by(condition object.state.Off);
-	equals(effect object.state.poweringUp);
-	meets(effect object.state.On);
-}
-
-TOPCAT::turnOff
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-	met_by(condition object.state.On);
-	equals(effect object.state.poweringDown);
-	meets(effect object.state.Off);
-}
-
-TOPCAT::consumePowerWhileOn
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-    contained_by(object.state.On);
-    starts(effect object.nanosat.mainBattery.consume power);
-    mulEq(duration, 29, power.quantity);
-    bool continueLoopT;
-    if(continueLoopT) {
-        meets(effect object.consumePowerWhileOn next);
-        next.end <= 1500;
-        starts(effect object.nanosat.mainBattery.consume p);
-        mulEq(duration, 29, p.quantity);
-    }
-}
-
-TOPCAT::runExperiment
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-    met_by(effect object.turnOn);
-    meets(effect object.turnOff);
-    contained_by(condition object.state.On);
-    starts(effect object.nanosat.memory.produce data);
-    eq(data.quantity, 204800);
-}
-
-MIC::turnOn
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-    contained_by(condition object.nanosat.c3d.state.Off);
-	met_by(condition object.state.Off);
-	equals(effect object.state.poweringUp);
-	meets(effect object.state.On);
-}
-
-MIC::turnOff
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-    contained_by(condition object.nanosat.c3d.state.Off);
-	met_by(condition object.state.On);
-	equals(effect object.state.poweringDown);
-	meets(effect object.state.Off);
-}
-
-MIC::consumePowerWhileOn
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-    contained_by(condition object.nanosat.c3d.state.Off);
-    contained_by(object.state.On);
-    starts(effect object.nanosat.mainBattery.consume power);
-    mulEq(duration, 63, power.quantity);
-    bool continueLoopM;
-    if(continueLoopM) {
-        meets(effect object.consumePowerWhileOn next);
-        next.end <= 1500;
-        starts(effect object.nanosat.mainBattery.consume p);
-        mulEq(duration, 63, p.quantity);
-    }
-}
-
-MIC::runExperiment
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-    met_by(effect object.turnOn);
-    meets(effect object.turnOff);
-    contained_by(condition object.nanosat.c3d.state.Off);
-    contained_by(condition object.state.On);
-    starts(effect object.nanosat.memory.produce data);
-    eq(data.quantity, 34816);
-}
-
-FUNCUBE::communicateEducation
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-    contained_by(condition object.education.window.Available);
-    starts(effect object.nanosat.mainBattery.consume power);
-    mulEq(duration, 22, power.quantity);
-    bool continueLoopFE;
-    if(continueLoopFE) {
-        meets(effect object.communicateEducation next);
-        next.end <= 1500;
-        starts(effect object.nanosat.mainBattery.consume p);
-        mulEq(duration, 22, p.quantity);
-    }
-}
-
-FUNCUBE::communicateAmateur
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-    contained_by(condition object.amateur.window.Available);
-    starts(effect object.nanosat.mainBattery.consume power);
-    mulEq(duration, 21, power.quantity);
-    bool continueLoopFA;
-    if(continueLoopFA) {
-        meets(effect object.communicateAmateur next);
-        next.end <= 1500;
-        starts(effect object.nanosat.mainBattery.consume p);
-        mulEq(duration, 21, p.quantity);
-    }
-}
-
-JANUS::runExperimentLowPower
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-    met_by(effect object.turnOn);
-    meets(effect object.turnOff);
-    starts(effect object.nanosat.mainBattery.consume power);
-    mulEq(duration, 22, power.quantity);
-    bool continueLoopJL;
-    if(continueLoopJL) {
-        meets(effect object.runExperimentLowPower next);
-        next.end <= 1500;
-        starts(effect object.nanosat.mainBattery.consume p);
-        mulEq(duration, 22, p.quantity);
-    }
-    starts(effect object.nanosat.memory.produce data);
-    eq(data.quantity, 512);
-}
-
-JANUS::runExperimentHighPower
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-    met_by(effect object.turnOn);
-    meets(effect object.turnOff);
-    starts(effect object.nanosat.mainBattery.consume power);
-    mulEq(duration, 120, power.quantity);
-    bool continueLoopJH;
-    if(continueLoopJH) {
-        meets(effect object.runExperimentHighPower next);
-        next.end <= 1500;
-        starts(effect object.nanosat.mainBattery.consume p);
-        mulEq(duration, 120, p.quantity);
-    }
-    starts(effect object.nanosat.memory.produce data);
-    eq(data.quantity, 512);
-    // this is to ensure it only starts the experiment in the SAA
-    starts(condition object.nanosat.saa.Available);
-}
-
-JANUS::turnOn
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-	met_by(condition object.state.Off);
-	equals(effect object.state.poweringUp);
-	meets(effect object.state.On);
-}
-
-JANUS::turnOff
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-	met_by(condition object.state.On);
-	equals(effect object.state.poweringDown);
-	meets(effect object.state.Off);
-}
-
 SolarPanel::chargeBattery
 {
     contained_by(object.nanosat.timeHorizon.Available);
@@ -630,33 +248,5 @@ STX::downlinkData
         mulEq(duration, 786432, data.quantity);
         starts(effect object.nanosat.mainBattery.consume consumption);
         mulEq(duration, 453, consumption.quantity);
-    }
-}
-
-UVTRX::downlinkData
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-    contained_by(condition object.downlink.window.Available);
-    bool continueLoopU;
-    if(continueLoopU) {
-        meets(effect object.downlinkData next);
-        next.end <= 1500;
-        starts(effect object.nanosat.memory.consume data);
-        mulEq(duration, 72000, data.quantity);
-        starts(effect object.nanosat.mainBattery.consume consumption);
-        mulEq(duration, 35, consumption.quantity);
-    }
-}
-
-UVTRX::beaconActive
-{
-    contained_by(object.nanosat.timeHorizon.Available);
-    contained_by(condition object.beacon.window.Available);
-    bool continueLoopUB;
-    if(continueLoopUB) {
-        meets(effect object.beaconActive next);
-        next.end <= 1500;
-        starts(effect object.nanosat.mainBattery.consume consumption);
-        mulEq(duration, 0.21, consumption.quantity);
     }
 }

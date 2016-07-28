@@ -13,18 +13,12 @@
   <UnboundVariableManager defaultPriority="0">
     <FlawFilter var-match="end"/>
     <FlawFilter component="InfiniteDynamicFilter"/>
+    <FlawFilter class-match="Resource" var-match="quantity"/>
+    <FlawFilter class-match="Reservoir" var-match="quantity"/>
     <FlawHandler component="StandardVariableHandler"/>
+    <FlawHandler var-match="start" component="StandardVariableHandler" priority="9999"/>
     <FlawHandler class="SolarPanel" predicate="chargeBattery" variable="continueLoopB" component="Max"/>
     <FlawHandler class="C3D" predicate="consumePowerWhileOn" variable="continueLoopC" component="Max"/>
-    <FlawHandler class="TOPCAT" predicate="consumePowerWhileOn" variable="continueLoopT" component="Max"/>
-    <FlawHandler class="MIC" predicate="consumePowerWhileOn" variable="continueLoopM" component="Max"/>
-    <FlawHandler class="FUNCUBE" predicate="communicateAmateur" variable="continueLoopFA" component="Max"/>
-    <FlawHandler class="FUNCUBE" predicate="communicateEducation" variable="continueLoopFE" component="Max"/>
-    <FlawHandler class="JANUS" predicate="runExperimentLowPower" variable="continueLoopJL" component="Max"/>
-    <FlawHandler class="JANUS" predicate="runExperimentHighPower" variable="continueLoopJH" component="Max"/>
     <FlawHandler class="STX" predicate="downlinkData" variable="continueLoopS" component="Max"/>
-    <FlawHandler class="UVTRX" predicate="downlinkData" variable="continueLoopU" component="Max"/>
-    <FlawHandler class="UVTRX" predicate="beaconActive" variable="continueLoopUB" component="Max"/>
-    <FlawHandler class="ConstantlyActivePayload" predicate="consumePower" variable="continueLoopCAP" component="Max"/>
   </UnboundVariableManager>
 </Solver>
