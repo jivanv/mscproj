@@ -17,6 +17,8 @@ fact(nanosat.c3d.rm.state.Off rmOff);
 rmOff.start = 0;
 fact(nanosat.topcat.state.Off tOff);
 tOff.start = 0;
+fact(nanosat.mic.state.Off mOff);
+mOff.start = 0;
 
 // Establish the windows of availability
 fact(nanosat.c3d.camera.window.Available camWindow1);
@@ -215,9 +217,9 @@ leq(0, TOPCATexperiment.start);
 leq(TOPCATexperiment.end, 1500);
 
 // If TOPCAT is on, consume power
-fact(nanosat.topcat.consumePowerWhileOnTOPCAT topcatUseBattery);
-leq(0, topcatUseBattery.start);
-leq(topcatUseBattery.end, 1500);
+fact(nanosat.topcat.consumePowerWhileOnTOPCAT TOPCATuseBattery);
+leq(0, TOPCATuseBattery.start);
+leq(TOPCATuseBattery.end, 1500);
 
 // Perform a low power JANUS experiment
 goal(nanosat.janus.runExperimentLowPowerJANUS JANUSexperimentLowPower);
@@ -228,3 +230,13 @@ leq(JANUSexperimentLowPower.end, 1500);
 goal(nanosat.janus.runExperimentHighPowerJANUS JANUSexperimentHighPower);
 leq(0, JANUSexperimentHighPower.start);
 leq(JANUSexperimentHighPower.end, 1500);
+
+// Perform a MIC experiment
+goal(nanosat.mic.runExperimentMIC MICexperiment);
+leq(0, MICexperiment.start);
+leq(MICexperiment.end, 1500);
+
+// If MIC is on, consume power
+fact(nanosat.mic.consumePowerWhileOnMIC MICuseBattery);
+leq(0, MICuseBattery.start);
+leq(MICuseBattery.end, 1500);

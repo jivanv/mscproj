@@ -10,6 +10,7 @@ class Camera;
 class RadiationMonitor;
 class TOPCAT;
 class JANUS;
+class MIC;
 
 class Nanosatellite 
 {
@@ -20,6 +21,7 @@ class Nanosatellite
 	C3D c3d;
 	TOPCAT topcat;
 	JANUS janus;
+	MIC mic;
 		    
 	Nanosatellite(Battery b, Memory m)
 	{
@@ -30,6 +32,7 @@ class Nanosatellite
         c3d = new C3D(this);
         topcat = new TOPCAT(this);
         janus = new JANUS(this);
+        mic = new MIC(this);
   	}
 }
 
@@ -163,6 +166,34 @@ class JANUS extends Timeline
     action runExperimentHighPowerJANUS {
         eq(1, duration);
     }
+}
+
+class MIC
+{
+    Nanosatellite nanosat;
+    PayloadState state;
+    
+    MIC(Nanosatellite n)
+    {
+        nanosat = n;
+        state = new PayloadState();
+    }
+    
+    action turnOnMIC{
+	    eq(1, duration);
+	}
+	
+	action turnOffMIC{
+	    eq(1, duration);
+	}
+	
+	action consumePowerWhileOnMIC {
+	    eq(1, duration);
+	}
+	
+	action runExperimentMIC {
+	    eq(15, duration);
+	}
 }
 
 class Battery extends Reservoir
@@ -400,6 +431,45 @@ JANUS::runExperimentHighPowerJANUS
     }
     starts(effect object.nanosat.memory.produce data);
     eq(data.quantity, 512);
+}
+
+MIC::turnOnMIC
+{
+    contained_by(condition object.nanosat.c3d.camera.state.Off);
+    contained_by(condition object.nanosat.c3d.rm.state.Off);
+	met_by(condition object.state.Off);
+	equals(effect object.state.poweringUp);
+	meets(effect object.state.On);
+}
+
+MIC::turnOffMIC
+{
+	met_by(condition object.state.On);
+	equals(effect object.state.poweringDown);
+	meets(effect object.state.Off);
+}
+
+MIC::consumePowerWhileOnMIC
+{
+    contained_by(object.state.On);
+    bool continueLoopM;
+    if(continueLoopM) {
+        meets(effect object.consumePowerWhileOnMIC next);
+        next.end <= 1500;
+        starts(effect object.nanosat.mainBattery.consume power);
+        eq(power.quantity, 63);
+    }
+}
+
+MIC::runExperimentMIC
+{
+    contained_by(condition object.nanosat.c3d.camera.state.Off);
+    contained_by(condition object.nanosat.c3d.rm.state.Off);
+    met_by(object.turnOnMIC);
+    meets(object.turnOffMIC);
+    contained_by(condition object.state.On);
+    starts(effect object.nanosat.memory.produce data);
+    eq(data.quantity, 34816);
 }
 
 SolarPanel::chargeBattery
