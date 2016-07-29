@@ -9,6 +9,7 @@ class C3D;
 class Camera;
 class RadiationMonitor;
 class TOPCAT;
+class JANUS;
 
 class Nanosatellite 
 {
@@ -18,6 +19,7 @@ class Nanosatellite
 	STX stx;
 	C3D c3d;
 	TOPCAT topcat;
+	JANUS janus;
 		    
 	Nanosatellite(Battery b, Memory m)
 	{
@@ -27,6 +29,7 @@ class Nanosatellite
         stx = new STX(this);
         c3d = new C3D(this);
         topcat = new TOPCAT(this);
+        janus = new JANUS(this);
   	}
 }
 
@@ -138,6 +141,28 @@ class TOPCAT
 	action runExperimentTOPCAT {
 	    eq(40, duration);
 	}
+}
+
+class JANUS extends Timeline
+{
+    Nanosatellite nanosat;
+    Window window;
+    PayloadState state;
+    
+    JANUS(Nanosatellite n)
+    {
+        nanosat = n;
+        window = new Window();
+        state = new PayloadState();
+    }
+    
+    action runExperimentLowPowerJANUS {
+        eq(1, duration);
+    }
+    
+    action runExperimentHighPowerJANUS {
+        eq(1, duration);
+    }
 }
 
 class Battery extends Reservoir
@@ -348,6 +373,33 @@ TOPCAT::runExperimentTOPCAT
     contained_by(condition object.state.On);
     starts(effect object.nanosat.memory.produce data);
     eq(data.quantity, 204800);
+}
+
+JANUS::runExperimentLowPowerJANUS
+{
+    bool continueLoopJL;
+    if(continueLoopJL) {
+        meets(effect object.runExperimentLowPowerJANUS next);
+        next.end <= 1500;
+        starts(effect object.nanosat.mainBattery.consume power);
+        eq(power.quantity, 22);
+    }
+    starts(effect object.nanosat.memory.produce data);
+    eq(data.quantity, 512);
+}
+
+JANUS::runExperimentHighPowerJANUS
+{
+    contained_by(object.window.Available);
+    bool continueLoopJH;
+    if(continueLoopJH) {
+        meets(effect object.runExperimentHighPowerJANUS next);
+        next.end <= 1500;
+        starts(effect object.nanosat.mainBattery.consume power);
+        eq(power.quantity, 120);
+    }
+    starts(effect object.nanosat.memory.produce data);
+    eq(data.quantity, 512);
 }
 
 SolarPanel::chargeBattery

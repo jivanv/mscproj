@@ -19,5 +19,7 @@
     <FlawHandler class="Camera" predicate="consumePowerWhileOnC3DCam" variable="continueLoopC" component="Max"/>
     <FlawHandler class="RadiationMonitor" predicate="consumePowerWhileOnC3Drm" variable="continueLoopRM" component="Max"/>
     <FlawHandler class="TOPCAT" predicate="consumePowerWhileOnTOPCAT" variable="continueLoopT" component="Max"/>
+    <FlawHandler class="JANUS" predicate="runExperimentHighPowerJANUS" variable="continueLoopJH" component="Max"/>
+    <FlawHandler class="JANUS" predicate="runExperimentLowPowerJANUS" variable="continueLoopJL" component="Max"/>
   </UnboundVariableManager>
 </Solver>

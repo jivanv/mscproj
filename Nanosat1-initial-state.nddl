@@ -87,6 +87,28 @@ SAA6.end = 926;
 SAA7.start = 1433;
 SAA7.end = 1444;
 
+fact(nanosat.janus.window.Available SAAjanushighpower1);
+fact(nanosat.janus.window.Available SAAjanushighpower2);
+fact(nanosat.janus.window.Available SAAjanushighpower3);
+fact(nanosat.janus.window.Available SAAjanushighpower4);
+fact(nanosat.janus.window.Available SAAjanushighpower5);
+fact(nanosat.janus.window.Available SAAjanushighpower6);
+fact(nanosat.janus.window.Available SAAjanushighpower7);
+SAAjanushighpower1.start = 77;
+SAAjanushighpower1.end = 87;
+SAAjanushighpower2.start = 173;
+SAAjanushighpower2.end = 183;
+SAAjanushighpower3.start = 632;
+SAAjanushighpower3.end = 638;
+SAAjanushighpower4.start = 728;
+SAAjanushighpower4.end = 736;
+SAAjanushighpower5.start = 823;
+SAAjanushighpower5.end = 834;
+SAAjanushighpower6.start = 923;
+SAAjanushighpower6.end = 926;
+SAAjanushighpower7.start = 1433;
+SAAjanushighpower7.end = 1444;
+
 fact(nanosat.panel.window.Available panelWindow1);
 fact(nanosat.panel.window.Available panelWindow2);
 fact(nanosat.panel.window.Available panelWindow3);
@@ -147,7 +169,10 @@ downlinkWindowCapeTown4.start = 1434;
 downlinkWindowCapeTown4.end = 1446;
 
 // Charge the battery during hours of sunlight
+goal(nanosat.panel.chargeBattery charge1);
 goal(nanosat.panel.chargeBattery charge2);
+leq(panelWindow1.start, charge1.start);
+leq(charge1.end, panelWindow1.end);
 leq(panelWindow2.start, charge2.start);
 leq(charge2.end, panelWindow2.end);
 
@@ -176,7 +201,7 @@ fact(nanosat.c3d.rm.consumePowerWhileOnC3Drm rmUseBattery);
 leq(0, rmUseBattery.start);
 leq(rmUseBattery.end, 1500);
 
-// Take a photo of the UK ground station once
+// Take a photo of the UK ground station
 goal(nanosat.c3d.camera.takePhoto takePhoto);
 takePhoto.start = camWindow1.start;
 
@@ -193,3 +218,13 @@ leq(TOPCATexperiment.end, 1500);
 fact(nanosat.topcat.consumePowerWhileOnTOPCAT topcatUseBattery);
 leq(0, topcatUseBattery.start);
 leq(topcatUseBattery.end, 1500);
+
+// Perform a low power JANUS experiment
+goal(nanosat.janus.runExperimentLowPowerJANUS JANUSexperimentLowPower);
+leq(0, JANUSexperimentLowPower.start);
+leq(JANUSexperimentLowPower.end, 1500);
+
+// Perform a high power JANUS experiment
+goal(nanosat.janus.runExperimentHighPowerJANUS JANUSexperimentHighPower);
+leq(0, JANUSexperimentHighPower.start);
+leq(JANUSexperimentHighPower.end, 1500);
