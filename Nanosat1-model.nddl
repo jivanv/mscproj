@@ -11,6 +11,7 @@ class RadiationMonitor;
 class TOPCAT;
 class JANUS;
 class MIC;
+class FUNCUBE;
 
 class Nanosatellite 
 {
@@ -22,6 +23,7 @@ class Nanosatellite
 	TOPCAT topcat;
 	JANUS janus;
 	MIC mic;
+	FUNCUBE funcube2;
 		    
 	Nanosatellite(Battery b, Memory m)
 	{
@@ -33,6 +35,7 @@ class Nanosatellite
         topcat = new TOPCAT(this);
         janus = new JANUS(this);
         mic = new MIC(this);
+        funcube2 = new FUNCUBE(this);
   	}
 }
 
@@ -194,6 +197,28 @@ class MIC
 	action runExperimentMIC {
 	    eq(15, duration);
 	}
+}
+
+class FUNCUBE
+{
+    Nanosatellite nanosat;
+    Window educationWindow;
+    Window amateurWindow;
+    
+    FUNCUBE(Nanosatellite n)
+    {
+        nanosat = n;
+        educationWindow = new Window();
+        amateurWindow = new Window();
+    }
+    
+    action educationalCommunicationsFUNCUBE {
+        eq(1, duration);
+    }
+    
+    action amateurCommunicationsFUNCUBE {
+        eq(1, duration);
+    }
 }
 
 class Battery extends Reservoir
@@ -470,6 +495,30 @@ MIC::runExperimentMIC
     contained_by(condition object.state.On);
     starts(effect object.nanosat.memory.produce data);
     eq(data.quantity, 34816);
+}
+
+FUNCUBE::educationalCommunicationsFUNCUBE
+{
+    contained_by(condition object.educationWindow.Available);
+    bool continueLoopFE;
+    if(continueLoopFE) {
+        meets(effect object.educationalCommunicationsFUNCUBE next);
+        next.end <= 1500;
+        starts(effect object.nanosat.mainBattery.consume power);
+        eq(power.quantity, 22);
+    }
+}
+
+FUNCUBE::amateurCommunicationsFUNCUBE
+{
+    contained_by(condition object.amateurWindow.Available);
+    bool continueLoopFA;
+    if(continueLoopFA) {
+        meets(effect object.amateurCommunicationsFUNCUBE next);
+        next.end <= 1500;
+        starts(effect object.nanosat.mainBattery.consume power);
+        eq(power.quantity, 21);
+    }
 }
 
 SolarPanel::chargeBattery
