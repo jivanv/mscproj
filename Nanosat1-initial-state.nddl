@@ -13,6 +13,8 @@ close();
 // Establish the initial conditions
 fact(nanosat.c3d.camera.state.Off camOff);
 camOff.start = 0;
+fact(nanosat.c3d.rm.state.Off rmOff);
+rmOff.start = 0;
 
 // Establish the windows of availability
 fact(nanosat.c3d.camera.window.Available camWindow1);
@@ -60,6 +62,28 @@ camWindow14.start = 1293;
 camWindow14.end = 1339;
 camWindow15.start = 1390;
 camWindow15.end = 1440;
+
+fact(nanosat.c3d.rm.window.Available SAA1);
+fact(nanosat.c3d.rm.window.Available SAA2);
+fact(nanosat.c3d.rm.window.Available SAA3);
+fact(nanosat.c3d.rm.window.Available SAA4);
+fact(nanosat.c3d.rm.window.Available SAA5);
+fact(nanosat.c3d.rm.window.Available SAA6);
+fact(nanosat.c3d.rm.window.Available SAA7);
+SAA1.start = 77;
+SAA1.end = 87;
+SAA2.start = 173;
+SAA2.end = 183;
+SAA3.start = 632;
+SAA3.end = 638;
+SAA4.start = 728;
+SAA4.end = 736;
+SAA5.start = 823;
+SAA5.end = 834;
+SAA6.start = 923;
+SAA6.end = 926;
+SAA7.start = 1433;
+SAA7.end = 1444;
 
 fact(nanosat.panel.window.Available panelWindow1);
 fact(nanosat.panel.window.Available panelWindow2);
@@ -146,8 +170,15 @@ fact(nanosat.c3d.camera.consumePowerWhileOnC3DCam cameraUseBattery);
 leq(0, cameraUseBattery.start);
 leq(cameraUseBattery.end, 1500);
 
+fact(nanosat.c3d.rm.consumePowerWhileOnC3Drm rmUseBattery);
+leq(0, rmUseBattery.start);
+leq(rmUseBattery.end, 1500);
+
 // Take a photo of the UK ground station once
 goal(nanosat.c3d.camera.takePhoto takePhoto);
 takePhoto.start = 30;
 //leq(0, takePhoto.start);
 //leq(takePhoto.end, 1500);
+// Measure radiation when in the SAA
+goal(nanosat.c3d.rm.measureRadiation measureRad);
+measureRad.start = 77;

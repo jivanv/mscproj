@@ -5,8 +5,9 @@ class Window;
 class SolarPanel;
 class Memory;
 class STX;
-class Camera;
 class C3D;
+class Camera;
+class RadiationMonitor;
 
 class Nanosatellite 
 {
@@ -30,11 +31,13 @@ class C3D
 {
     Nanosatellite nanosat;
     Camera camera;
+    RadiationMonitor rm;
     
     C3D(Nanosatellite n)
     {
         nanosat = n;
         camera = new Camera(this);
+        rm = new RadiationMonitor(this);
     }
 }
 
@@ -69,6 +72,40 @@ class Camera
 	
 	action takePhoto {
 	    eq(30, duration);
+	}
+}
+
+class RadiationMonitor
+{
+    Window window;
+    PayloadState state;
+    C3D c3d;
+    
+    RadiationMonitor(C3D c)
+    {
+        c3d = c;
+        window = new Window();
+        state = new PayloadState();
+    }
+    
+    action turnOnC3D {
+	    eq(1, duration);
+	}
+	
+	action turnOffC3D {
+	    eq(1, duration);
+	}
+	
+	action consumePowerWhileOnC3Drm {
+	    eq(1, duration);
+	}
+	
+	action runHouseKeepingMode {
+	    eq(1, duration);
+	}
+	
+	action measureRadiation {
+	    eq(40, duration);
 	}
 }
 
@@ -192,6 +229,55 @@ Camera::consumePowerWhileOnC3DCam
     bool continueLoopC;
     if(continueLoopC) {
         meets(effect object.consumePowerWhileOnC3DCam next);
+        next.end <= 1500;
+        starts(effect object.c3d.nanosat.mainBattery.consume p);
+        eq(p.quantity, 13);
+    }
+}
+
+RadiationMonitor::measureRadiation
+{
+    starts_during(object.window.Available);
+    contained_by(condition object.state.On);
+    met_by(object.runHouseKeepingMode);
+    meets(effect object.turnOffC3D);
+    starts(effect object.c3d.nanosat.memory.produce data);
+    eq(data.quantity, 18432);
+}
+
+RadiationMonitor::turnOnC3D
+{
+    met_by(condition object.state.Off);
+	equals(effect object.state.poweringUp);
+	meets(effect object.state.On);
+	meets(object.runHouseKeepingMode);
+}
+
+RadiationMonitor::turnOffC3D
+{
+	met_by(condition object.state.On);
+	equals(effect object.state.poweringDown);
+	meets(effect object.state.Off);
+	met_by(object.measureRadiation);
+}
+
+RadiationMonitor::runHouseKeepingMode
+{
+    contained_by(condition object.state.On);
+    met_by(object.turnOnC3D);
+    meets(object.measureRadiation);
+    starts(effect object.c3d.nanosat.memory.produce data);
+    eq(data.quantity, 256);
+    starts(effect object.c3d.nanosat.mainBattery.consume power);
+    eq(power.quantity, 13);
+}
+
+RadiationMonitor::consumePowerWhileOnC3Drm
+{
+    contained_by(condition object.state.On);
+    bool continueLoopRM;
+    if(continueLoopRM) {
+        meets(effect object.consumePowerWhileOnC3Drm next);
         next.end <= 1500;
         starts(effect object.c3d.nanosat.mainBattery.consume p);
         eq(p.quantity, 13);

@@ -14,8 +14,9 @@
     <FlawFilter var-match="end"/>
     <FlawFilter component="InfiniteDynamicFilter"/>
     <FlawHandler component="StandardVariableHandler"/>
-    <FlawHandler class="Camera" predicate="consumePowerWhileOnC3DCam" variable="continueLoopC" component="Max"/>
     <FlawHandler class="SolarPanel" predicate="chargeBattery" variable="continueLoopB" component="Max"/>
     <FlawHandler class="STX" predicate="downlinkData" variable="continueLoopS" component="Max"/>
+    <FlawHandler class="Camera" predicate="consumePowerWhileOnC3DCam" variable="continueLoopC" component="Max"/>
+    <FlawHandler class="RadiationMonitor" predicate="consumePowerWhileOnC3Drm" variable="continueLoopRM" component="Max"/>
   </UnboundVariableManager>
 </Solver>
