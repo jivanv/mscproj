@@ -18,5 +18,6 @@
     <FlawHandler class="STX" predicate="downlinkData" variable="continueLoopS" component="Max"/>
     <FlawHandler class="Camera" predicate="consumePowerWhileOnC3DCam" variable="continueLoopC" component="Max"/>
     <FlawHandler class="RadiationMonitor" predicate="consumePowerWhileOnC3Drm" variable="continueLoopRM" component="Max"/>
+    <FlawHandler class="TOPCAT" predicate="consumePowerWhileOnTOPCAT" variable="continueLoopT" component="Max"/>
   </UnboundVariableManager>
 </Solver>

@@ -146,6 +146,9 @@ void showPlan()
     
       PSObjectList ol4 = psengine.getObjectsByType("STX");	
 	  PSTokenList tl4 = ol4.get(0).getTokens();
+	  
+	  PSObjectList ol5 = psengine.getObjectsByType("TOPCAT");	
+	  PSTokenList tl5 = ol5.get(0).getTokens();
 
 	columnNames = new Vector();
 	data = new Vector();
@@ -161,6 +164,7 @@ void showPlan()
 	addRows(data, tl2, columnNames);
 	addRows(data, tl3, columnNames);
     addRows(data, tl4, columnNames);
+    addRows(data, tl5, columnNames);
 
 	// Sort the rows based on the 3rd column (start) 
 	sortedData = new Vector();

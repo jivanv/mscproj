@@ -8,6 +8,7 @@ class STX;
 class C3D;
 class Camera;
 class RadiationMonitor;
+class TOPCAT;
 
 class Nanosatellite 
 {
@@ -16,6 +17,7 @@ class Nanosatellite
 	SolarPanel panel;
 	STX stx;
 	C3D c3d;
+	TOPCAT topcat;
 		    
 	Nanosatellite(Battery b, Memory m)
 	{
@@ -24,6 +26,7 @@ class Nanosatellite
         panel = new SolarPanel(this);
         stx = new STX(this);
         c3d = new C3D(this);
+        topcat = new TOPCAT(this);
   	}
 }
 
@@ -105,6 +108,34 @@ class RadiationMonitor
 	}
 	
 	action measureRadiation {
+	    eq(40, duration);
+	}
+}
+
+class TOPCAT
+{
+    Nanosatellite nanosat;
+    PayloadState state;
+    
+    TOPCAT(Nanosatellite n)
+    {
+        nanosat = n;
+        state = new PayloadState();
+    }
+    
+    action turnOnTOPCAT{
+	    eq(15, duration);
+	}
+	
+	action turnOffTOPCAT{
+	    eq(1, duration);
+	}
+	
+	action consumePowerWhileOnTOPCAT {
+	    eq(1, duration);
+	}
+	
+	action runExperimentTOPCAT {
 	    eq(40, duration);
 	}
 }
@@ -282,6 +313,41 @@ RadiationMonitor::consumePowerWhileOnC3Drm
         starts(effect object.c3d.nanosat.mainBattery.consume p);
         eq(p.quantity, 13);
     }
+}
+
+TOPCAT::turnOnTOPCAT
+{
+	met_by(condition object.state.Off);
+	equals(effect object.state.poweringUp);
+	meets(effect object.state.On);
+}
+
+TOPCAT::turnOffTOPCAT
+{
+	met_by(condition object.state.On);
+	equals(effect object.state.poweringDown);
+	meets(effect object.state.Off);
+}
+
+TOPCAT::consumePowerWhileOnTOPCAT
+{
+    contained_by(object.state.On);
+    bool continueLoopT;
+    if(continueLoopT) {
+        meets(effect object.consumePowerWhileOnTOPCAT next);
+        next.end <= 1500;
+        starts(effect object.nanosat.mainBattery.consume power);
+        eq(power.quantity, 29);
+    }
+}
+
+TOPCAT::runExperimentTOPCAT
+{
+    met_by(object.turnOnTOPCAT);
+    meets(object.turnOffTOPCAT);
+    contained_by(condition object.state.On);
+    starts(effect object.nanosat.memory.produce data);
+    eq(data.quantity, 204800);
 }
 
 SolarPanel::chargeBattery

@@ -15,6 +15,8 @@ fact(nanosat.c3d.camera.state.Off camOff);
 camOff.start = 0;
 fact(nanosat.c3d.rm.state.Off rmOff);
 rmOff.start = 0;
+fact(nanosat.topcat.state.Off tOff);
+tOff.start = 0;
 
 // Establish the windows of availability
 fact(nanosat.c3d.camera.window.Available camWindow1);
@@ -176,9 +178,18 @@ leq(rmUseBattery.end, 1500);
 
 // Take a photo of the UK ground station once
 goal(nanosat.c3d.camera.takePhoto takePhoto);
-takePhoto.start = 30;
-//leq(0, takePhoto.start);
-//leq(takePhoto.end, 1500);
+takePhoto.start = camWindow1.start;
+
 // Measure radiation when in the SAA
 goal(nanosat.c3d.rm.measureRadiation measureRad);
-measureRad.start = 77;
+measureRad.start = SAA1.start;
+
+// Perform a TOPCAT experiment
+goal(nanosat.topcat.runExperimentTOPCAT TOPCATexperiment);
+leq(0, TOPCATexperiment.start);
+leq(TOPCATexperiment.end, 1500);
+
+// If TOPCAT is on, consume power
+fact(nanosat.topcat.consumePowerWhileOnTOPCAT topcatUseBattery);
+leq(0, topcatUseBattery.start);
+leq(topcatUseBattery.end, 1500);
