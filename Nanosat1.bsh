@@ -30,7 +30,7 @@ try {
 	//desktop.makeSolverDialog(solver);
 	
 	//Instead of showing stepping tool, skip right to the end:
-    solver.solve(280, 280);
+    solver.solve(325, 325);
 
 }
 catch (Exception e) {
@@ -158,6 +158,9 @@ void showPlan()
 	  
 	  PSObjectList ol8 = psengine.getObjectsByType("FUNCUBE");	
 	  PSTokenList tl8 = ol8.get(0).getTokens();
+	  
+	  PSObjectList ol9 = psengine.getObjectsByType("UVTRX");	
+	  PSTokenList tl9 = ol9.get(0).getTokens();
 
 	columnNames = new Vector();
 	data = new Vector();
@@ -177,6 +180,7 @@ void showPlan()
     addRows(data, tl6, columnNames);
     addRows(data, tl7, columnNames);
     addRows(data, tl8, columnNames);
+    addRows(data, tl9, columnNames);
 
 	// Sort the rows based on the 3rd column (start) 
 	sortedData = new Vector();

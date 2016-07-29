@@ -170,6 +170,41 @@ downlinkWindowCapeTown3.end = 1351;
 downlinkWindowCapeTown4.start = 1434;
 downlinkWindowCapeTown4.end = 1446;
 
+fact(nanosat.uvtrx.downlinkWindow.Available downlinkWindowUK1);
+fact(nanosat.uvtrx.downlinkWindow.Available downlinkWindowUK2);
+fact(nanosat.uvtrx.downlinkWindow.Available downlinkWindowUK3);
+fact(nanosat.uvtrx.downlinkWindow.Available downlinkWindowUK4);
+fact(nanosat.uvtrx.downlinkWindow.Available downlinkWindowUK5);
+downlinkWindowUK1.start = 2;
+downlinkWindowUK1.end = 14;
+downlinkWindowUK2.start = 701;
+downlinkWindowUK2.end = 713;
+downlinkWindowUK3.start = 797;
+downlinkWindowUK3.end = 809;
+downlinkWindowUK4.start = 894;
+downlinkWindowUK4.end = 904;
+downlinkWindowUK5.start = 1269;
+downlinkWindowUK5.end = 1279;
+
+fact(nanosat.uvtrx.beaconWindow.Available beaconWindow1);
+fact(nanosat.uvtrx.beaconWindow.Available beaconWindow2);
+fact(nanosat.uvtrx.beaconWindow.Available beaconWindow3);
+fact(nanosat.uvtrx.beaconWindow.Available beaconWindow4);
+fact(nanosat.uvtrx.beaconWindow.Available beaconWindow5);
+fact(nanosat.uvtrx.beaconWindow.Available beaconWindow6);
+beaconWindow1.start = 0;
+beaconWindow1.end = 1;
+beaconWindow2.start = 15;
+beaconWindow2.end = 700;
+beaconWindow3.start = 714;
+beaconWindow3.end = 796;
+beaconWindow4.start = 810;
+beaconWindow4.end = 893;
+beaconWindow5.start = 905;
+beaconWindow5.end = 1268;
+beaconWindow6.start = 1280;
+beaconWindow6.end = 1440;
+
 fact(nanosat.funcube2.amateurWindow.Available amateurWindow1);
 fact(nanosat.funcube2.amateurWindow.Available amateurWindow2);
 fact(nanosat.funcube2.amateurWindow.Available amateurWindow3);
@@ -280,6 +315,37 @@ leq(downlinkCapeTown1.end, downlinkWindowCapeTown1.end);
 //leq(downlinkCapeTown3.end, downlinkWindowCapeTown3.end);
 //leq(downlinkWindowCapeTown4.start, downlinkCapeTown4.start);
 //leq(downlinkCapeTown4.end, downlinkWindowCapeTown4.end);
+
+// Downlink at all available opportunities - UK
+goal(nanosat.uvtrx.downlinkData downlinkUK1);
+//goal(nanosat.uvtrx.downlinkData downlinkUK2);
+//goal(nanosat.uvtrx.downlinkData downlinkUK3);
+//goal(nanosat.uvtrx.downlinkData downlinkUK4);
+//goal(nanosat.uvtrx.downlinkData downlinkUK5);
+leq(downlinkWindowUK1.start, downlinkUK1.start);
+leq(downlinkUK1.end, downlinkWindowUK1.end);
+//leq(downlinkWindowUK2.start, downlinkUK2.start);
+//leq(downlinkUK2.end, downlinkWindowUK2.end);
+//leq(downlinkWindowUK3.start, downlinkUK3.start);
+//leq(downlinkUK3.end, downlinkWindowUK3.end);
+//leq(downlinkWindowUK4.start, downlinkUK4.start);
+//leq(downlinkUK4.end, downlinkWindowUK4.end);
+//leq(downlinkWindowUK5.start, downlinkUK5.start);
+//leq(downlinkUK5.end, downlinkWindowUK5.end);
+
+// Beacon should be active when not downlinking to the UK ground station
+goal(nanosat.uvtrx.beaconSignal beacon1);
+//goal(nanosat.uvtrx.beaconSignal beacon2);
+//goal(nanosat.uvtrx.beaconSignal beacon3);
+//goal(nanosat.uvtrx.beaconSignal beacon4);
+//goal(nanosat.uvtrx.beaconSignal beacon5);
+//goal(nanosat.uvtrx.beaconSignal beacon6);
+beacon1.start = beaconWindow1.start;
+//beacon2.start = beaconWindow2.start;
+//beacon3.start = beaconWindow3.start;
+//beacon4.start = beaconWindow4.start;
+//beacon5.start = beaconWindow5.start;
+//beacon6.start = beaconWindow6.start;
 
 // EXPERIMENTAL PAYLOADS
 

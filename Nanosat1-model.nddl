@@ -12,6 +12,7 @@ class TOPCAT;
 class JANUS;
 class MIC;
 class FUNCUBE;
+class UVTRX;
 
 class Nanosatellite 
 {
@@ -24,6 +25,7 @@ class Nanosatellite
 	JANUS janus;
 	MIC mic;
 	FUNCUBE funcube2;
+	UVTRX uvtrx;
 		    
 	Nanosatellite(Battery b, Memory m)
 	{
@@ -36,6 +38,7 @@ class Nanosatellite
         janus = new JANUS(this);
         mic = new MIC(this);
         funcube2 = new FUNCUBE(this);
+        uvtrx = new UVTRX(this);
   	}
 }
 
@@ -292,6 +295,28 @@ class STX
 }
 
 
+class UVTRX
+{
+    Nanosatellite nanosat;
+    Window beaconWindow;
+    Window downlinkWindow;
+    
+    UVTRX(Nanosatellite n)
+    {
+        nanosat = n;
+        downlinkWindow = new Window();
+        beaconWindow = new Window();
+    }
+    
+    action downlinkData{
+        eq(1, duration);
+    }
+    
+    action beaconSignal{
+        eq(1, duration);
+    }
+}
+
 // Actions
 
 Camera::takePhoto
@@ -544,5 +569,31 @@ STX::downlinkData
         eq(data.quantity, 78643);
         starts(effect object.nanosat.mainBattery.consume consumption);
         eq(consumption.quantity, 453);
+    }
+}
+
+UVTRX::downlinkData
+{
+    contained_by(condition object.downlinkWindow.Available);
+    bool continueLoopUD;
+    if(continueLoopUD) {
+        meets(effect object.downlinkData next);
+        next.end <= 1500;
+        starts(effect object.nanosat.memory.consume data);
+        eq(data.quantity, 72000);
+        starts(effect object.nanosat.mainBattery.consume consumption);
+        eq(consumption.quantity, 35);
+    }
+}
+
+UVTRX::beaconSignal
+{
+    contained_by(condition object.beaconWindow.Available);
+    bool continueLoopUB;
+    if(continueLoopUB) {
+        meets(effect object.beaconSignal next);
+        next.end <= 1500;
+        starts(effect object.nanosat.mainBattery.consume consumption);
+        eq(consumption.quantity, 0.21);
     }
 }
