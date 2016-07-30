@@ -209,6 +209,50 @@ void showPlan()
  	frame.setSize(frame.getSize()); // Force repaint
 }
 
+// Amended helper method for activities
+void addRowsActivities(Vector data, PSTokenList tl, Vector columnNames)
+{ 
+	for (int i=0; i < tl.size() ; i++) {
+    	row = new Vector();
+    	PSToken t = tl.get(i);
+    	String tokenString = t.toString();
+      // 	print(tokenString);
+       	if(!tokenString.contains("consume") && !tokenString.contains("Battery")){
+       	
+		// Fill each column as best we can:
+       	for (int k=0; k < columnNames.size(); k++) {
+			String col = columnNames.get(k);
+			
+			// Three special cases before we get to generic case:
+			if(col == "Key") {
+				row.add(t.getEntityKey());
+			}
+			else if(col == "Name") {
+				row.add(t.getEntityName());
+			}
+			else if(col == "ES") {
+				row.add(t.getStart().getLowerBound());
+			}
+		
+			else {
+				String entry = "--";
+ 		     	PSVariableList vars = t.getParameters();
+        			for (int j=0; j<vars.size();j++) 
+       			{	
+       				PSVariable var = vars.get(j);
+        			if (var.getEntityName().equals(col)) 
+       				{
+       					entry = var.toString();
+       				}
+       			}
+       			row.add(entry);
+       	    }
+		}
+		data.add(row);    
+	}
+	}
+}
+
 // call showActivities() to get a timetable of activities for the payloads
 void showActivities()
 {	   
@@ -238,11 +282,11 @@ void showActivities()
     columnNames.add("duration");
     columnNames.add("end");
 	
-	addRows(data, tl, columnNames);
-	addRows(data, tl2, columnNames);
-	addRows(data, tl3, columnNames);
-    addRows(data, tl4, columnNames);
-    addRows(data, tl5, columnNames);
+	addRowsActivities(data, tl, columnNames);
+	addRowsActivities(data, tl2, columnNames);
+	addRowsActivities(data, tl3, columnNames);
+    addRowsActivities(data, tl4, columnNames);
+    addRowsActivities(data, tl5, columnNames);
 
 	// Sort the rows based on the 3rd column (start) 
 	sortedData = new Vector();
