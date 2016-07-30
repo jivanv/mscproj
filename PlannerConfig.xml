@@ -26,5 +26,6 @@
     <FlawHandler class="MIC" predicate="consumePowerWhileOnMIC" variable="continueLoopM" component="Max"/>
     <FlawHandler class="FUNCUBE" predicate="amateurCommunicationsFUNCUBE" variable="continueLoopFA" component="Max"/>
     <FlawHandler class="FUNCUBE" predicate="educationalCommunicationsFUNCUBE" variable="continueLoopFE" component="Max"/>
+    <FlawHandler class="ConstantlyActivePayload" predicate="alwaysOn" variable="continueLoopCAP" component="Max"/>
   </UnboundVariableManager>
 </Solver>

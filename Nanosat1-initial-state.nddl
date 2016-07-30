@@ -74,20 +74,23 @@ fact(nanosat.c3d.rm.window.Available SAA4);
 fact(nanosat.c3d.rm.window.Available SAA5);
 fact(nanosat.c3d.rm.window.Available SAA6);
 fact(nanosat.c3d.rm.window.Available SAA7);
-SAA1.start = 77;
-SAA1.end = 87;
-SAA2.start = 173;
-SAA2.end = 183;
-SAA3.start = 632;
-SAA3.end = 638;
-SAA4.start = 728;
-SAA4.end = 736;
-SAA5.start = 823;
-SAA5.end = 834;
-SAA6.start = 923;
-SAA6.end = 926;
-SAA7.start = 1433;
-SAA7.end = 1444;
+fact(nanosat.c3d.rm.window.Available SAA8);
+SAA1.start = 0;
+SAA1.end = 4;
+SAA2.start = 77;
+SAA2.end = 87;
+SAA3.start = 173;
+SAA3.end = 183;
+SAA4.start = 632;
+SAA4.end = 638;
+SAA5.start = 728;
+SAA5.end = 736;
+SAA6.start = 823;
+SAA6.end = 834;
+SAA7.start = 923;
+SAA7.end = 926;
+SAA8.start = 1433;
+SAA8.end = 1440;
 
 fact(nanosat.janus.window.Available SAAjanushighpower1);
 fact(nanosat.janus.window.Available SAAjanushighpower2);
@@ -96,20 +99,23 @@ fact(nanosat.janus.window.Available SAAjanushighpower4);
 fact(nanosat.janus.window.Available SAAjanushighpower5);
 fact(nanosat.janus.window.Available SAAjanushighpower6);
 fact(nanosat.janus.window.Available SAAjanushighpower7);
-SAAjanushighpower1.start = 77;
-SAAjanushighpower1.end = 87;
-SAAjanushighpower2.start = 173;
-SAAjanushighpower2.end = 183;
-SAAjanushighpower3.start = 632;
-SAAjanushighpower3.end = 638;
-SAAjanushighpower4.start = 728;
-SAAjanushighpower4.end = 736;
-SAAjanushighpower5.start = 823;
-SAAjanushighpower5.end = 834;
-SAAjanushighpower6.start = 923;
-SAAjanushighpower6.end = 926;
-SAAjanushighpower7.start = 1433;
-SAAjanushighpower7.end = 1444;
+fact(nanosat.janus.window.Available SAAjanushighpower8);
+SAAjanushighpower1.start = 0;
+SAAjanushighpower1.end = 4;
+SAAjanushighpower2.start = 77;
+SAAjanushighpower2.end = 87;
+SAAjanushighpower3.start = 173;
+SAAjanushighpower3.end = 183;
+SAAjanushighpower4.start = 632;
+SAAjanushighpower4.end = 638;
+SAAjanushighpower5.start = 728;
+SAAjanushighpower5.end = 736;
+SAAjanushighpower6.start = 823;
+SAAjanushighpower6.end = 834;
+SAAjanushighpower7.start = 923;
+SAAjanushighpower7.end = 926;
+SAAjanushighpower8.start = 1433;
+SAAjanushighpower8.end = 1440;
 
 fact(nanosat.panel.window.Available panelWindow1);
 fact(nanosat.panel.window.Available panelWindow2);
@@ -161,14 +167,17 @@ fact(nanosat.stx.window.Available downlinkWindowCapeTown1);
 fact(nanosat.stx.window.Available downlinkWindowCapeTown2);
 fact(nanosat.stx.window.Available downlinkWindowCapeTown3);
 fact(nanosat.stx.window.Available downlinkWindowCapeTown4);
-downlinkWindowCapeTown1.start = 533;
-downlinkWindowCapeTown1.end = 544;
-downlinkWindowCapeTown2.start = 627;
-downlinkWindowCapeTown2.end = 640;
-downlinkWindowCapeTown3.start = 1338;
-downlinkWindowCapeTown3.end = 1351;
-downlinkWindowCapeTown4.start = 1434;
-downlinkWindowCapeTown4.end = 1446;
+fact(nanosat.stx.window.Available downlinkWindowCapeTown5);
+downlinkWindowCapeTown1.start = 0;
+downlinkWindowCapeTown1.end = 6;
+downlinkWindowCapeTown2.start = 533;
+downlinkWindowCapeTown2.end = 544;
+downlinkWindowCapeTown3.start = 627;
+downlinkWindowCapeTown3.end = 640;
+downlinkWindowCapeTown4.start = 1338;
+downlinkWindowCapeTown4.end = 1351;
+downlinkWindowCapeTown5.start = 1434;
+downlinkWindowCapeTown5.end = 1440;
 
 fact(nanosat.uvtrx.downlinkWindow.Available downlinkWindowUK1);
 fact(nanosat.uvtrx.downlinkWindow.Available downlinkWindowUK2);
@@ -346,6 +355,7 @@ goal(nanosat.stx.downlinkData downlinkCapeTown1);
 goal(nanosat.stx.downlinkData downlinkCapeTown2);
 goal(nanosat.stx.downlinkData downlinkCapeTown3);
 goal(nanosat.stx.downlinkData downlinkCapeTown4);
+goal(nanosat.stx.downlinkData downlinkCapeTown5);
 leq(downlinkWindowCapeTown1.start, downlinkCapeTown1.start);
 leq(downlinkCapeTown1.end, downlinkWindowCapeTown1.end);
 leq(downlinkWindowCapeTown2.start, downlinkCapeTown2.start);
@@ -354,6 +364,8 @@ leq(downlinkWindowCapeTown3.start, downlinkCapeTown3.start);
 leq(downlinkCapeTown3.end, downlinkWindowCapeTown3.end);
 leq(downlinkWindowCapeTown4.start, downlinkCapeTown4.start);
 leq(downlinkCapeTown4.end, downlinkWindowCapeTown4.end);
+leq(downlinkWindowCapeTown5.start, downlinkCapeTown5.start);
+leq(downlinkCapeTown5.end, downlinkWindowCapeTown5.end);
 
 // Downlink at all available opportunities - UK
 goal(nanosat.uvtrx.downlinkData downlinkUK1);
@@ -391,11 +403,11 @@ beacon6.start = beaconWindow6.start;
 // If C3D camera/radiation monitor is on, consume power
 fact(nanosat.c3d.camera.consumePowerWhileOnC3DCam cameraUseBattery);
 leq(0, cameraUseBattery.start);
-leq(cameraUseBattery.end, 1500);
+leq(cameraUseBattery.end, 1440);
 
 fact(nanosat.c3d.rm.consumePowerWhileOnC3Drm rmUseBattery);
 leq(0, rmUseBattery.start);
-leq(rmUseBattery.end, 1500);
+leq(rmUseBattery.end, 1440);
 
 // Take a photo of the UK ground station
 goal(nanosat.c3d.camera.takePhoto takePhoto);
@@ -408,39 +420,43 @@ measureRad.start = SAA1.start;
 // Perform a TOPCAT experiment
 goal(nanosat.topcat.runExperimentTOPCAT TOPCATexperiment);
 leq(0, TOPCATexperiment.start);
-leq(TOPCATexperiment.end, 1500);
+leq(TOPCATexperiment.end, 1440);
 
 // If TOPCAT is on, consume power
 fact(nanosat.topcat.consumePowerWhileOnTOPCAT TOPCATuseBattery);
 leq(0, TOPCATuseBattery.start);
-leq(TOPCATuseBattery.end, 1500);
+leq(TOPCATuseBattery.end, 1440);
 
 // Perform a low power JANUS experiment
 goal(nanosat.janus.runExperimentLowPowerJANUS JANUSexperimentLowPower);
 leq(0, JANUSexperimentLowPower.start);
-leq(JANUSexperimentLowPower.end, 1500);
+leq(JANUSexperimentLowPower.end, 1440);
 
 // Perform a high power JANUS experiment
 goal(nanosat.janus.runExperimentHighPowerJANUS JANUSexperimentHighPower);
 leq(0, JANUSexperimentHighPower.start);
-leq(JANUSexperimentHighPower.end, 1500);
+leq(JANUSexperimentHighPower.end, 1440);
 
 // Perform a MIC experiment
 goal(nanosat.mic.runExperimentMIC MICexperiment);
 leq(0, MICexperiment.start);
-leq(MICexperiment.end, 1500);
+leq(MICexperiment.end, 1440);
 
 // If MIC is on, consume power
 fact(nanosat.mic.consumePowerWhileOnMIC MICuseBattery);
 leq(0, MICuseBattery.start);
-leq(MICuseBattery.end, 1500);
+leq(MICuseBattery.end, 1440);
 
 // FUNCUBE educational communications
 goal(nanosat.funcube2.educationalCommunicationsFUNCUBE FUNCUBEeducationalComms);
 leq(0, FUNCUBEeducationalComms.start);
-leq(FUNCUBEeducationalComms.end, 1500);
+leq(FUNCUBEeducationalComms.end, 1440);
 
 // FUNCUBE amateur communications
 goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms);
 leq(0, FUNCUBEamateurComms.start);
-leq(FUNCUBEamateurComms.end, 1500);
+leq(FUNCUBEamateurComms.end, 1440);
+
+// The EPS, SWB, BAT, OBC and ADCS payloads are always on and consuming power
+fact(nanosat.constantpayloads.alwaysOn payloadsAlwaysOn);
+payloadsAlwaysOn.start = 0;

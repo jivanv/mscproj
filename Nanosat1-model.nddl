@@ -13,6 +13,7 @@ class JANUS;
 class MIC;
 class FUNCUBE;
 class UVTRX;
+class ConstantlyActivePayload;
 
 class Nanosatellite 
 {
@@ -26,6 +27,7 @@ class Nanosatellite
 	MIC mic;
 	FUNCUBE funcube2;
 	UVTRX uvtrx;
+	ConstantlyActivePayload constantpayloads;
 		    
 	Nanosatellite(Battery b, Memory m)
 	{
@@ -39,6 +41,7 @@ class Nanosatellite
         mic = new MIC(this);
         funcube2 = new FUNCUBE(this);
         uvtrx = new UVTRX(this);
+        constantpayloads = new ConstantlyActivePayload(this, 0.61);
   	}
 }
 
@@ -220,6 +223,22 @@ class FUNCUBE
     }
     
     action amateurCommunicationsFUNCUBE {
+        eq(1, duration);
+    }
+}
+
+class ConstantlyActivePayload
+{
+    Nanosatellite nanosat;
+    float consumptionRate;
+    
+    ConstantlyActivePayload(Nanosatellite n, float r)
+    {
+        nanosat = n;
+        consumptionRate = r;
+    }
+    
+    action alwaysOn {
         eq(1, duration);
     }
 }
@@ -544,6 +563,17 @@ FUNCUBE::amateurCommunicationsFUNCUBE
         next.end <= 1500;
         starts(effect object.nanosat.mainBattery.consume power);
         eq(power.quantity, 21);
+    }
+}
+
+ConstantlyActivePayload::alwaysOn
+{
+    bool continueLoopCAP;
+    if(continueLoopCAP) {
+        meets(effect object.alwaysOn next);
+        next.end <= 1500;
+        starts(effect object.nanosat.mainBattery.consume power);
+        eq(power.quantity, object.consumptionRate);
     }
 }
 
