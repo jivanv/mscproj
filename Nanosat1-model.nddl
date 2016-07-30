@@ -471,6 +471,7 @@ JANUS::runExperimentLowPowerJANUS
 
 JANUS::runExperimentHighPowerJANUS
 {
+    contained_by(condition object.nanosat.topcat.state.Off);
     contained_by(object.window.Available);
     bool continueLoopJH;
     if(continueLoopJH) {
