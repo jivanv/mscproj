@@ -7,9 +7,9 @@ import org.ops.ui.gantt.swing.*;
 import org.ops.ui.rchart.swing.*;
 import org.ops.ui.utils.swing.Util;
 
-int month = GregorianCalendar.SEPTEMBER, day = 11; 
-GregorianCalendar start = new GregorianCalendar(2006,month,day,0,0);
-GregorianCalendar end = new GregorianCalendar(2006,month,day,1,30);
+int month = GregorianCalendar.JULY, day = 1; 
+GregorianCalendar start = new GregorianCalendar(2016,month,day,0,0);
+GregorianCalendar end = new GregorianCalendar(2016,month,day,0,10);
 
 try {
     // Load the model and the problem :
@@ -23,14 +23,14 @@ try {
 	solver = desktop.makeSolver(
 		"PlannerConfig.xml", // config
 		0,   // startHorizon
-        1500  // endHorizon
+        1440  // endHorizon
     );
     
     // This will display a dialog that allows the user to run the solver interactively
-	//desktop.makeSolverDialog(solver);
+	desktop.makeSolverDialog(solver);
 	
 	//Instead of showing stepping tool, skip right to the end:
-    solver.solve(760, 760);
+    //solver.solve(410, 410);
 
 }
 catch (Exception e) {
@@ -53,6 +53,7 @@ void showBatteryActivity()
 {
     PSObject b = psengine.getObjectByName("battery");
     desktop.showTokens(b);
+    resourceFrame = desktop.makeResourcesFrame("Battery",start);
 }
 
 void printBatteryLevels()
@@ -72,8 +73,6 @@ void showMemoryActivity()
     PSObject m = psengine.getObjectByName("memory");
     desktop.showTokens(m);
     resourceFrame = desktop.makeResourcesFrame("Memory",start);
-    resourceFrame.setLocation(0,180);
-    resourceFrame.setSize(500,300);	
 }
 
 void printMemoryLevels()
@@ -129,39 +128,42 @@ void addRows(Vector data, PSTokenList tl, Vector columnNames)
 	}
 }
 
-// call showPlan() to get a timetable
+// call showPlan() to get a full timetable of everything that is happening
 // a) Gather the tokens in the agent and timeline objects.
 // b) Gather the tokens associated with them.
 // c) Store the token variables we want to show for each token.
 // d) Sort them in chronological order
 void showPlan()
 {	   
-	  PSObjectList ol = psengine.getObjectsByType("SolarPanel");
+	  PSObjectList ol = psengine.getObjectsByType("RadiationMonitor");
 	  PSTokenList tl = ol.get(0).getTokens();
 	
-	  PSObjectList ol2 = psengine.getObjectsByType("TOPCAT");	
+	  PSObjectList ol2 = psengine.getObjectsByType("Camera");	
 	  PSTokenList tl2 = ol2.get(0).getTokens();
 
-      PSObjectList ol3 = psengine.getObjectsByType("C3D");	
+      PSObjectList ol3 = psengine.getObjectsByType("SolarPanel");	
 	  PSTokenList tl3 = ol3.get(0).getTokens();
     
       PSObjectList ol4 = psengine.getObjectsByType("STX");	
 	  PSTokenList tl4 = ol4.get(0).getTokens();
 	  
-	  PSObjectList ol5 = psengine.getObjectsByType("MIC");	
+	  PSObjectList ol5 = psengine.getObjectsByType("TOPCAT");	
 	  PSTokenList tl5 = ol5.get(0).getTokens();
 	  
-	  PSObjectList ol6 = psengine.getObjectsByType("FUNCUBE");	
+	  PSObjectList ol6 = psengine.getObjectsByType("JANUS");	
 	  PSTokenList tl6 = ol6.get(0).getTokens();
 	  
-	  PSObjectList ol7 = psengine.getObjectsByType("JANUS");	
+	  PSObjectList ol7 = psengine.getObjectsByType("MIC");	
 	  PSTokenList tl7 = ol7.get(0).getTokens();
 	  
-	  PSObjectList ol8 = psengine.getObjectsByType("UVTRX");	
+	  PSObjectList ol8 = psengine.getObjectsByType("FUNCUBE");	
 	  PSTokenList tl8 = ol8.get(0).getTokens();
 	  
-	  PSObjectList ol9 = psengine.getObjectsByType("ConstantlyActivePayload");	
+	  PSObjectList ol9 = psengine.getObjectsByType("UVTRX");	
 	  PSTokenList tl9 = ol9.get(0).getTokens();
+	  
+	  PSObjectList ol10 = psengine.getObjectsByType("ConstantlyActivePayload");	
+	  PSTokenList tl10 = ol10.get(0).getTokens();
 
 	columnNames = new Vector();
 	data = new Vector();
@@ -182,6 +184,7 @@ void showPlan()
     addRows(data, tl7, columnNames);
     addRows(data, tl8, columnNames);
     addRows(data, tl9, columnNames);
+    addRows(data, tl10, columnNames);
 
 	// Sort the rows based on the 3rd column (start) 
 	sortedData = new Vector();
@@ -206,24 +209,68 @@ void showPlan()
  	frame.setSize(frame.getSize()); // Force repaint
 }
 
-// call showActivities() to get a timetable of just the activities and their times
+// Amended helper method for activities
+void addRowsActivities(Vector data, PSTokenList tl, Vector columnNames)
+{ 
+	for (int i=0; i < tl.size() ; i++) {
+    	row = new Vector();
+    	PSToken t = tl.get(i);
+    	String tokenString = t.toString();
+      // 	print(tokenString);
+       	if(!tokenString.contains("consume") && !tokenString.contains("Battery")){
+       	
+		// Fill each column as best we can:
+       	for (int k=0; k < columnNames.size(); k++) {
+			String col = columnNames.get(k);
+			
+			// Three special cases before we get to generic case:
+			if(col == "Key") {
+				row.add(t.getEntityKey());
+			}
+			else if(col == "Name") {
+				row.add(t.getEntityName());
+			}
+			else if(col == "ES") {
+				row.add(t.getStart().getLowerBound());
+			}
+		
+			else {
+				String entry = "--";
+ 		     	PSVariableList vars = t.getParameters();
+        			for (int j=0; j<vars.size();j++) 
+       			{	
+       				PSVariable var = vars.get(j);
+        			if (var.getEntityName().equals(col)) 
+       				{
+       					entry = var.toString();
+       				}
+       			}
+       			row.add(entry);
+       	    }
+		}
+		data.add(row);    
+	}
+	}
+}
 
+// call showActivities() to get a timetable of activities for the payloads
 void showActivities()
-{	
-	  PSObjectList ol2 = psengine.getObjectsByType("TOPCAT");	
+{	   
+	  PSObjectList ol = psengine.getObjectsByType("RadiationMonitor");
+	  PSTokenList tl = ol.get(0).getTokens();
+	
+	  PSObjectList ol2 = psengine.getObjectsByType("Camera");	
 	  PSTokenList tl2 = ol2.get(0).getTokens();
-
-      PSObjectList ol3 = psengine.getObjectsByType("C3D");	
+	  
+	  PSObjectList ol3 = psengine.getObjectsByType("TOPCAT");	
 	  PSTokenList tl3 = ol3.get(0).getTokens();
+	  
+	  PSObjectList ol4 = psengine.getObjectsByType("JANUS");	
+	  PSTokenList tl4 = ol4.get(0).getTokens();
 	  
 	  PSObjectList ol5 = psengine.getObjectsByType("MIC");	
 	  PSTokenList tl5 = ol5.get(0).getTokens();
 	  
-	  PSObjectList ol6 = psengine.getObjectsByType("FUNCUBE");	
-	  PSTokenList tl6 = ol6.get(0).getTokens();
-	  
-	  PSObjectList ol7 = psengine.getObjectsByType("JANUS");	
-	  PSTokenList tl7 = ol7.get(0).getTokens();
 
 	columnNames = new Vector();
 	data = new Vector();
@@ -235,11 +282,11 @@ void showActivities()
     columnNames.add("duration");
     columnNames.add("end");
 	
-	addRows(data, tl2, columnNames);
-	addRows(data, tl3, columnNames);
-    addRows(data, tl5, columnNames);
-    addRows(data, tl6, columnNames);
-    addRows(data, tl7, columnNames);
+	addRowsActivities(data, tl, columnNames);
+	addRowsActivities(data, tl2, columnNames);
+	addRowsActivities(data, tl3, columnNames);
+    addRowsActivities(data, tl4, columnNames);
+    addRowsActivities(data, tl5, columnNames);
 
 	// Sort the rows based on the 3rd column (start) 
 	sortedData = new Vector();
@@ -264,12 +311,9 @@ void showActivities()
  	frame.setSize(frame.getSize()); // Force repaint
 }
 
-
 // Show results right away:
-showPlan();
-print("Battery levels: ");
-printBatteryLevels();
-print("Memory levels: ");
-printMemoryLevels();
-
-
+//showPlan();
+//print("Battery levels: ");
+//printBatteryLevels();
+//print("Memory levels: ");
+//printMemoryLevels();
