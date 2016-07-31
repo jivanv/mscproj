@@ -14,6 +14,7 @@
     <FlawFilter var-match="end"/>
     <FlawFilter component="InfiniteDynamicFilter"/>
     <FlawHandler component="StandardVariableHandler"/>
+    <FlawHandler var-match="start" component="StandardVariableHandler" priority="9999"/>
     <FlawHandler class="SolarPanel" predicate="chargeBattery" variable="continueLoopB" component="Max"/>
     <FlawHandler class="STX" predicate="downlinkData" variable="continueLoopS" component="Max"/>
     <FlawHandler class="UVTRX" predicate="downlinkData" variable="continueLoopUD" component="Max"/>

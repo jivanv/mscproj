@@ -41,7 +41,7 @@ class Nanosatellite
         mic = new MIC(this);
         funcube2 = new FUNCUBE(this);
         uvtrx = new UVTRX(this);
-        constantpayloads = new ConstantlyActivePayload(this, 0.61);
+        constantpayloads = new ConstantlyActivePayload(this, 0.62);
   	}
 }
 
@@ -340,6 +340,7 @@ class UVTRX
 
 Camera::takePhoto
 {
+    starts_during(object.c3d.nanosat.uvtrx.downlinkWindow.Available);
     contained_by(object.window.Available);
     contained_by(condition object.state.On);
     met_by(object.runHouseKeepingMode);
@@ -375,7 +376,7 @@ Camera::runHouseKeepingMode
     starts(effect object.c3d.nanosat.memory.produce data);
     eq(data.quantity, 256);
     starts(effect object.c3d.nanosat.mainBattery.consume power);
-    eq(power.quantity, 13);
+    eq(power.quantity, 12.73);
 }
 
 Camera::consumePowerWhileOnC3DCam
@@ -385,9 +386,9 @@ Camera::consumePowerWhileOnC3DCam
     bool continueLoopC;
     if(continueLoopC) {
         meets(effect object.consumePowerWhileOnC3DCam next);
-        next.end <= 1500;
+        next.end <= 1440;
         starts(effect object.c3d.nanosat.mainBattery.consume p);
-        eq(p.quantity, 13);
+        eq(p.quantity, 12.73);
     }
 }
 
@@ -425,7 +426,7 @@ RadiationMonitor::runHouseKeepingMode
     starts(effect object.c3d.nanosat.memory.produce data);
     eq(data.quantity, 256);
     starts(effect object.c3d.nanosat.mainBattery.consume power);
-    eq(power.quantity, 13);
+    eq(power.quantity, 12.73);
 }
 
 RadiationMonitor::consumePowerWhileOnC3Drm
@@ -434,9 +435,9 @@ RadiationMonitor::consumePowerWhileOnC3Drm
     bool continueLoopRM;
     if(continueLoopRM) {
         meets(effect object.consumePowerWhileOnC3Drm next);
-        next.end <= 1500;
+        next.end <= 1440;
         starts(effect object.c3d.nanosat.mainBattery.consume p);
-        eq(p.quantity, 13);
+        eq(p.quantity, 12.73);
     }
 }
 
@@ -460,9 +461,9 @@ TOPCAT::consumePowerWhileOnTOPCAT
     bool continueLoopT;
     if(continueLoopT) {
         meets(effect object.consumePowerWhileOnTOPCAT next);
-        next.end <= 1500;
+        next.end <= 1440;
         starts(effect object.nanosat.mainBattery.consume power);
-        eq(power.quantity, 29);
+        eq(power.quantity, 28.83);
     }
 }
 
@@ -480,9 +481,9 @@ JANUS::runExperimentLowPowerJANUS
     bool continueLoopJL;
     if(continueLoopJL) {
         meets(effect object.runExperimentLowPowerJANUS next);
-        next.end <= 1500;
+        next.end <= 1440;
         starts(effect object.nanosat.mainBattery.consume power);
-        eq(power.quantity, 22);
+        eq(power.quantity, 22.29);
     }
     starts(effect object.nanosat.memory.produce data);
     eq(data.quantity, 512);
@@ -495,7 +496,7 @@ JANUS::runExperimentHighPowerJANUS
     bool continueLoopJH;
     if(continueLoopJH) {
         meets(effect object.runExperimentHighPowerJANUS next);
-        next.end <= 1500;
+        next.end <= 1440;
         starts(effect object.nanosat.mainBattery.consume power);
         eq(power.quantity, 120);
     }
@@ -525,9 +526,9 @@ MIC::consumePowerWhileOnMIC
     bool continueLoopM;
     if(continueLoopM) {
         meets(effect object.consumePowerWhileOnMIC next);
-        next.end <= 1500;
+        next.end <= 1440;
         starts(effect object.nanosat.mainBattery.consume power);
-        eq(power.quantity, 63);
+        eq(power.quantity, 62.5);
     }
 }
 
@@ -548,9 +549,9 @@ FUNCUBE::educationalCommunicationsFUNCUBE
     bool continueLoopFE;
     if(continueLoopFE) {
         meets(effect object.educationalCommunicationsFUNCUBE next);
-        next.end <= 1500;
+        next.end <= 1440;
         starts(effect object.nanosat.mainBattery.consume power);
-        eq(power.quantity, 22);
+        eq(power.quantity, 21.57);
     }
 }
 
@@ -560,9 +561,9 @@ FUNCUBE::amateurCommunicationsFUNCUBE
     bool continueLoopFA;
     if(continueLoopFA) {
         meets(effect object.amateurCommunicationsFUNCUBE next);
-        next.end <= 1500;
+        next.end <= 1440;
         starts(effect object.nanosat.mainBattery.consume power);
-        eq(power.quantity, 21);
+        eq(power.quantity, 20.64);
     }
 }
 
@@ -571,7 +572,7 @@ ConstantlyActivePayload::alwaysOn
     bool continueLoopCAP;
     if(continueLoopCAP) {
         meets(effect object.alwaysOn next);
-        next.end <= 1500;
+        next.end <= 1440;
         starts(effect object.nanosat.mainBattery.consume power);
         eq(power.quantity, object.consumptionRate);
     }
@@ -583,7 +584,7 @@ SolarPanel::chargeBattery
   	bool continueLoopB;
     if(continueLoopB) {
         meets(effect object.chargeBattery next);
-        next.end <= 1500;
+        next.end <= 1440;
         contains(effect object.nanosat.mainBattery.produce power);
         eq(power.quantity, 9);
     }
@@ -595,11 +596,11 @@ STX::downlinkData
     bool continueLoopS;
     if(continueLoopS) {
         meets(effect object.downlinkData next);
-        next.end <= 1500;
+        next.end <= 1440;
         starts(effect object.nanosat.memory.consume data);
         eq(data.quantity, 78643);
         starts(effect object.nanosat.mainBattery.consume consumption);
-        eq(consumption.quantity, 453);
+        eq(consumption.quantity, 453.33);
     }
 }
 
@@ -609,11 +610,11 @@ UVTRX::downlinkData
     bool continueLoopUD;
     if(continueLoopUD) {
         meets(effect object.downlinkData next);
-        next.end <= 1500;
+        next.end <= 1440;
         starts(effect object.nanosat.memory.consume data);
         eq(data.quantity, 72000);
         starts(effect object.nanosat.mainBattery.consume consumption);
-        eq(consumption.quantity, 35);
+        eq(consumption.quantity, 35.45);
     }
 }
 
@@ -623,7 +624,7 @@ UVTRX::beaconSignal
     bool continueLoopUB;
     if(continueLoopUB) {
         meets(effect object.beaconSignal next);
-        next.end <= 1500;
+        next.end <= 1440;
         starts(effect object.nanosat.mainBattery.consume consumption);
         eq(consumption.quantity, 0.21);
     }
