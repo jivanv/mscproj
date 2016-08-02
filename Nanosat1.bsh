@@ -30,7 +30,7 @@ try {
 	desktop.makeSolverDialog(solver);
 	
 	//Instead of showing stepping tool, skip right to the end:
-    //solver.solve(410, 410);
+    //solver.solve(1000, 1000);
 
 }
 catch (Exception e) {
@@ -310,10 +310,3 @@ void showActivities()
     frame.getContentPane().add(scrollpane);    	
  	frame.setSize(frame.getSize()); // Force repaint
 }
-
-// Show results right away:
-//showPlan();
-//print("Battery levels: ");
-//printBatteryLevels();
-//print("Memory levels: ");
-//printMemoryLevels();
