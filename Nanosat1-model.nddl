@@ -14,6 +14,7 @@ class MIC;
 class FUNCUBE;
 class UVTRX;
 class ConstantlyActivePayload;
+class Payload;
 
 class Nanosatellite 
 {
@@ -41,9 +42,11 @@ class Nanosatellite
         mic = new MIC(this);
         funcube2 = new FUNCUBE(this);
         uvtrx = new UVTRX(this);
-        constantpayloads = new ConstantlyActivePayload(this, 0.62);
+        constantpayloads = new ConstantlyActivePayload(this, 0.61);
   	}
 }
+
+class Payload {}
 
 class C3D
 {
@@ -59,7 +62,7 @@ class C3D
     }
 }
 
-class Camera
+class Camera extends Payload
 {
     Window window;
     PayloadState state;
@@ -93,7 +96,7 @@ class Camera
 	}
 }
 
-class RadiationMonitor
+class RadiationMonitor extends Payload
 {
     Window window;
     PayloadState state;
@@ -127,7 +130,7 @@ class RadiationMonitor
 	}
 }
 
-class TOPCAT
+class TOPCAT extends Payload
 {
     Nanosatellite nanosat;
     PayloadState state;
@@ -151,7 +154,7 @@ class TOPCAT
 	}
 	
 	action runExperimentTOPCAT {
-	    eq(40, duration);
+	    eq(1, duration);
 	}
 }
 
@@ -177,7 +180,7 @@ class JANUS extends Timeline
     }
 }
 
-class MIC
+class MIC extends Payload
 {
     Nanosatellite nanosat;
     PayloadState state;
@@ -201,11 +204,11 @@ class MIC
 	}
 	
 	action runExperimentMIC {
-	    eq(15, duration);
+	    eq(1, duration);
 	}
 }
 
-class FUNCUBE
+class FUNCUBE extends Payload
 {
     Nanosatellite nanosat;
     Window educationWindow;
@@ -227,7 +230,7 @@ class FUNCUBE
     }
 }
 
-class ConstantlyActivePayload
+class ConstantlyActivePayload extends Payload
 {
     Nanosatellite nanosat;
     float consumptionRate;
@@ -340,7 +343,6 @@ class UVTRX
 
 Camera::takePhoto
 {
-    starts_during(object.c3d.nanosat.uvtrx.downlinkWindow.Available);
     contained_by(object.window.Available);
     contained_by(condition object.state.On);
     met_by(object.runHouseKeepingMode);
@@ -376,7 +378,7 @@ Camera::runHouseKeepingMode
     starts(effect object.c3d.nanosat.memory.produce data);
     eq(data.quantity, 256);
     starts(effect object.c3d.nanosat.mainBattery.consume power);
-    eq(power.quantity, 12.73);
+    eq(power.quantity, 13);
 }
 
 Camera::consumePowerWhileOnC3DCam
@@ -388,7 +390,7 @@ Camera::consumePowerWhileOnC3DCam
         meets(effect object.consumePowerWhileOnC3DCam next);
         next.end <= 1440;
         starts(effect object.c3d.nanosat.mainBattery.consume p);
-        eq(p.quantity, 12.73);
+        eq(p.quantity, 13);
     }
 }
 
@@ -426,7 +428,7 @@ RadiationMonitor::runHouseKeepingMode
     starts(effect object.c3d.nanosat.memory.produce data);
     eq(data.quantity, 256);
     starts(effect object.c3d.nanosat.mainBattery.consume power);
-    eq(power.quantity, 12.73);
+    eq(power.quantity, 13);
 }
 
 RadiationMonitor::consumePowerWhileOnC3Drm
@@ -437,7 +439,7 @@ RadiationMonitor::consumePowerWhileOnC3Drm
         meets(effect object.consumePowerWhileOnC3Drm next);
         next.end <= 1440;
         starts(effect object.c3d.nanosat.mainBattery.consume p);
-        eq(p.quantity, 12.73);
+        eq(p.quantity, 13);
     }
 }
 
@@ -463,7 +465,7 @@ TOPCAT::consumePowerWhileOnTOPCAT
         meets(effect object.consumePowerWhileOnTOPCAT next);
         next.end <= 1440;
         starts(effect object.nanosat.mainBattery.consume power);
-        eq(power.quantity, 28.83);
+        eq(power.quantity, 29);
     }
 }
 
@@ -483,7 +485,7 @@ JANUS::runExperimentLowPowerJANUS
         meets(effect object.runExperimentLowPowerJANUS next);
         next.end <= 1440;
         starts(effect object.nanosat.mainBattery.consume power);
-        eq(power.quantity, 22.29);
+        eq(power.quantity, 22);
     }
     starts(effect object.nanosat.memory.produce data);
     eq(data.quantity, 512);
@@ -528,7 +530,7 @@ MIC::consumePowerWhileOnMIC
         meets(effect object.consumePowerWhileOnMIC next);
         next.end <= 1440;
         starts(effect object.nanosat.mainBattery.consume power);
-        eq(power.quantity, 62.5);
+        eq(power.quantity, 63);
     }
 }
 
@@ -551,7 +553,7 @@ FUNCUBE::educationalCommunicationsFUNCUBE
         meets(effect object.educationalCommunicationsFUNCUBE next);
         next.end <= 1440;
         starts(effect object.nanosat.mainBattery.consume power);
-        eq(power.quantity, 21.57);
+        eq(power.quantity, 22);
     }
 }
 
@@ -563,7 +565,7 @@ FUNCUBE::amateurCommunicationsFUNCUBE
         meets(effect object.amateurCommunicationsFUNCUBE next);
         next.end <= 1440;
         starts(effect object.nanosat.mainBattery.consume power);
-        eq(power.quantity, 20.64);
+        eq(power.quantity, 21);
     }
 }
 
@@ -600,7 +602,7 @@ STX::downlinkData
         starts(effect object.nanosat.memory.consume data);
         eq(data.quantity, 78643);
         starts(effect object.nanosat.mainBattery.consume consumption);
-        eq(consumption.quantity, 453.33);
+        eq(consumption.quantity, 453);
     }
 }
 
@@ -614,7 +616,7 @@ UVTRX::downlinkData
         starts(effect object.nanosat.memory.consume data);
         eq(data.quantity, 72000);
         starts(effect object.nanosat.mainBattery.consume consumption);
-        eq(consumption.quantity, 35.45);
+        eq(consumption.quantity, 35);
     }
 }
 
