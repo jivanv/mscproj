@@ -348,6 +348,7 @@ class UVTRX
 
 Camera::takePhoto
 {
+    starts(object.c3d.nanosat.uvtrx.downlinkWindow.Available);
     contained_by(object.window.Available);
     contained_by(condition object.state.On);
     met_by(object.runHouseKeepingMode);
