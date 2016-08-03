@@ -151,7 +151,7 @@ class TOPCAT
 	}
 	
 	action runExperimentTOPCAT {
-	    eq(1, duration);
+	    eq(40, duration);
 	}
 }
 
@@ -169,10 +169,18 @@ class JANUS extends Timeline
     }
     
     action runExperimentLowPowerJANUS {
-        eq(1, duration);
+        eq(35, duration);
     }
     
     action runExperimentHighPowerJANUS {
+        eq(20, duration);
+    }
+    
+    action consumePowerWhileRunningLowJANUS {
+        eq(1, duration);
+    }
+    
+    action consumePowerWhileRunningHighJANUS {
         eq(1, duration);
     }
 }
@@ -201,8 +209,24 @@ class MIC
 	}
 	
 	action runExperimentMIC {
-	    eq(1, duration);
+	    eq(15, duration);
 	}
+}
+
+class ConstantlyActivePayload
+{
+    Nanosatellite nanosat;
+    float consumptionRate;
+    
+    ConstantlyActivePayload(Nanosatellite n, float r)
+    {
+        nanosat = n;
+        consumptionRate = r;
+    }
+    
+    action alwaysOn {
+        eq(1, duration);
+    }
 }
 
 class FUNCUBE
@@ -223,22 +247,6 @@ class FUNCUBE
     }
     
     action amateurCommunicationsFUNCUBE {
-        eq(1, duration);
-    }
-}
-
-class ConstantlyActivePayload
-{
-    Nanosatellite nanosat;
-    float consumptionRate;
-    
-    ConstantlyActivePayload(Nanosatellite n, float r)
-    {
-        nanosat = n;
-        consumptionRate = r;
-    }
-    
-    action alwaysOn {
         eq(1, duration);
     }
 }
@@ -477,6 +485,13 @@ TOPCAT::runExperimentTOPCAT
 
 JANUS::runExperimentLowPowerJANUS
 {
+    starts(effect object.nanosat.memory.produce data);
+    eq(data.quantity, 512);
+}
+
+JANUS::consumePowerWhileRunningLowJANUS
+{
+    contained_by(object.runExperimentLowPowerJANUS);
     bool continueLoopJL;
     if(continueLoopJL) {
         meets(effect object.runExperimentLowPowerJANUS next);
@@ -484,13 +499,18 @@ JANUS::runExperimentLowPowerJANUS
         starts(effect object.nanosat.mainBattery.consume power);
         eq(power.quantity, 22);
     }
-    starts(effect object.nanosat.memory.produce data);
-    eq(data.quantity, 512);
 }
 
 JANUS::runExperimentHighPowerJANUS
 {
+    starts(effect object.nanosat.memory.produce data);
+    eq(data.quantity, 512);
+}
+
+JANUS::consumePowerWhileRunningHighJANUS
+{
     contained_by(condition object.nanosat.topcat.state.Off);
+    contained_by(object.runExperimentLowPowerJANUS);
     contained_by(object.window.Available);
     bool continueLoopJH;
     if(continueLoopJH) {
@@ -499,8 +519,6 @@ JANUS::runExperimentHighPowerJANUS
         starts(effect object.nanosat.mainBattery.consume power);
         eq(power.quantity, 120);
     }
-    starts(effect object.nanosat.memory.produce data);
-    eq(data.quantity, 512);
 }
 
 MIC::turnOnMIC
