@@ -494,7 +494,7 @@ JANUS::consumePowerWhileRunningLowJANUS
     contained_by(object.runExperimentLowPowerJANUS);
     bool continueLoopJL;
     if(continueLoopJL) {
-        meets(effect object.runExperimentLowPowerJANUS next);
+        meets(effect object.consumePowerWhileRunningLowJANUS next);
         next.end <= 1440;
         starts(effect object.nanosat.mainBattery.consume power);
         eq(power.quantity, 22);
@@ -503,18 +503,18 @@ JANUS::consumePowerWhileRunningLowJANUS
 
 JANUS::runExperimentHighPowerJANUS
 {
+    contained_by(condition object.nanosat.topcat.state.Off);
     starts(effect object.nanosat.memory.produce data);
     eq(data.quantity, 512);
 }
 
 JANUS::consumePowerWhileRunningHighJANUS
 {
-    contained_by(condition object.nanosat.topcat.state.Off);
-    contained_by(object.runExperimentLowPowerJANUS);
+    contained_by(object.runExperimentHighPowerJANUS);
     contained_by(object.window.Available);
     bool continueLoopJH;
     if(continueLoopJH) {
-        meets(effect object.runExperimentHighPowerJANUS next);
+        meets(effect object.consumePowerWhileRunningHighJANUS next);
         next.end <= 1440;
         starts(effect object.nanosat.mainBattery.consume power);
         eq(power.quantity, 120);
