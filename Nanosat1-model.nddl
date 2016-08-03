@@ -14,7 +14,6 @@ class MIC;
 class FUNCUBE;
 class UVTRX;
 class ConstantlyActivePayload;
-class Payload;
 
 class Nanosatellite 
 {
@@ -46,8 +45,6 @@ class Nanosatellite
   	}
 }
 
-class Payload {}
-
 class C3D
 {
     Nanosatellite nanosat;
@@ -62,7 +59,7 @@ class C3D
     }
 }
 
-class Camera extends Payload
+class Camera
 {
     Window window;
     PayloadState state;
@@ -96,7 +93,7 @@ class Camera extends Payload
 	}
 }
 
-class RadiationMonitor extends Payload
+class RadiationMonitor
 {
     Window window;
     PayloadState state;
@@ -130,7 +127,7 @@ class RadiationMonitor extends Payload
 	}
 }
 
-class TOPCAT extends Payload
+class TOPCAT
 {
     Nanosatellite nanosat;
     PayloadState state;
@@ -154,7 +151,7 @@ class TOPCAT extends Payload
 	}
 	
 	action runExperimentTOPCAT {
-	    eq(1, duration);
+	    eq(40, duration);
 	}
 }
 
@@ -172,15 +169,23 @@ class JANUS extends Timeline
     }
     
     action runExperimentLowPowerJANUS {
-        eq(1, duration);
+        eq(35, duration);
     }
     
     action runExperimentHighPowerJANUS {
+        eq(20, duration);
+    }
+    
+    action consumePowerWhileRunningLowJANUS {
+        eq(1, duration);
+    }
+    
+    action consumePowerWhileRunningHighJANUS {
         eq(1, duration);
     }
 }
 
-class MIC extends Payload
+class MIC
 {
     Nanosatellite nanosat;
     PayloadState state;
@@ -204,11 +209,27 @@ class MIC extends Payload
 	}
 	
 	action runExperimentMIC {
-	    eq(1, duration);
+	    eq(15, duration);
 	}
 }
 
-class FUNCUBE extends Payload
+class ConstantlyActivePayload
+{
+    Nanosatellite nanosat;
+    float consumptionRate;
+    
+    ConstantlyActivePayload(Nanosatellite n, float r)
+    {
+        nanosat = n;
+        consumptionRate = r;
+    }
+    
+    action alwaysOn {
+        eq(1, duration);
+    }
+}
+
+class FUNCUBE
 {
     Nanosatellite nanosat;
     Window educationWindow;
@@ -226,22 +247,6 @@ class FUNCUBE extends Payload
     }
     
     action amateurCommunicationsFUNCUBE {
-        eq(1, duration);
-    }
-}
-
-class ConstantlyActivePayload extends Payload
-{
-    Nanosatellite nanosat;
-    float consumptionRate;
-    
-    ConstantlyActivePayload(Nanosatellite n, float r)
-    {
-        nanosat = n;
-        consumptionRate = r;
-    }
-    
-    action alwaysOn {
         eq(1, duration);
     }
 }
@@ -343,6 +348,7 @@ class UVTRX
 
 Camera::takePhoto
 {
+    starts(object.c3d.nanosat.uvtrx.downlinkWindow.Available);
     contained_by(object.window.Available);
     contained_by(condition object.state.On);
     met_by(object.runHouseKeepingMode);
@@ -480,30 +486,40 @@ TOPCAT::runExperimentTOPCAT
 
 JANUS::runExperimentLowPowerJANUS
 {
+    starts(effect object.nanosat.memory.produce data);
+    eq(data.quantity, 512);
+}
+
+JANUS::consumePowerWhileRunningLowJANUS
+{
+    contained_by(object.runExperimentLowPowerJANUS);
     bool continueLoopJL;
     if(continueLoopJL) {
-        meets(effect object.runExperimentLowPowerJANUS next);
+        meets(effect object.consumePowerWhileRunningLowJANUS next);
         next.end <= 1440;
         starts(effect object.nanosat.mainBattery.consume power);
         eq(power.quantity, 22);
     }
-    starts(effect object.nanosat.memory.produce data);
-    eq(data.quantity, 512);
 }
 
 JANUS::runExperimentHighPowerJANUS
 {
     contained_by(condition object.nanosat.topcat.state.Off);
+    starts(effect object.nanosat.memory.produce data);
+    eq(data.quantity, 512);
+}
+
+JANUS::consumePowerWhileRunningHighJANUS
+{
+    contained_by(object.runExperimentHighPowerJANUS);
     contained_by(object.window.Available);
     bool continueLoopJH;
     if(continueLoopJH) {
-        meets(effect object.runExperimentHighPowerJANUS next);
+        meets(effect object.consumePowerWhileRunningHighJANUS next);
         next.end <= 1440;
         starts(effect object.nanosat.mainBattery.consume power);
         eq(power.quantity, 120);
     }
-    starts(effect object.nanosat.memory.produce data);
-    eq(data.quantity, 512);
 }
 
 MIC::turnOnMIC

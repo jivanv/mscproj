@@ -411,11 +411,13 @@ leq(rmUseBattery.end, 1440);
 
 // Take a photo of the UK ground station
 goal(nanosat.c3d.camera.takePhoto takePhoto);
-takePhoto.start = camWindow1.start;
+leq(0, takePhoto.start);
+leq(takePhoto.end, 1440);
 
 // Measure radiation when in the SAA
-goal(nanosat.c3d.rm.measureRadiation measureRad);
-measureRad.start = SAA1.start;
+goal(nanosat.c3d.rm.measureRadiation measureRadiation);
+leq(0, measureRadiation.start);
+leq(measureRadiation.end, 1440);
 
 // Perform a TOPCAT experiment
 goal(nanosat.topcat.runExperimentTOPCAT TOPCATexperiment);

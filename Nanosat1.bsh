@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import org.ops.ui.main.swing.PSDesktop;
 import org.ops.ui.mouse.swing.*;
 import org.ops.ui.gantt.swing.*;
-import org.ops.ui.gantt.model.*;
 import org.ops.ui.rchart.swing.*;
 import org.ops.ui.utils.swing.Util;
 
@@ -48,60 +47,6 @@ void showGantt()
     ganttFrame.setSize(700,300);
     PSGantt gantt = (PSGantt)ganttFrame.getContentPane().getComponent(0);
     gantt.addMouseListener(dp);         
-}
-
-void showGanttAmendedAgain()
-    throws Exception
-{
-    ActionDetailsPanel dp = (ActionDetailsPanel)desktop.makeDetailsFrame().getContentPane().getComponent(0);
-    JInternalFrame ganttFrame = desktop.makeResourceGanttFrame("Payload",start,end);
-    ganttFrame.setLocation(0,0);
-    ganttFrame.setSize(700,300);
-    PSGantt gantt = (PSGantt)ganttFrame.getContentPane().getComponent(0);
-    gantt.addMouseListener(dp);         
-}
-
-void showGanttAmended()
-    throws Exception
-{    
-    PSGanttPSEModel model = new PSGanttPSEModel(psengine,start,"Camera",1);
-    PSGantt gantt = new PSEGantt(model,start,end);
-    
-    PSGanttPSEModel model2 = new PSGanttPSEModel(psengine,start,"RadiationMonitor",1);
-    PSGantt gantt2 = new PSEGantt(model2,start,end);
-    
-    PSGanttPSEModel model3 = new PSGanttPSEModel(psengine,start,"STX",1);
-    PSGantt gantt3 = new PSEGantt(model3,start,end);
-    
-    PSGanttPSEModel model4 = new PSGanttPSEModel(psengine,start,"UVTRX",1);
-    PSGantt gantt4 = new PSEGantt(model4,start,end);
-    
-    PSGanttPSEModel model5 = new PSGanttPSEModel(psengine,start,"FUNCUBE",1);
-    PSGantt gantt5 = new PSEGantt(model5,start,end);
-    
-    PSGanttPSEModel model6 = new PSGanttPSEModel(psengine,start,"TOPCAT",1);
-    PSGantt gantt6 = new PSEGantt(model6,start,end);
-    
-    PSGanttPSEModel model7 = new PSGanttPSEModel(psengine,start,"JANUS",1);
-    PSGantt gantt7 = new PSEGantt(model7,start,end);
-    
-    PSGanttPSEModel model8 = new PSGanttPSEModel(psengine,start,"MIC",1);
-    PSGantt gantt8 = new PSEGantt(model8,start,end);
-    
-    PSGanttPSEModel model9 = new PSGanttPSEModel(psengine,start,"ConstantlyActivePayload",1);
-    PSGantt gantt9 = new PSEGantt(model9,start,end);
-
-    JInternalFrame frame = desktop.makeNewFrame("GANTT");
-    Container container = frame.getContentPane();
-    container.add(gantt);
-    container.add(gantt2);
-    container.add(gantt3);
-    container.add(gantt4);
-    container.add(gantt5);
-    container.add(gantt6);
-    container.add(gantt7);
-    container.add(gantt8);
-    container.add(gantt9);
 }
 
 void showBatteryActivity()
@@ -365,10 +310,3 @@ void showActivities()
     frame.getContentPane().add(scrollpane);    	
  	frame.setSize(frame.getSize()); // Force repaint
 }
-
-// Show results right away:
-//showPlan();
-//print("Battery levels: ");
-//printBatteryLevels();
-//print("Memory levels: ");
-//printMemoryLevels();
