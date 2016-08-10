@@ -62,15 +62,15 @@ class C3D extends Timeline
     }
     
     action turnOnC3D {
-	    eq(1, duration);
+	    eq(10, duration);
 	}
 	
 	action turnOffC3D {
-	    eq(1, duration);
+	    eq(30, duration);
 	}
     
     action takePhoto {
-	    eq(30, duration);
+	    eq(1800, duration);
 	}
 	
 	action runHouseKeepingModeBeforeCamera {
@@ -82,7 +82,7 @@ class C3D extends Timeline
 	}
 	
 	action measureRadiation {
-	    eq(40, duration);
+	    eq(2400, duration);
 	}
 }
 
@@ -112,11 +112,11 @@ class TOPCAT
     }
     
     action turnOnTOPCAT{
-	    eq(15, duration);
+	    eq(900, duration);
 	}
 	
 	action turnOffTOPCAT{
-	    eq(1, duration);
+	    eq(30, duration);
 	}
 	
 	action consumePowerWhileOnTOPCAT {
@@ -124,7 +124,7 @@ class TOPCAT
 	}
 	
 	action runExperimentTOPCAT {
-	    eq(40, duration);
+	    eq(2400, duration);
 	}
 }
 
@@ -142,11 +142,11 @@ class JANUS extends Timeline
     }
     
     action runExperimentLowPowerJANUS {
-        eq(35, duration);
+        eq(2100, duration);
     }
     
     action runExperimentHighPowerJANUS {
-        eq(20, duration);
+        eq(1200, duration);
     }
     
     action consumePowerWhileRunningLowJANUS {
@@ -170,11 +170,11 @@ class MIC
     }
     
     action turnOnMIC{
-	    eq(1, duration);
+	    eq(30, duration);
 	}
 	
 	action turnOffMIC{
-	    eq(1, duration);
+	    eq(30, duration);
 	}
 	
 	action consumePowerWhileOnMIC {
@@ -182,7 +182,7 @@ class MIC
 	}
 	
 	action runExperimentMIC {
-	    eq(15, duration);
+	    eq(900, duration);
 	}
 }
 
@@ -229,9 +229,9 @@ class Battery extends Reservoir
     string profileType;
     
     // initial capacity, min, max, max production rate, max production overall, max consumption rate, max consumption overall
-	Battery(float ic, float min, float max, float pr_max, float p_max, float cr_max, float c_max)
+	Battery(float ic, float min, float max)
 	{
-		super(ic, min, max, pr_max, p_max, cr_max, c_max);
+		super(ic, min, max);
 		profileType="IncrementalFlowProfile";
 	}
 }
@@ -325,9 +325,9 @@ C3DPowerConsumption::consumePowerWhileOnC3D
     bool continueLoopC;
     if(continueLoopC) {
         meets(effect object.consumePowerWhileOnC3D next);
-        next.end <= 1440;
+        next.end <= 86400;
         starts(effect object.c3d.nanosat.mainBattery.consume p);
-        eq(p.quantity, 54);
+        eq(p.quantity, 900);
     }    
 }
 
@@ -364,7 +364,7 @@ C3D::runHouseKeepingModeBeforeCamera
     ends(effect object.nanosat.memory.produce data);
     eq(data.quantity, 256);
     starts(effect object.nanosat.mainBattery.consume power);
-    eq(power.quantity, 54);
+    eq(power.quantity, 900);
 }
 
 C3D::measureRadiation
@@ -383,7 +383,7 @@ C3D::runHouseKeepingModeBeforeRM
     ends(effect object.nanosat.memory.produce data);
     eq(data.quantity, 256);
     starts(effect object.nanosat.mainBattery.consume power);
-    eq(power.quantity, 54);
+    eq(power.quantity, 900);
 }
 
 TOPCAT::turnOnTOPCAT
@@ -406,9 +406,9 @@ TOPCAT::consumePowerWhileOnTOPCAT
     bool continueLoopT;
     if(continueLoopT) {
         meets(effect object.consumePowerWhileOnTOPCAT next);
-        next.end <= 1440;
+        next.end <= 86400;
         starts(effect object.nanosat.mainBattery.consume power);
-        eq(power.quantity, 96);
+        eq(power.quantity, 1600);
     }
 }
 
@@ -433,9 +433,9 @@ JANUS::consumePowerWhileRunningLowJANUS
     bool continueLoopJL;
     if(continueLoopJL) {
         meets(effect object.consumePowerWhileRunningLowJANUS next);
-        next.end <= 1440;
+        next.end <= 86400;
         starts(effect object.nanosat.mainBattery.consume power);
-        eq(power.quantity, 46.8);
+        eq(power.quantity, 780);
     }
 }
 
@@ -456,9 +456,9 @@ JANUS::consumePowerWhileRunningHighJANUS
     bool continueLoopJH;
     if(continueLoopJH) {
         meets(effect object.consumePowerWhileRunningHighJANUS next);
-        next.end <= 1440;
+        next.end <= 86400;
         starts(effect object.nanosat.mainBattery.consume power);
-        eq(power.quantity, 144);
+        eq(power.quantity, 2400);
     }
 }
 
@@ -483,9 +483,9 @@ MIC::consumePowerWhileOnMIC
     bool continueLoopM;
     if(continueLoopM) {
         meets(effect object.consumePowerWhileOnMIC next);
-        next.end <= 1440;
+        next.end <= 86400;
         starts(effect object.nanosat.mainBattery.consume power);
-        eq(power.quantity, 60);
+        eq(power.quantity, 1000);
     }
 }
 
@@ -506,9 +506,9 @@ FUNCUBE::educationalCommunicationsFUNCUBE
     bool continueLoopFE;
     if(continueLoopFE) {
         meets(effect object.educationalCommunicationsFUNCUBE next);
-        next.end <= 1440;
+        next.end <= 86400;
         starts(effect object.nanosat.mainBattery.consume power);
-        eq(power.quantity, 60.84);
+        eq(power.quantity, 1014);
     }
 }
 
@@ -518,9 +518,9 @@ FUNCUBE::amateurCommunicationsFUNCUBE
     bool continueLoopFA;
     if(continueLoopFA) {
         meets(effect object.amateurCommunicationsFUNCUBE next);
-        next.end <= 1440;
+        next.end <= 86400;
         starts(effect object.nanosat.mainBattery.consume power);
-        eq(power.quantity, 58.2);
+        eq(power.quantity, 970);
     }
 }
 
@@ -529,7 +529,7 @@ ConstantlyActivePayload::alwaysOn
     bool continueLoopCAP;
     if(continueLoopCAP) {
         meets(effect object.alwaysOn next);
-        next.end <= 1440;
+        next.end <= 86400;
         starts(effect object.nanosat.mainBattery.consume power);
         eq(power.quantity, object.consumptionRate);
     }
@@ -541,9 +541,9 @@ SolarPanel::chargeBattery
   	bool continueLoopB;
     if(continueLoopB) {
         starts(effect object.nanosat.mainBattery.produce power);
-        eq(power.quantity, [0,390]);
+        eq(power.quantity, [0,6500]);
         meets(effect object.chargeBattery next);
-        next.end <= 1440;
+        next.end <= 86400;
     }
 }
 
@@ -553,11 +553,11 @@ STX::downlinkData
     bool continueLoopS;
     if(continueLoopS) {
         meets(effect object.downlinkData next);
-        next.end <= 1440;
+        next.end <= 86400;
         starts(effect object.nanosat.memory.consume data);
         eq(data.quantity, [0,4194304]);
         starts(effect object.nanosat.mainBattery.consume consumption);
-        eq(consumption.quantity, 163.2);
+        eq(consumption.quantity, 5440);
     }
 }
 
@@ -567,11 +567,11 @@ UVTRX::downlinkData
     bool continueLoopUD;
     if(continueLoopUD) {
         meets(effect object.downlinkData next);
-        next.end <= 1440;
+        next.end <= 86400;
         starts(effect object.nanosat.memory.consume data);
         eq(data.quantity, [0,72000]);
         starts(effect object.nanosat.mainBattery.consume consumption);
-        eq(consumption.quantity, 23.4);
+        eq(consumption.quantity, 390);
     }
 }
 
@@ -581,8 +581,8 @@ UVTRX::beaconSignal
     bool continueLoopUB;
     if(continueLoopUB) {
         meets(effect object.beaconSignal next);
-        next.end <= 1440;
+        next.end <= 86400;
         starts(effect object.nanosat.mainBattery.consume consumption);
-        eq(consumption.quantity, 17.7);
+        eq(consumption.quantity, 295);
     }
 }

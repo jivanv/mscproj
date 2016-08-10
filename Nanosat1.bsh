@@ -23,7 +23,7 @@ try {
 	solver = desktop.makeSolver(
 		"PlannerConfig.xml", // config
 		0,   // startHorizon
-        1440  // endHorizon
+        86400  // endHorizon
     );
     
     // This will display a dialog that allows the user to run the solver interactively
@@ -296,7 +296,7 @@ void showActivities()
 		data.remove(bestIdx);
 	}
 
-	frame = desktop.makeNewFrame("Timeline");
+	frame = desktop.makeNewFrame("Activity Timetable");
 	table = new JTable(new Util.MatrixTableModel(sortedData,columnNames));
 	scrollpane = new JScrollPane(table);
     frame.getContentPane().add(scrollpane);    	
