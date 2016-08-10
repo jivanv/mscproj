@@ -1,26 +1,26 @@
 <Solver name="DefaultTestSolver">
   <FlawFilter component="HorizonFilter" policy="PartiallyContained"/>
-
+  
   <ThreatManager defaultPriority="0">
     <FlawHandler component="StandardThreatHandler"/>
-    <FlawFilter class-match="Reservoir"/>
+    <FlawFilter class-match="Battery"/>
   </ThreatManager>
-
+  
   <OpenConditionManager defaultPriority="0">
     <FlawHandler component="StandardOpenConditionHandler"/>
   </OpenConditionManager>
-
+  
   <UnboundVariableManager defaultPriority="0">
     <FlawFilter var-match="end"/>
     <FlawFilter component="InfiniteDynamicFilter"/>
     <FlawHandler component="StandardVariableHandler"/>
-    <FlawHandler var-match="start" component="StandardVariableHandler" priority="9999"/>
+    <FlawHandler class="Battery" predicate="produce" variable="quantity" component="Max"/>
+    <FlawHandler class="Memory" predicate="consume" variable="quantity" component="Max"/>
     <FlawHandler class="SolarPanel" predicate="chargeBattery" variable="continueLoopB" component="Max"/>
     <FlawHandler class="STX" predicate="downlinkData" variable="continueLoopS" component="Max"/>
     <FlawHandler class="UVTRX" predicate="downlinkData" variable="continueLoopUD" component="Max"/>
     <FlawHandler class="UVTRX" predicate="beaconSignal" variable="continueLoopUB" component="Max"/>
-    <FlawHandler class="Camera" predicate="consumePowerWhileOnC3DCam" variable="continueLoopC" component="Max"/>
-    <FlawHandler class="RadiationMonitor" predicate="consumePowerWhileOnC3Drm" variable="continueLoopRM" component="Max"/>
+    <FlawHandler class="C3DPowerConsumption" predicate="consumePowerWhileOnC3D" variable="continueLoopC" component="Max"/>
     <FlawHandler class="TOPCAT" predicate="consumePowerWhileOnTOPCAT" variable="continueLoopT" component="Max"/>
     <FlawHandler class="JANUS" predicate="consumePowerWhileRunningHighJANUS" variable="continueLoopJH" component="Max"/>
     <FlawHandler class="JANUS" predicate="consumePowerWhileRunningLowJANUS" variable="continueLoopJL" component="Max"/>
