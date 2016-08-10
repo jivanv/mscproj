@@ -3,7 +3,7 @@
 // Create a planner configuration instance in PLASMA.
 
 // Setting up the nanosatellite with battery
-Battery battery = new Battery(108000, 0, 108000, +inff, +inff, 223.2, +inff);
+Battery battery = new Battery(108000, 0, 108000);
 Memory memory = new Memory(0, 0, 4194304);
 Nanosatellite nanosat = new Nanosatellite(battery, memory);
 

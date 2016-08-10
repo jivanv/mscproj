@@ -229,9 +229,9 @@ class Battery extends Reservoir
     string profileType;
     
     // initial capacity, min, max, max production rate, max production overall, max consumption rate, max consumption overall
-	Battery(float ic, float min, float max, float pr_max, float p_max, float cr_max, float c_max)
+	Battery(float ic, float min, float max)
 	{
-		super(ic, min, max, pr_max, p_max, cr_max, c_max);
+		super(ic, min, max);
 		profileType="IncrementalFlowProfile";
 	}
 }
@@ -502,6 +502,7 @@ MIC::runExperimentMIC
 
 FUNCUBE::educationalCommunicationsFUNCUBE
 {
+    after(object.nanosat.janus.runExperimentHighPowerJANUS);
     contained_by(condition object.educationWindow.Available);
     bool continueLoopFE;
     if(continueLoopFE) {
@@ -514,6 +515,7 @@ FUNCUBE::educationalCommunicationsFUNCUBE
 
 FUNCUBE::amateurCommunicationsFUNCUBE
 {
+    after(object.nanosat.janus.runExperimentHighPowerJANUS);
     contained_by(condition object.amateurWindow.Available);
     bool continueLoopFA;
     if(continueLoopFA) {
@@ -557,7 +559,7 @@ STX::downlinkData
         starts(effect object.nanosat.memory.consume data);
         eq(data.quantity, [0,4194304]);
         starts(effect object.nanosat.mainBattery.consume consumption);
-        eq(consumption.quantity, 163.2);
+        eq(consumption.quantity, 326.4);
     }
 }
 

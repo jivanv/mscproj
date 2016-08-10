@@ -296,7 +296,7 @@ void showActivities()
 		data.remove(bestIdx);
 	}
 
-	frame = desktop.makeNewFrame("Timeline");
+	frame = desktop.makeNewFrame("Activity Timetable");
 	table = new JTable(new Util.MatrixTableModel(sortedData,columnNames));
 	scrollpane = new JScrollPane(table);
     frame.getContentPane().add(scrollpane);    	
@@ -379,7 +379,7 @@ void showRadioActivity()
 		data.remove(bestIdx);
 	}
 
-	frame = desktop.makeNewFrame("Timeline");
+	frame = desktop.makeNewFrame("Radio Activity");
 	table = new JTable(new Util.MatrixTableModel(sortedData,columnNames));
 	scrollpane = new JScrollPane(table);
     frame.getContentPane().add(scrollpane);    	

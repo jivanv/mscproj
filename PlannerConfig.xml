@@ -3,7 +3,6 @@
   
   <ThreatManager defaultPriority="0">
     <FlawHandler component="StandardThreatHandler"/>
-    <FlawFilter class-match="Battery"/>
   </ThreatManager>
   
   <OpenConditionManager defaultPriority="0">
@@ -30,3 +29,4 @@
     <FlawHandler class="ConstantlyActivePayload" predicate="alwaysOn" variable="continueLoopCAP" component="Max"/>
   </UnboundVariableManager>
 </Solver>
+
