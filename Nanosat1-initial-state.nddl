@@ -19,6 +19,14 @@ fact(nanosat.mic.state.Off mOff);
 mOff.start = 0;
 
 // Establish the windows of availability
+fact(nanosat.mic.window.Available micwindow);
+micwindow.start = 0;
+micwindow.end = 1440;
+
+fact(nanosat.topcat.window.Available topcatwindow);
+topcatwindow.start = 0;
+topcatwindow.end = 1440;
+
 fact(nanosat.c3d.camWindow.Available camWindow1);
 fact(nanosat.c3d.camWindow.Available camWindow2);
 fact(nanosat.c3d.camWindow.Available camWindow3);
@@ -115,68 +123,6 @@ SAAjanushighpower7.end = 926;
 SAAjanushighpower8.start = 1433;
 SAAjanushighpower8.end = 1440;
 
-fact(nanosat.panel.window.Available panelWindow1);
-fact(nanosat.panel.window.Available panelWindow2);
-fact(nanosat.panel.window.Available panelWindow3);
-fact(nanosat.panel.window.Available panelWindow4);
-fact(nanosat.panel.window.Available panelWindow5);
-fact(nanosat.panel.window.Available panelWindow6);
-fact(nanosat.panel.window.Available panelWindow7);
-fact(nanosat.panel.window.Available panelWindow8);
-fact(nanosat.panel.window.Available panelWindow9);
-fact(nanosat.panel.window.Available panelWindow10);
-fact(nanosat.panel.window.Available panelWindow11);
-fact(nanosat.panel.window.Available panelWindow12);
-fact(nanosat.panel.window.Available panelWindow13);
-fact(nanosat.panel.window.Available panelWindow14);
-fact(nanosat.panel.window.Available panelWindow15);
-panelWindow1.start = 30;
-panelWindow1.end = 77;
-panelWindow2.start = 127;
-panelWindow2.end = 174;
-panelWindow3.start = 224;
-panelWindow3.end = 271;
-panelWindow4.start = 322;
-panelWindow4.end = 368;
-panelWindow5.start = 419;
-panelWindow5.end = 465;
-panelWindow6.start = 516;
-panelWindow6.end = 562;
-panelWindow7.start = 613;
-panelWindow7.end = 659;
-panelWindow8.start = 709;
-panelWindow8.end = 757;
-panelWindow9.start = 807;
-panelWindow9.end = 854;
-panelWindow10.start = 904;
-panelWindow10.end = 951;
-panelWindow11.start = 1001;
-panelWindow11.end = 1048;
-panelWindow12.start = 1098;
-panelWindow12.end = 1145;
-panelWindow13.start = 1196;
-panelWindow13.end = 1242;
-panelWindow14.start = 1293;
-panelWindow14.end = 1339;
-panelWindow15.start = 1390;
-panelWindow15.end = 1440;
-
-fact(nanosat.stx.window.Available downlinkWindowCapeTown1);
-fact(nanosat.stx.window.Available downlinkWindowCapeTown2);
-fact(nanosat.stx.window.Available downlinkWindowCapeTown3);
-fact(nanosat.stx.window.Available downlinkWindowCapeTown4);
-fact(nanosat.stx.window.Available downlinkWindowCapeTown5);
-downlinkWindowCapeTown1.start = 0;
-downlinkWindowCapeTown1.end = 6;
-downlinkWindowCapeTown2.start = 533;
-downlinkWindowCapeTown2.end = 544;
-downlinkWindowCapeTown3.start = 627;
-downlinkWindowCapeTown3.end = 640;
-downlinkWindowCapeTown4.start = 1338;
-downlinkWindowCapeTown4.end = 1351;
-downlinkWindowCapeTown5.start = 1434;
-downlinkWindowCapeTown5.end = 1440;
-
 fact(nanosat.uvtrx.downlinkWindow.Available downlinkWindowUK1);
 fact(nanosat.uvtrx.downlinkWindow.Available downlinkWindowUK2);
 fact(nanosat.uvtrx.downlinkWindow.Available downlinkWindowUK3);
@@ -212,6 +158,7 @@ beaconWindow5.end = 1268;
 beaconWindow6.start = 1280;
 beaconWindow6.end = 1440;
 
+fact(nanosat.funcube2.amateurWindow.Available amateurWindow0);
 fact(nanosat.funcube2.amateurWindow.Available amateurWindow1);
 fact(nanosat.funcube2.amateurWindow.Available amateurWindow2);
 fact(nanosat.funcube2.amateurWindow.Available amateurWindow3);
@@ -226,6 +173,8 @@ fact(nanosat.funcube2.amateurWindow.Available amateurWindow11);
 fact(nanosat.funcube2.amateurWindow.Available amateurWindow12);
 fact(nanosat.funcube2.amateurWindow.Available amateurWindow13);
 fact(nanosat.funcube2.amateurWindow.Available amateurWindow14);
+amateurWindow0.start = 0;
+amateurWindow0.end = 29;
 amateurWindow1.start = 78;
 amateurWindow1.end = 126;
 amateurWindow2.start = 175;
@@ -301,7 +250,68 @@ educationWindow14.end = 1339;
 educationWindow15.start = 1390;
 educationWindow15.end = 1440;
 
-// Charge the battery during hours of sunlight
+fact(nanosat.stx.window.Available downlinkWindowCapeTown1);
+fact(nanosat.stx.window.Available downlinkWindowCapeTown2);
+fact(nanosat.stx.window.Available downlinkWindowCapeTown3);
+fact(nanosat.stx.window.Available downlinkWindowCapeTown4);
+fact(nanosat.stx.window.Available downlinkWindowCapeTown5);
+downlinkWindowCapeTown1.start = 0;
+downlinkWindowCapeTown1.end = 6;
+downlinkWindowCapeTown2.start = 533;
+downlinkWindowCapeTown2.end = 544;
+downlinkWindowCapeTown3.start = 627;
+downlinkWindowCapeTown3.end = 640;
+downlinkWindowCapeTown4.start = 1338;
+downlinkWindowCapeTown4.end = 1351;
+downlinkWindowCapeTown5.start = 1434;
+downlinkWindowCapeTown5.end = 1440;
+
+fact(nanosat.panel.window.Available panelWindow1);
+fact(nanosat.panel.window.Available panelWindow2);
+fact(nanosat.panel.window.Available panelWindow3);
+fact(nanosat.panel.window.Available panelWindow4);
+fact(nanosat.panel.window.Available panelWindow5);
+fact(nanosat.panel.window.Available panelWindow6);
+fact(nanosat.panel.window.Available panelWindow7);
+fact(nanosat.panel.window.Available panelWindow8);
+fact(nanosat.panel.window.Available panelWindow9);
+fact(nanosat.panel.window.Available panelWindow10);
+fact(nanosat.panel.window.Available panelWindow11);
+fact(nanosat.panel.window.Available panelWindow12);
+fact(nanosat.panel.window.Available panelWindow13);
+fact(nanosat.panel.window.Available panelWindow14);
+fact(nanosat.panel.window.Available panelWindow15);
+panelWindow1.start = 30;
+panelWindow1.end = 77;
+panelWindow2.start = 127;
+panelWindow2.end = 174;
+panelWindow3.start = 224;
+panelWindow3.end = 271;
+panelWindow4.start = 322;
+panelWindow4.end = 368;
+panelWindow5.start = 419;
+panelWindow5.end = 465;
+panelWindow6.start = 516;
+panelWindow6.end = 562;
+panelWindow7.start = 613;
+panelWindow7.end = 659;
+panelWindow8.start = 709;
+panelWindow8.end = 757;
+panelWindow9.start = 807;
+panelWindow9.end = 854;
+panelWindow10.start = 904;
+panelWindow10.end = 951;
+panelWindow11.start = 1001;
+panelWindow11.end = 1048;
+panelWindow12.start = 1098;
+panelWindow12.end = 1145;
+panelWindow13.start = 1196;
+panelWindow13.end = 1242;
+panelWindow14.start = 1293;
+panelWindow14.end = 1339;
+panelWindow15.start = 1390;
+panelWindow15.end = 1440;
+
 goal(nanosat.panel.chargeBattery charge1);
 goal(nanosat.panel.chargeBattery charge2);
 goal(nanosat.panel.chargeBattery charge3);
@@ -317,38 +327,36 @@ goal(nanosat.panel.chargeBattery charge12);
 goal(nanosat.panel.chargeBattery charge13);
 goal(nanosat.panel.chargeBattery charge14);
 goal(nanosat.panel.chargeBattery charge15);
-charge1.start = panelWindow1.start;
-charge2.start = panelWindow2.start;
-charge3.start = panelWindow3.start;
-charge4.start = panelWindow4.start;
-charge5.start = panelWindow5.start;
-charge6.start = panelWindow6.start;
-charge7.start = panelWindow7.start;
-charge8.start = panelWindow8.start;
-charge9.start = panelWindow9.start;
-charge10.start = panelWindow10.start;
-charge11.start = panelWindow11.start;
-charge12.start = panelWindow12.start;
-charge13.start = panelWindow13.start;
-charge14.start = panelWindow14.start;
-charge15.start = panelWindow15.start;
-
-// Downlink at all available opportunities - Cape Town
-goal(nanosat.stx.downlinkData downlinkCapeTown1);
-goal(nanosat.stx.downlinkData downlinkCapeTown2);
-goal(nanosat.stx.downlinkData downlinkCapeTown3);
-goal(nanosat.stx.downlinkData downlinkCapeTown4);
-goal(nanosat.stx.downlinkData downlinkCapeTown5);
-leq(downlinkWindowCapeTown1.start, downlinkCapeTown1.start);
-leq(downlinkCapeTown1.end, downlinkWindowCapeTown1.end);
-leq(downlinkWindowCapeTown2.start, downlinkCapeTown2.start);
-leq(downlinkCapeTown2.end, downlinkWindowCapeTown2.end);
-leq(downlinkWindowCapeTown3.start, downlinkCapeTown3.start);
-leq(downlinkCapeTown3.end, downlinkWindowCapeTown3.end);
-leq(downlinkWindowCapeTown4.start, downlinkCapeTown4.start);
-leq(downlinkCapeTown4.end, downlinkWindowCapeTown4.end);
-leq(downlinkWindowCapeTown5.start, downlinkCapeTown5.start);
-leq(downlinkCapeTown5.end, downlinkWindowCapeTown5.end);
+leq(panelWindow1.start, charge1.start);
+leq(charge1.end, panelWindow1.end);
+leq(panelWindow2.start, charge2.start);
+leq(charge2.end, panelWindow2.end);
+leq(panelWindow3.start, charge3.start);
+leq(charge3.end, panelWindow3.end);
+leq(panelWindow4.start, charge4.start);
+leq(charge4.end, panelWindow4.end);
+leq(panelWindow5.start, charge5.start);
+leq(charge5.end, panelWindow5.end);
+leq(panelWindow6.start, charge6.start);
+leq(charge6.end, panelWindow6.end);
+leq(panelWindow7.start, charge7.start);
+leq(charge7.end, panelWindow7.end);
+leq(panelWindow8.start, charge8.start);
+leq(charge8.end, panelWindow8.end);
+leq(panelWindow9.start, charge9.start);
+leq(charge9.end, panelWindow9.end);
+leq(panelWindow10.start, charge10.start);
+leq(charge10.end, panelWindow10.end);
+leq(panelWindow11.start, charge11.start);
+leq(charge11.end, panelWindow11.end);
+leq(panelWindow12.start, charge12.start);
+leq(charge12.end, panelWindow12.end);
+leq(panelWindow13.start, charge13.start);
+leq(charge13.end, panelWindow13.end);
+leq(panelWindow14.start, charge14.start);
+leq(charge14.end, panelWindow14.end);
+leq(panelWindow15.start, charge15.start);
+leq(charge15.end, panelWindow15.end);
 
 // Downlink at all available opportunities - UK
 goal(nanosat.uvtrx.downlinkData downlinkUK1);
@@ -387,12 +395,44 @@ leq(beacon5.end, beaconWindow5.end);
 leq(beaconWindow6.start, beacon6.start);
 leq(beacon6.end, beaconWindow6.end);
 
+// Downlink at all available opportunities - Cape Town
+goal(nanosat.stx.downlinkData downlinkCapeTown1);
+goal(nanosat.stx.downlinkData downlinkCapeTown2);
+goal(nanosat.stx.downlinkData downlinkCapeTown3);
+goal(nanosat.stx.downlinkData downlinkCapeTown4);
+goal(nanosat.stx.downlinkData downlinkCapeTown5);
+leq(downlinkWindowCapeTown1.start, downlinkCapeTown1.start);
+leq(downlinkCapeTown1.end, downlinkWindowCapeTown1.end);
+leq(downlinkWindowCapeTown2.start, downlinkCapeTown2.start);
+leq(downlinkCapeTown2.end, downlinkWindowCapeTown2.end);
+leq(downlinkWindowCapeTown3.start, downlinkCapeTown3.start);
+leq(downlinkCapeTown3.end, downlinkWindowCapeTown3.end);
+leq(downlinkWindowCapeTown4.start, downlinkCapeTown4.start);
+leq(downlinkCapeTown4.end, downlinkWindowCapeTown4.end);
+leq(downlinkWindowCapeTown5.start, downlinkCapeTown5.start);
+leq(downlinkCapeTown5.end, downlinkWindowCapeTown5.end);
+
 // EXPERIMENTAL PAYLOADS
 
-// If C3D camera/radiation monitor is on, consume power
-fact(nanosat.c3d.power.consumePowerWhileOnC3D c3dUseBattery);
-leq(0, c3dUseBattery.start);
-leq(c3dUseBattery.end, 1440);
+// Perform a high power JANUS experiment
+goal(nanosat.janus.runExperimentHighPowerJANUS JANUSexperimentHighPower);
+leq(0, JANUSexperimentHighPower.start);
+leq(JANUSexperimentHighPower.end, 1440);
+
+// Perform a low power JANUS experiment
+goal(nanosat.janus.runExperimentLowPowerJANUS JANUSexperimentLowPower);
+leq(0, JANUSexperimentLowPower.start);
+leq(JANUSexperimentLowPower.end, 1440);
+
+// Perform a TOPCAT experiment
+goal(nanosat.topcat.runExperimentTOPCAT TOPCATexperiment);
+leq(0, TOPCATexperiment.start);
+leq(TOPCATexperiment.end, 1440);
+
+// Perform a MIC experiment
+goal(nanosat.mic.runExperimentMIC MICexperiment);
+leq(0, MICexperiment.start);
+leq(MICexperiment.end, 1440);
 
 // Take a photo of the UK ground station
 goal(nanosat.c3d.takePhoto takePhoto);
@@ -403,36 +443,6 @@ leq(takePhoto.end, 1440);
 goal(nanosat.c3d.measureRadiation measureRadiation);
 leq(0, measureRadiation.start);
 leq(measureRadiation.end, 1440);
-
-// Perform a TOPCAT experiment
-goal(nanosat.topcat.runExperimentTOPCAT TOPCATexperiment);
-leq(0, TOPCATexperiment.start);
-leq(TOPCATexperiment.end, 1440);
-
-// If TOPCAT is on, consume power
-fact(nanosat.topcat.consumePowerWhileOnTOPCAT TOPCATuseBattery);
-leq(0, TOPCATuseBattery.start);
-leq(TOPCATuseBattery.end, 1440);
-
-// Perform a low power JANUS experiment
-goal(nanosat.janus.runExperimentLowPowerJANUS JANUSexperimentLowPower);
-leq(0, JANUSexperimentLowPower.start);
-leq(JANUSexperimentLowPower.end, 1440);
-
-// Perform a high power JANUS experiment
-goal(nanosat.janus.runExperimentHighPowerJANUS JANUSexperimentHighPower);
-leq(0, JANUSexperimentHighPower.start);
-leq(JANUSexperimentHighPower.end, 1440);
-
-// Perform a MIC experiment
-goal(nanosat.mic.runExperimentMIC MICexperiment);
-leq(0, MICexperiment.start);
-leq(MICexperiment.end, 1440);
-
-// If MIC is on, consume power
-fact(nanosat.mic.consumePowerWhileOnMIC MICuseBattery);
-leq(0, MICuseBattery.start);
-leq(MICuseBattery.end, 1440);
 
 // The EPS, SWB, BAT, OBC and ADCS payloads are always on and consuming power
 fact(nanosat.constantpayloads.alwaysOn payloadsAlwaysOn);
@@ -471,6 +481,7 @@ FUNCUBEeducationalComms14.start = educationWindow14.start;
 FUNCUBEeducationalComms15.start = educationWindow15.start;
 
 // FUNCUBE amateur communications
+goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms0);
 goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms1);
 goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms2);
 goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms3);
@@ -485,6 +496,7 @@ goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms11);
 goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms12);
 goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms13);
 goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms14);
+FUNCUBEamateurComms0.start = amateurWindow0.start;
 FUNCUBEamateurComms1.start = amateurWindow1.start;
 FUNCUBEamateurComms2.start = amateurWindow2.start;
 FUNCUBEamateurComms3.start = amateurWindow3.start;

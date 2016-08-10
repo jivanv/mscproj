@@ -205,65 +205,25 @@ void showPlan()
  	frame.setSize(frame.getSize()); // Force repaint
 }
 
-// Amended helper method for activities
-void addRowsActivities(Vector data, PSTokenList tl, Vector columnNames)
-{ 
-	for (int i=0; i < tl.size() ; i++) {
-    	row = new Vector();
-    	PSToken t = tl.get(i);
-    	String tokenString = t.toString();
-      // 	print(tokenString);
-       	if(!tokenString.contains("consume") && !tokenString.contains("Battery")){
-       	
-		// Fill each column as best we can:
-       	for (int k=0; k < columnNames.size(); k++) {
-			String col = columnNames.get(k);
-			
-			// Three special cases before we get to generic case:
-			if(col == "Key") {
-				row.add(t.getEntityKey());
-			}
-			else if(col == "Name") {
-				row.add(t.getEntityName());
-			}
-			else if(col == "ES") {
-				row.add(t.getStart().getLowerBound());
-			}
-		
-			else {
-				String entry = "--";
- 		     	PSVariableList vars = t.getParameters();
-        			for (int j=0; j<vars.size();j++) 
-       			{	
-       				PSVariable var = vars.get(j);
-        			if (var.getEntityName().equals(col)) 
-       				{
-       					entry = var.toString();
-       				}
-       			}
-       			row.add(entry);
-       	    }
-		}
-		data.add(row);    
-	}
-	}
-}
-
-// call showActivities() to get a timetable of activities for the payloads
 void showActivities()
-{	   
-	  PSObjectList ol1 = psengine.getObjectsByType("TOPCAT");	
-	  PSTokenList tl1 = ol1.get(0).getTokens();
+{	  
+	  PSObjectList ol9 = psengine.getObjectsByType("C3D");	
+	  PSTokenList tl9 = ol9.get(0).getTokens();
 	  
-	  PSObjectList ol2 = psengine.getObjectsByType("JANUS");	
-	  PSTokenList tl2 = ol2.get(0).getTokens();
-	  
-	  PSObjectList ol3 = psengine.getObjectsByType("MIC");	
+	  PSObjectList ol3 = psengine.getObjectsByType("TOPCAT");	
 	  PSTokenList tl3 = ol3.get(0).getTokens();
 	  
-	  PSObjectList ol4 = psengine.getObjectsByType("C3D");	
+	  PSObjectList ol4 = psengine.getObjectsByType("JANUS");	
 	  PSTokenList tl4 = ol4.get(0).getTokens();
 	  
+	  PSObjectList ol5 = psengine.getObjectsByType("MIC");	
+	  PSTokenList tl5 = ol5.get(0).getTokens();
+	  
+	//  PSObjectList ol6 = psengine.getObjectsByType("FUNCUBE");	
+	//  PSTokenList tl6 = ol6.get(0).getTokens();
+	  
+//	  PSObjectList ol8 = psengine.getObjectsByType("ConstantlyActivePayload");	
+//	  PSTokenList tl8 = ol8.get(0).getTokens();
 
 	columnNames = new Vector();
 	data = new Vector();
@@ -275,10 +235,12 @@ void showActivities()
     columnNames.add("duration");
     columnNames.add("end");
 	
-	addRowsActivities(data, tl1, columnNames);
-    addRowsActivities(data, tl2, columnNames);
-    addRowsActivities(data, tl3, columnNames);
-    addRowsActivities(data, tl4, columnNames);
+    addRows(data, tl9, columnNames);
+    addRows(data, tl3, columnNames);
+    addRows(data, tl4, columnNames);
+    addRows(data, tl5, columnNames);
+//    addRows(data, tl6, columnNames);
+//    addRows(data, tl8, columnNames);
 
 	// Sort the rows based on the 3rd column (start) 
 	sortedData = new Vector();
@@ -296,56 +258,49 @@ void showActivities()
 		data.remove(bestIdx);
 	}
 
-	frame = desktop.makeNewFrame("Timeline");
+	frame = desktop.makeNewFrame("Activity Timetable");
 	table = new JTable(new Util.MatrixTableModel(sortedData,columnNames));
 	scrollpane = new JScrollPane(table);
     frame.getContentPane().add(scrollpane);    	
  	frame.setSize(frame.getSize()); // Force repaint
 }
 
-void makeSchemaFrame() {desktop.makeSchemaBrowserFrame();}
-
-void showDownlinkActivity()
+void showBatteryActivity()
 {
-    PSObjectList ol1 = psengine.getObjectsByType("UVTRX");	
-    PSTokenList tl1 = ol1.get(0).getTokens();
-    PSObjectList ol2 = psengine.getObjectsByType("STX");	
-    PSTokenList tl2 = ol2.get(0).getTokens();
+    PSObject b = psengine.getObjectByName("battery");
+    desktop.showTokens(b);
+    resourceFrame = desktop.makeResourcesFrame("Battery",start);
+}
 
-	columnNames = new Vector();
-	data = new Vector();
- 
-    columnNames.add("Key");
-    columnNames.add("Name");
-	columnNames.add("ES");  // We use this column for chronological sorting later
-    columnNames.add("start");
-    columnNames.add("duration");
-    columnNames.add("end");
-	
-	addRows(data, tl1, columnNames);
-    addRows(data, tl2, columnNames);
-
-	// Sort the rows based on the 3rd column (start) 
-	sortedData = new Vector();
-	
-	while(data.size() > 0) {
-		int bestIdx = -1;
-		double lowestLB = 0;
-		for(int i=0; i < data.size(); i++) {
-			if (bestIdx == -1 || data.get(i).get(2) < lowestLB) {
-				bestIdx = i;
-				lowestLB = data.get(i).get(2);
-			}
-		}
-		sortedData.add(data.get(bestIdx));
-		data.remove(bestIdx);
+void printBatteryLevels()
+{
+    PSObject obj = psengine.getObjectByName("battery");
+    PSResource r = PSResource.asPSResource(obj);
+    PSResourceProfile prof = r.getFDLevels();    
+    PSTimePointList times = prof.getTimes();
+	for (int i=0; i<times.size(); i++) {
+		int time = times.get(i);
+		print(times.get(i)+" ["+prof.getLowerBound(time)+", "+prof.getUpperBound(time)+"]");
 	}
+}
 
-	frame = desktop.makeNewFrame("Timeline");
-	table = new JTable(new Util.MatrixTableModel(sortedData,columnNames));
-	scrollpane = new JScrollPane(table);
-    frame.getContentPane().add(scrollpane);    	
- 	frame.setSize(frame.getSize()); // Force repaint
+void showMemoryActivity()
+{
+    PSObject m = psengine.getObjectByName("memory");
+    desktop.showTokens(m);
+    resourceFrame = desktop.makeResourcesFrame("Memory", start);
+}
+
+void printMemoryLevels()
+{
+    PSObject obj = psengine.getObjectByName("memory");
+    PSResource r = PSResource.asPSResource(obj);
+    PSResourceProfile prof = r.getFDLevels();    
+    PSTimePointList times = prof.getTimes();
+	for (int i=0; i<times.size(); i++) {
+		int time = times.get(i);
+		print(times.get(i)+" ["+prof.getLowerBound(time)+", "+prof.getUpperBound(time)+"]");
+	}
 }
 
 void showRadioActivity()
@@ -381,87 +336,7 @@ void showRadioActivity()
 		data.remove(bestIdx);
 	}
 
-	frame = desktop.makeNewFrame("Timeline");
-	table = new JTable(new Util.MatrixTableModel(sortedData,columnNames));
-	scrollpane = new JScrollPane(table);
-    frame.getContentPane().add(scrollpane);    	
- 	frame.setSize(frame.getSize()); // Force repaint
-}
-
-void checkConstantlyActivePayloads()
-{
-    PSObjectList ol1 = psengine.getObjectsByType("ConstantlyActivePayload");	
-    PSTokenList tl1 = ol1.get(0).getTokens();
-
-	columnNames = new Vector();
-	data = new Vector();
- 
-    columnNames.add("Key");
-    columnNames.add("Name");
-	columnNames.add("ES");  // We use this column for chronological sorting later
-    columnNames.add("start");
-    columnNames.add("duration");
-    columnNames.add("end");
-	
-	addRows(data, tl1, columnNames);
-
-	// Sort the rows based on the 3rd column (start) 
-	sortedData = new Vector();
-	
-	while(data.size() > 0) {
-		int bestIdx = -1;
-		double lowestLB = 0;
-		for(int i=0; i < data.size(); i++) {
-			if (bestIdx == -1 || data.get(i).get(2) < lowestLB) {
-				bestIdx = i;
-				lowestLB = data.get(i).get(2);
-			}
-		}
-		sortedData.add(data.get(bestIdx));
-		data.remove(bestIdx);
-	}
-
-	frame = desktop.makeNewFrame("Timeline");
-	table = new JTable(new Util.MatrixTableModel(sortedData,columnNames));
-	scrollpane = new JScrollPane(table);
-    frame.getContentPane().add(scrollpane);    	
- 	frame.setSize(frame.getSize()); // Force repaint
-}
-
-void checkSolarPanel()
-{
-    PSObjectList ol1 = psengine.getObjectsByType("SolarPanel");	
-    PSTokenList tl1 = ol1.get(0).getTokens();
-
-	columnNames = new Vector();
-	data = new Vector();
- 
-    columnNames.add("Key");
-    columnNames.add("Name");
-	columnNames.add("ES");  // We use this column for chronological sorting later
-    columnNames.add("start");
-    columnNames.add("duration");
-    columnNames.add("end");
-	
-	addRows(data, tl1, columnNames);
-
-	// Sort the rows based on the 3rd column (start) 
-	sortedData = new Vector();
-	
-	while(data.size() > 0) {
-		int bestIdx = -1;
-		double lowestLB = 0;
-		for(int i=0; i < data.size(); i++) {
-			if (bestIdx == -1 || data.get(i).get(2) < lowestLB) {
-				bestIdx = i;
-				lowestLB = data.get(i).get(2);
-			}
-		}
-		sortedData.add(data.get(bestIdx));
-		data.remove(bestIdx);
-	}
-
-	frame = desktop.makeNewFrame("Timeline");
+	frame = desktop.makeNewFrame("Radio Activity");
 	table = new JTable(new Util.MatrixTableModel(sortedData,columnNames));
 	scrollpane = new JScrollPane(table);
     frame.getContentPane().add(scrollpane);    	
