@@ -29,4 +29,3 @@
     <FlawHandler class="ConstantlyActivePayload" predicate="alwaysOn" variable="continueLoopCAP" component="Max"/>
   </UnboundVariableManager>
 </Solver>
-

@@ -339,7 +339,7 @@ void showDownlinkActivity()
 		data.remove(bestIdx);
 	}
 
-	frame = desktop.makeNewFrame("Timeline");
+	frame = desktop.makeNewFrame("Downlink Activity");
 	table = new JTable(new Util.MatrixTableModel(sortedData,columnNames));
 	scrollpane = new JScrollPane(table);
     frame.getContentPane().add(scrollpane);    	
@@ -419,7 +419,7 @@ void checkConstantlyActivePayloads()
 		data.remove(bestIdx);
 	}
 
-	frame = desktop.makeNewFrame("Timeline");
+	frame = desktop.makeNewFrame("Subsystems");
 	table = new JTable(new Util.MatrixTableModel(sortedData,columnNames));
 	scrollpane = new JScrollPane(table);
     frame.getContentPane().add(scrollpane);    	
@@ -459,7 +459,7 @@ void checkSolarPanel()
 		data.remove(bestIdx);
 	}
 
-	frame = desktop.makeNewFrame("Timeline");
+	frame = desktop.makeNewFrame("Charging Activity");
 	table = new JTable(new Util.MatrixTableModel(sortedData,columnNames));
 	scrollpane = new JScrollPane(table);
     frame.getContentPane().add(scrollpane);    	

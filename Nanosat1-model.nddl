@@ -227,12 +227,14 @@ class FUNCUBE extends Timeline
 class Battery extends Reservoir
 {
     string profileType;
-    
+    //string detectorType;
     // initial capacity, min, max, max production rate, max production overall, max consumption rate, max consumption overall
 	Battery(float ic, float min, float max)
 	{
 		super(ic, min, max);
 		profileType="IncrementalFlowProfile";
+		//profileType = "GroundedProfile";
+        //detectorType = "GroundedFVDetector";
 	}
 }
 
@@ -502,7 +504,6 @@ MIC::runExperimentMIC
 
 FUNCUBE::educationalCommunicationsFUNCUBE
 {
-    after(object.nanosat.janus.runExperimentHighPowerJANUS);
     contained_by(condition object.educationWindow.Available);
     bool continueLoopFE;
     if(continueLoopFE) {
@@ -515,7 +516,6 @@ FUNCUBE::educationalCommunicationsFUNCUBE
 
 FUNCUBE::amateurCommunicationsFUNCUBE
 {
-    after(object.nanosat.janus.runExperimentHighPowerJANUS);
     contained_by(condition object.amateurWindow.Available);
     bool continueLoopFA;
     if(continueLoopFA) {
@@ -542,10 +542,10 @@ SolarPanel::chargeBattery
     contained_by(condition object.window.Available);
   	bool continueLoopB;
     if(continueLoopB) {
-        starts(effect object.nanosat.mainBattery.produce power);
-        eq(power.quantity, [0,390]);
         meets(effect object.chargeBattery next);
         next.end <= 1440;
+        starts(effect object.nanosat.mainBattery.produce power);
+        eq(power.quantity, [0,390]);
     }
 }
 
