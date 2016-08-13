@@ -1,0 +1,246 @@
+#include "Nanosat1-model.nddl"
+
+// Create a planner configuration instance in PLASMA.
+
+// Setting up the nanosatellite with battery
+INSERTbatteryDetails
+INSERTmemoryDetails
+Nanosatellite nanosat = new Nanosatellite(battery, memory);
+
+// Close the the PLASMA Database - no more objects can be created.
+close();
+
+// Establish the initial conditions
+fact(nanosat.c3d.state.Off cOff);
+cOff.start = 0;
+fact(nanosat.topcat.state.Off tOff);
+tOff.start = 0;
+fact(nanosat.mic.state.Off mOff);
+mOff.start = 0;
+
+// Establish the windows of availability
+INSERTcameraWindows
+INSERTrmWindows
+INSERTjanusHighPowerWindows
+INSERTpanelWindows
+INSERTdownlinkWindowsCapeTown
+INSERTdownlinkWindowsUK
+INSERTbeaconWindows
+INSERTfuncubeEduWindows
+INSERTfuncubeAmaWindows
+
+// Charge the battery during hours of sunlight
+goal(nanosat.panel.chargeBattery charge1);
+goal(nanosat.panel.chargeBattery charge2);
+goal(nanosat.panel.chargeBattery charge3);
+goal(nanosat.panel.chargeBattery charge4);
+goal(nanosat.panel.chargeBattery charge5);
+goal(nanosat.panel.chargeBattery charge6);
+goal(nanosat.panel.chargeBattery charge7);
+goal(nanosat.panel.chargeBattery charge8);
+goal(nanosat.panel.chargeBattery charge9);
+goal(nanosat.panel.chargeBattery charge10);
+goal(nanosat.panel.chargeBattery charge11);
+goal(nanosat.panel.chargeBattery charge12);
+goal(nanosat.panel.chargeBattery charge13);
+goal(nanosat.panel.chargeBattery charge14);
+goal(nanosat.panel.chargeBattery charge15);
+leq(panelWindow1.start, charge1.start);
+leq(charge1.end, panelWindow1.end);
+leq(panelWindow2.start, charge2.start);
+leq(charge2.end, panelWindow2.end);
+leq(panelWindow3.start, charge3.start);
+leq(charge3.end, panelWindow3.end);
+leq(panelWindow4.start, charge4.start);
+leq(charge4.end, panelWindow4.end);
+leq(panelWindow5.start, charge5.start);
+leq(charge5.end, panelWindow5.end);
+leq(panelWindow6.start, charge6.start);
+leq(charge6.end, panelWindow6.end);
+leq(panelWindow7.start, charge7.start);
+leq(charge7.end, panelWindow7.end);
+leq(panelWindow8.start, charge8.start);
+leq(charge8.end, panelWindow8.end);
+leq(panelWindow9.start, charge9.start);
+leq(charge9.end, panelWindow9.end);
+leq(panelWindow10.start, charge10.start);
+leq(charge10.end, panelWindow10.end);
+leq(panelWindow11.start, charge11.start);
+leq(charge11.end, panelWindow11.end);
+leq(panelWindow12.start, charge12.start);
+leq(charge12.end, panelWindow12.end);
+leq(panelWindow13.start, charge13.start);
+leq(charge13.end, panelWindow13.end);
+leq(panelWindow14.start, charge14.start);
+leq(charge14.end, panelWindow14.end);
+leq(panelWindow15.start, charge15.start);
+leq(charge15.end, panelWindow15.end);
+
+// Downlink at all available opportunities - Cape Town
+goal(nanosat.stx.downlinkData downlinkCapeTown1);
+goal(nanosat.stx.downlinkData downlinkCapeTown2);
+goal(nanosat.stx.downlinkData downlinkCapeTown3);
+goal(nanosat.stx.downlinkData downlinkCapeTown4);
+goal(nanosat.stx.downlinkData downlinkCapeTown5);
+leq(downlinkWindowCapeTown1.start, downlinkCapeTown1.start);
+leq(downlinkCapeTown1.end, downlinkWindowCapeTown1.end);
+leq(downlinkWindowCapeTown2.start, downlinkCapeTown2.start);
+leq(downlinkCapeTown2.end, downlinkWindowCapeTown2.end);
+leq(downlinkWindowCapeTown3.start, downlinkCapeTown3.start);
+leq(downlinkCapeTown3.end, downlinkWindowCapeTown3.end);
+leq(downlinkWindowCapeTown4.start, downlinkCapeTown4.start);
+leq(downlinkCapeTown4.end, downlinkWindowCapeTown4.end);
+leq(downlinkWindowCapeTown5.start, downlinkCapeTown5.start);
+leq(downlinkCapeTown5.end, downlinkWindowCapeTown5.end);
+
+// Downlink at all available opportunities - UK
+goal(nanosat.uvtrx.downlinkData downlinkUK1);
+goal(nanosat.uvtrx.downlinkData downlinkUK2);
+goal(nanosat.uvtrx.downlinkData downlinkUK3);
+goal(nanosat.uvtrx.downlinkData downlinkUK4);
+goal(nanosat.uvtrx.downlinkData downlinkUK5);
+leq(downlinkWindowUK1.start, downlinkUK1.start);
+leq(downlinkUK1.end, downlinkWindowUK1.end);
+leq(downlinkWindowUK2.start, downlinkUK2.start);
+leq(downlinkUK2.end, downlinkWindowUK2.end);
+leq(downlinkWindowUK3.start, downlinkUK3.start);
+leq(downlinkUK3.end, downlinkWindowUK3.end);
+leq(downlinkWindowUK4.start, downlinkUK4.start);
+leq(downlinkUK4.end, downlinkWindowUK4.end);
+leq(downlinkWindowUK5.start, downlinkUK5.start);
+leq(downlinkUK5.end, downlinkWindowUK5.end);
+
+// Beacon should be active when not downlinking to the UK ground station
+goal(nanosat.uvtrx.beaconSignal beacon1);
+goal(nanosat.uvtrx.beaconSignal beacon2);
+goal(nanosat.uvtrx.beaconSignal beacon3);
+goal(nanosat.uvtrx.beaconSignal beacon4);
+goal(nanosat.uvtrx.beaconSignal beacon5);
+goal(nanosat.uvtrx.beaconSignal beacon6);
+leq(beaconWindow1.start, beacon1.start);
+leq(beacon1.end, beaconWindow1.end);
+leq(beaconWindow2.start, beacon2.start);
+leq(beacon2.end, beaconWindow2.end);
+leq(beaconWindow3.start, beacon3.start);
+leq(beacon3.end, beaconWindow3.end);
+leq(beaconWindow4.start, beacon4.start);
+leq(beacon4.end, beaconWindow4.end);
+leq(beaconWindow5.start, beacon5.start);
+leq(beacon5.end, beaconWindow5.end);
+leq(beaconWindow6.start, beacon6.start);
+leq(beacon6.end, beaconWindow6.end);
+
+// EXPERIMENTAL PAYLOADS
+
+// Perform a TOPCAT experiment
+goal(nanosat.topcat.runExperimentTOPCAT TOPCATexperiment);
+leq(0, TOPCATexperiment.start);
+leq(TOPCATexperiment.end, INSERThorizon);
+
+// If TOPCAT is on, consume power
+fact(nanosat.topcat.consumePowerWhileOnTOPCAT TOPCATuseBattery);
+leq(0, TOPCATuseBattery.start);
+leq(TOPCATuseBattery.end, INSERThorizon);
+
+// Perform a MIC experiment
+goal(nanosat.mic.runExperimentMIC MICexperiment);
+leq(0, MICexperiment.start);
+leq(MICexperiment.end, INSERThorizon);
+
+// If MIC is on, consume power
+fact(nanosat.mic.consumePowerWhileOnMIC MICuseBattery);
+leq(0, MICuseBattery.start);
+leq(MICuseBattery.end, INSERThorizon);
+
+// Perform a low power JANUS experiment
+goal(nanosat.janus.runExperimentLowPowerJANUS JANUSexperimentLowPower);
+leq(0, JANUSexperimentLowPower.start);
+leq(JANUSexperimentLowPower.end, INSERThorizon);
+
+// Perform a high power JANUS experiment
+goal(nanosat.janus.runExperimentHighPowerJANUS JANUSexperimentHighPower);
+leq(0, JANUSexperimentHighPower.start);
+leq(JANUSexperimentHighPower.end, INSERThorizon);
+
+// If C3D camera/radiation monitor is on, consume power
+fact(nanosat.c3d.power.consumePowerWhileOnC3D c3dUseBattery);
+leq(0, c3dUseBattery.start);
+leq(c3dUseBattery.end, INSERThorizon);
+
+// Take a photo of the UK ground station
+goal(nanosat.c3d.takePhoto takePhoto);
+leq(0, takePhoto.start);
+leq(takePhoto.end, INSERThorizon);
+
+// Measure radiation when in the SAA
+goal(nanosat.c3d.measureRadiation measureRadiation);
+leq(0, measureRadiation.start);
+leq(measureRadiation.end, INSERThorizon);
+
+// The EPS, SWB, BAT, OBC and ADCS payloads are always on and consuming power
+fact(nanosat.constantpayloads.alwaysOn payloadsAlwaysOn);
+payloadsAlwaysOn.start = 0;
+
+// FUNCUBE educational communications
+goal(nanosat.funcube2.educationalCommunicationsFUNCUBE FUNCUBEeducationalComms1);
+goal(nanosat.funcube2.educationalCommunicationsFUNCUBE FUNCUBEeducationalComms2);
+goal(nanosat.funcube2.educationalCommunicationsFUNCUBE FUNCUBEeducationalComms3);
+goal(nanosat.funcube2.educationalCommunicationsFUNCUBE FUNCUBEeducationalComms4);
+goal(nanosat.funcube2.educationalCommunicationsFUNCUBE FUNCUBEeducationalComms5);
+goal(nanosat.funcube2.educationalCommunicationsFUNCUBE FUNCUBEeducationalComms6);
+goal(nanosat.funcube2.educationalCommunicationsFUNCUBE FUNCUBEeducationalComms7);
+goal(nanosat.funcube2.educationalCommunicationsFUNCUBE FUNCUBEeducationalComms8);
+goal(nanosat.funcube2.educationalCommunicationsFUNCUBE FUNCUBEeducationalComms9);
+goal(nanosat.funcube2.educationalCommunicationsFUNCUBE FUNCUBEeducationalComms10);
+goal(nanosat.funcube2.educationalCommunicationsFUNCUBE FUNCUBEeducationalComms11);
+goal(nanosat.funcube2.educationalCommunicationsFUNCUBE FUNCUBEeducationalComms12);
+goal(nanosat.funcube2.educationalCommunicationsFUNCUBE FUNCUBEeducationalComms13);
+goal(nanosat.funcube2.educationalCommunicationsFUNCUBE FUNCUBEeducationalComms14);
+goal(nanosat.funcube2.educationalCommunicationsFUNCUBE FUNCUBEeducationalComms15);
+FUNCUBEeducationalComms1.start = educationWindow1.start;
+FUNCUBEeducationalComms2.start = educationWindow2.start;
+FUNCUBEeducationalComms3.start = educationWindow3.start;
+FUNCUBEeducationalComms4.start = educationWindow4.start;
+FUNCUBEeducationalComms5.start = educationWindow5.start;
+FUNCUBEeducationalComms6.start = educationWindow6.start;
+FUNCUBEeducationalComms7.start = educationWindow7.start;
+FUNCUBEeducationalComms8.start = educationWindow8.start;
+FUNCUBEeducationalComms9.start = educationWindow9.start;
+FUNCUBEeducationalComms10.start = educationWindow10.start;
+FUNCUBEeducationalComms11.start = educationWindow11.start;
+FUNCUBEeducationalComms12.start = educationWindow12.start;
+FUNCUBEeducationalComms13.start = educationWindow13.start;
+FUNCUBEeducationalComms14.start = educationWindow14.start;
+FUNCUBEeducationalComms15.start = educationWindow15.start;
+
+// FUNCUBE amateur communications
+goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms1);
+goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms2);
+goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms3);
+goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms4);
+goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms5);
+goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms6);
+goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms7);
+goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms8);
+goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms9);
+goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms10);
+goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms11);
+goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms12);
+goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms13);
+goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms14);
+goal(nanosat.funcube2.amateurCommunicationsFUNCUBE FUNCUBEamateurComms15);
+FUNCUBEamateurComms1.start = amateurWindow1.start;
+FUNCUBEamateurComms2.start = amateurWindow2.start;
+FUNCUBEamateurComms3.start = amateurWindow3.start;
+FUNCUBEamateurComms4.start = amateurWindow4.start;
+FUNCUBEamateurComms5.start = amateurWindow5.start;
+FUNCUBEamateurComms6.start = amateurWindow6.start;
+FUNCUBEamateurComms7.start = amateurWindow7.start;
+FUNCUBEamateurComms8.start = amateurWindow8.start;
+FUNCUBEamateurComms9.start = amateurWindow9.start;
+FUNCUBEamateurComms10.start = amateurWindow10.start;
+FUNCUBEamateurComms11.start = amateurWindow11.start;
+FUNCUBEamateurComms12.start = amateurWindow12.start;
+FUNCUBEamateurComms13.start = amateurWindow13.start;
+FUNCUBEamateurComms14.start = amateurWindow14.start;
+FUNCUBEamateurComms15.start = amateurWindow15.start;
