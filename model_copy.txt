@@ -324,6 +324,8 @@ class UVTRX extends Timeline
 C3DPowerConsumption::consumePowerWhileOnC3D
 {
     contained_by(condition object.c3d.state.On);
+    starts(effect object.c3d.nanosat.mainBattery.consume p);
+    eq(p.quantity, INSERTC3DbatteryConsumption);
     bool continueLoopC;
     if(continueLoopC) {
         meets(effect object.consumePowerWhileOnC3D next);
@@ -405,6 +407,8 @@ TOPCAT::turnOffTOPCAT
 TOPCAT::consumePowerWhileOnTOPCAT
 {
     contained_by(object.state.On);
+    starts(effect object.nanosat.mainBattery.consume power);
+    eq(power.quantity, INSERTTOPCATbatteryConsumption);
     bool continueLoopT;
     if(continueLoopT) {
         meets(effect object.consumePowerWhileOnTOPCAT next);
@@ -432,6 +436,8 @@ JANUS::runExperimentLowPowerJANUS
 JANUS::consumePowerWhileRunningLowJANUS
 {
     contained_by(object.runExperimentLowPowerJANUS);
+    starts(effect object.nanosat.mainBattery.consume power);
+    eq(power.quantity, INSERTJANUSbatteryConsumptionLow);
     bool continueLoopJL;
     if(continueLoopJL) {
         meets(effect object.consumePowerWhileRunningLowJANUS next);
@@ -454,6 +460,8 @@ JANUS::runExperimentHighPowerJANUS
 JANUS::consumePowerWhileRunningHighJANUS
 {
     contained_by(object.runExperimentHighPowerJANUS);
+    starts(effect object.nanosat.mainBattery.consume power);
+    eq(power.quantity, INSERTJANUSbatteryConsumptionHigh);
     starts_during(object.window.Available);
     bool continueLoopJH;
     if(continueLoopJH) {
@@ -482,6 +490,8 @@ MIC::turnOffMIC
 MIC::consumePowerWhileOnMIC
 {
     contained_by(object.state.On);
+    starts(effect object.nanosat.mainBattery.consume power);
+    eq(power.quantity, INSERTMICbatteryConsumption);
     bool continueLoopM;
     if(continueLoopM) {
         meets(effect object.consumePowerWhileOnMIC next);
@@ -505,6 +515,8 @@ MIC::runExperimentMIC
 FUNCUBE::educationalCommunicationsFUNCUBE
 {
     contained_by(condition object.educationWindow.Available);
+    starts(effect object.nanosat.mainBattery.consume power);
+    eq(power.quantity, INSERTFUNCUBEbatteryConsumptionEdu);
     bool continueLoopFE;
     if(continueLoopFE) {
         meets(effect object.educationalCommunicationsFUNCUBE next);
@@ -517,6 +529,8 @@ FUNCUBE::educationalCommunicationsFUNCUBE
 FUNCUBE::amateurCommunicationsFUNCUBE
 {
     contained_by(condition object.amateurWindow.Available);
+    starts(effect object.nanosat.mainBattery.consume power);
+    eq(power.quantity, INSERTFUNCUBEbatteryConsumptionAma);
     bool continueLoopFA;
     if(continueLoopFA) {
         meets(effect object.amateurCommunicationsFUNCUBE next);
@@ -529,6 +543,8 @@ FUNCUBE::amateurCommunicationsFUNCUBE
 ConstantlyActivePayload::alwaysOn
 {
     bool continueLoopCAP;
+    starts(effect object.nanosat.mainBattery.consume power);
+    eq(power.quantity, object.consumptionRate);
     if(continueLoopCAP) {
         meets(effect object.alwaysOn next);
         next.end <= INSERThorizon;
@@ -552,6 +568,8 @@ SolarPanel::chargeBattery
 STX::downlinkData
 {
     contained_by(condition object.window.Available);
+    starts(effect object.nanosat.mainBattery.consume consumption);
+    eq(consumption.quantity, INSERTSTXbatteryConsumption);
     bool continueLoopS;
     if(continueLoopS) {
         meets(effect object.downlinkData next);
@@ -566,6 +584,8 @@ STX::downlinkData
 UVTRX::downlinkData
 {
     contained_by(condition object.downlinkWindow.Available);
+    starts(effect object.nanosat.mainBattery.consume consumption);
+    eq(consumption.quantity, INSERTUVTRXbatteryConsumptionDownlink);
     bool continueLoopUD;
     if(continueLoopUD) {
         meets(effect object.downlinkData next);
@@ -580,6 +600,8 @@ UVTRX::downlinkData
 UVTRX::beaconSignal
 {
     contained_by(condition object.beaconWindow.Available);
+    starts(effect object.nanosat.mainBattery.consume consumption);
+    eq(consumption.quantity, INSERTUVTRXbatteryConsumptionBeacon);
     bool continueLoopUB;
     if(continueLoopUB) {
         meets(effect object.beaconSignal next);
