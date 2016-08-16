@@ -82,7 +82,7 @@ class Camera
 	}
 		
 	action takePhoto{
-    	eq(3, duration);
+    	eq(4, duration);
 	}
 	
 	action turnOn{
@@ -161,15 +161,15 @@ Camera::turnOff
 
 Camera::consumePowerWhileOn
 {
-    contained_by(object.state.On);
-    starts(effect object.nanosat.mainBattery.consume power);
-    mulEq(duration, 6, power.quantity);
+    starts(effect object.nanosat.mainBattery.consume p);
+    eq(p.quantity, 8);
+    contained_by(condition object.state.On);
     bool continueLoopC;
     if(continueLoopC) {
         meets(effect object.consumePowerWhileOn next);
         next.end <= 100;
         starts(effect object.nanosat.mainBattery.consume p);
-        mulEq(duration, 6, p.quantity);
+        eq(p.quantity, 8);
     }
 }
 
@@ -181,7 +181,7 @@ SolarPanel::chargeBattery
         meets(effect object.chargeBattery next);
         next.end <= 100;
         starts(effect object.nanosat.mainBattery.produce power);
-        mulEq(duration, 3, power.quantity);
+        eq(power.quantity, 4);
     }
 }
 
@@ -193,8 +193,8 @@ Transmitter::downlinkData
         meets(effect object.downlinkData next);
         next.end <= 100;
         starts(effect object.nanosat.memory.consume data);
-        mulEq(duration, 6, data.quantity);
+        eq(data.quantity, 10);
         starts(effect object.nanosat.mainBattery.consume consumption);
-        mulEq(duration, 2, consumption.quantity);
+        eq(consumption.quantity, 5);
     }
 }

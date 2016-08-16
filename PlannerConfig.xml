@@ -3,7 +3,6 @@
 
   <ThreatManager defaultPriority="0">
     <FlawHandler component="StandardThreatHandler"/>
-    <FlawFilter class-match="Reservoir"/>
   </ThreatManager>
 
   <OpenConditionManager defaultPriority="0">
@@ -13,8 +12,6 @@
   <UnboundVariableManager defaultPriority="0">
     <FlawFilter var-match="end"/>
     <FlawFilter component="InfiniteDynamicFilter"/>
-    <FlawFilter class-match="Resource" var-match="quantity"/>
-    <FlawFilter class-match="Reservoir" var-match="quantity"/>
     <FlawHandler component="StandardVariableHandler"/>
     <FlawHandler var-match="start" component="StandardVariableHandler" priority="9999"/>
     <FlawHandler class="SolarPanel" predicate="chargeBattery" variable="continueLoopB" component="Max"/>

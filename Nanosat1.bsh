@@ -9,7 +9,7 @@ import org.ops.ui.utils.swing.Util;
 
 int month = GregorianCalendar.JULY, day = 1; 
 GregorianCalendar start = new GregorianCalendar(2016,month,day,0,0);
-GregorianCalendar end = new GregorianCalendar(2016,month,day,0,10);
+GregorianCalendar end = new GregorianCalendar(2016,month,day,0,100);
 
 try {
     // Load the model and the problem :
@@ -133,19 +133,10 @@ void addRows(Vector data, PSTokenList tl, Vector columnNames)
 // b) Gather the tokens associated with them.
 // c) Store the token variables we want to show for each token.
 // d) Sort them in chronological order
-void showPlan()
+void showActivities()
 {	   
-//	  PSObjectList ol = psengine.getObjectsByType("RadiationMonitor");
-//	  PSTokenList tl = ol.get(0).getTokens();
-	
 	  PSObjectList ol2 = psengine.getObjectsByType("Camera");	
 	  PSTokenList tl2 = ol2.get(0).getTokens();
-
-      PSObjectList ol3 = psengine.getObjectsByType("SolarPanel");	
-	  PSTokenList tl3 = ol3.get(0).getTokens();
-    
-      PSObjectList ol4 = psengine.getObjectsByType("Transmitter");	
-	  PSTokenList tl4 = ol4.get(0).getTokens();
 
 	columnNames = new Vector();
 	data = new Vector();
@@ -157,10 +148,7 @@ void showPlan()
     columnNames.add("duration");
     columnNames.add("end");
 	
-//	addRows(data, tl, columnNames);
 	addRows(data, tl2, columnNames);
-	addRows(data, tl3, columnNames);
-    addRows(data, tl4, columnNames);
 
 	// Sort the rows based on the 3rd column (start) 
 	sortedData = new Vector();
@@ -178,7 +166,87 @@ void showPlan()
 		data.remove(bestIdx);
 	}
 
-	frame = desktop.makeNewFrame("Timeline");
+	frame = desktop.makeNewFrame("Activity Timetable");
+	table = new JTable(new Util.MatrixTableModel(sortedData,columnNames));
+	scrollpane = new JScrollPane(table);
+    frame.getContentPane().add(scrollpane);    	
+ 	frame.setSize(frame.getSize()); // Force repaint
+}
+
+void showChargingActivity()
+{	   
+      PSObjectList ol3 = psengine.getObjectsByType("SolarPanel");	
+	  PSTokenList tl3 = ol3.get(0).getTokens();
+
+	columnNames = new Vector();
+	data = new Vector();
+ 
+    columnNames.add("Key");
+    columnNames.add("Name");
+	columnNames.add("ES");  // We use this column for chronological sorting later
+    columnNames.add("start");
+    columnNames.add("duration");
+    columnNames.add("end");
+	
+	addRows(data, tl3, columnNames);
+
+	// Sort the rows based on the 3rd column (start) 
+	sortedData = new Vector();
+	
+	while(data.size() > 0) {
+		int bestIdx = -1;
+		double lowestLB = 0;
+		for(int i=0; i < data.size(); i++) {
+			if (bestIdx == -1 || data.get(i).get(2) < lowestLB) {
+				bestIdx = i;
+				lowestLB = data.get(i).get(2);
+			}
+		}
+		sortedData.add(data.get(bestIdx));
+		data.remove(bestIdx);
+	}
+
+	frame = desktop.makeNewFrame("Charging Activity");
+	table = new JTable(new Util.MatrixTableModel(sortedData,columnNames));
+	scrollpane = new JScrollPane(table);
+    frame.getContentPane().add(scrollpane);    	
+ 	frame.setSize(frame.getSize()); // Force repaint
+}
+
+void showDownlinkActivity()
+{	   
+      PSObjectList ol3 = psengine.getObjectsByType("Transmitter");	
+	  PSTokenList tl3 = ol3.get(0).getTokens();
+
+	columnNames = new Vector();
+	data = new Vector();
+ 
+    columnNames.add("Key");
+    columnNames.add("Name");
+	columnNames.add("ES");  // We use this column for chronological sorting later
+    columnNames.add("start");
+    columnNames.add("duration");
+    columnNames.add("end");
+	
+	addRows(data, tl3, columnNames);
+
+	// Sort the rows based on the 3rd column (start) 
+	sortedData = new Vector();
+	
+	while(data.size() > 0) {
+		int bestIdx = -1;
+		double lowestLB = 0;
+		for(int i=0; i < data.size(); i++) {
+			if (bestIdx == -1 || data.get(i).get(2) < lowestLB) {
+				bestIdx = i;
+				lowestLB = data.get(i).get(2);
+			}
+		}
+		sortedData.add(data.get(bestIdx));
+		data.remove(bestIdx);
+	}
+
+	frame = desktop.makeNewFrame("Downlinking Activity");
 	table = new JTable(new Util.MatrixTableModel(sortedData,columnNames));
 	scrollpane = new JScrollPane(table);
     frame.getContentPane().add(scrollpane);    	
@@ -186,10 +254,14 @@ void showPlan()
 }
 
 // Show results right away:
-showPlan();
-print("Battery levels: ");
-printBatteryLevels();
-print("Memory levels: ");
-printMemoryLevels();
-
-
+showActivities();
+showChargingActivity();
+showDownlinkActivity();
+//print("\n");
+//print("\n");
+//print("Battery levels:");
+//printBatteryLevels();
+//print("\n");
+//print("Memory levels:");
+//printMemoryLevels();
+//print("\n");

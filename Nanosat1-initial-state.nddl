@@ -20,7 +20,7 @@ camWindow.start = 5;
 camWindow.end = 20;
 
 fact(nanosat.panel.window.Available chargingWindow);
-chargingWindow.start = 0;
+chargingWindow.start = 5;
 chargingWindow.end = 50;
 
 fact(nanosat.transmitter.window.Available downlinkWindow);
@@ -28,25 +28,22 @@ downlinkWindow.start = 60;
 downlinkWindow.end = 90;
 
 // Charge the battery
-fact(nanosat.panel.chargeBattery charge);
+goal(nanosat.panel.chargeBattery charge);
 leq(0, charge.start);
 leq(charge.end, 100);
 
 // If in the appropriate window, downlink data
-fact(nanosat.transmitter.downlinkData downlink);
+goal(nanosat.transmitter.downlinkData downlink);
 leq(0, downlink.start);
 leq(downlink.end, 100);
 
 // Goals and facts about the camera
 // If the camera is on, consume power
-fact(nanosat.camera.consumePowerWhileOn camConsume);
-leq(0, camConsume.start);
-leq(camConsume.end, 100);
+goal(nanosat.camera.consumePowerWhileOn camUsingBattery);
+leq(0, camUsingBattery.start);
+leq(camUsingBattery.end, 100);
 
 // Take a photo
 goal(nanosat.camera.takePhoto takePhoto);
-takePhoto.start = 8;
-//leq(0, takePhoto.start);
-//leq(takePhoto.end, 100);
-goal(nanosat.camera.takePhoto takePhoto2);
-takePhoto2.start = 15;
+leq(0, takePhoto.start);
+leq(takePhoto.end, 100);
