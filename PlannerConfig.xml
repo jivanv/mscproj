@@ -3,7 +3,6 @@
   
   <ThreatManager defaultPriority="0">
     <FlawHandler component="StandardThreatHandler"/>
-    <FlawFilter class-match="Battery"/>
   </ThreatManager>
   
   <OpenConditionManager defaultPriority="0">
@@ -14,7 +13,6 @@
     <FlawFilter var-match="end"/>
     <FlawFilter component="InfiniteDynamicFilter"/>
     <FlawHandler component="StandardVariableHandler"/>
-    <FlawHandler class="Battery" predicate="produce" variable="quantity" component="Max"/>
     <FlawHandler class="Memory" predicate="consume" variable="quantity" component="Max"/>
     <FlawHandler class="SolarPanel" predicate="chargeBattery" variable="continueLoopB" component="Max"/>
     <FlawHandler class="STX" predicate="downlinkData" variable="continueLoopS" component="Max"/>
